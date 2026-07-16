@@ -1,0 +1,12 @@
+interface:
+  display_name: Write Like Takoon
+  short_description: Draft clear, tactful Thai and English in Takoon style
+  default_prompt: Use @write-like-takoon to draft or revise this message in my confirmed
+    writing style.
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true
