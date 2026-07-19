@@ -1,0 +1,13 @@
+interface:
+  display_name: Lundy
+  short_description: Coordinate focused, evidence-led subagent work.
+  default_prompt: Use Lundy to split this consequential task into independent investigation
+    lanes, coordinate the evidence, challenge disagreements, and return one recommendation
+    without overlapping edits.
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true
