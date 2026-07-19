@@ -1,8 +1,7 @@
 interface:
-  display_name: Ship Sound Code
-  short_description: Lean DX and UX gates for production code
-  default_prompt: Use @ship-sound-code to implement or review this change with lean,
-    evidence-led engineering.
+  display_name: "Ship Sound Code"
+  short_description: "Implement defined code changes safely"
+  default_prompt: "Use $ship-sound-code to implement this repository change from the approved delivery brief."
 policy:
   products:
   - chatgpt
