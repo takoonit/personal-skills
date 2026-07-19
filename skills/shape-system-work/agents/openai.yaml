@@ -1,8 +1,8 @@
 interface:
   display_name: Shape System Work
-  short_description: Shape architecture and risk-first delivery plans
-  default_prompt: Use @shape-system-work to analyse this system request, choose a
-    realistic architecture, and break it into verifiable development work.
+  short_description: Decide system direction before coding
+  default_prompt: Use $shape-system-work to decide this system direction and create
+    a delivery brief for $ship-sound-code.
 policy:
   products:
   - chatgpt

@@ -1,136 +1,58 @@
 ---
 name: shape-system-work
-description: Analyse ambiguous software product or system requests, expose unstated needs and constraints, select a proportionate architecture, and break delivery into risk-first, verifiable development slices. Use for discovery, solution design, architecture proposals, MVP scoping, technical planning, backlog decomposition, build-vs-buy decisions, or when a proposed feature sounds generic, over-designed, costly, or commercially unrealistic.
+description: "Decide what software system to build before implementation. Trigger for ambiguous product ideas, discovery, MVP scope, architecture, build-vs-buy, backlog shaping, or when code work reveals an unresolved outcome, constraint, or business trade-off. Produce an evidence-backed delivery brief for ship-sound-code. Do not use for a defined change in an existing codebase; use ship-sound-code instead."
 ---
 
 # Shape System Work
 
-Turn an idea into an evidence-backed system plan. Preserve the user's intent while challenging assumptions, hidden costs, and generic solutions.
+Decide what to build, why it matters, and what must be proven. Produce a delivery brief; do not design implementation details or edit code.
 
-## Operating principles
+## Plan and route
 
-- Start from the decision or outcome, not the requested feature list.
-- Separate facts, assumptions, constraints, and open questions. Never present inference as fact.
-- Ask only questions whose answers change scope, architecture, cost, or sequencing. Otherwise state a reversible assumption and proceed.
-- Prefer the smallest design that preserves the likely evolution path.
-- Treat operational burden, data quality, security, pricing, and human workflow as architecture concerns.
-- Find the differentiating mechanism. Reject features that merely rename a common pattern.
-- Include one devil's-advocate counterpoint and one leverage point.
-- Keep options to two or three. Recommend one and explain what would invalidate it.
+Create a concise task list: frame the decision, test the proposition, choose a direction, then hand over a delivery brief. Keep one task in progress.
 
-## Workflow
+Use this skill before `$ship-sound-code` when the outcome, user value, architecture, scope, or commercial constraint is still uncertain. Hand over once a direction is chosen and the next work is a concrete repository change. If `$ship-sound-code` discovers that a code change would alter the product outcome or a major system decision, return here rather than silently making that choice.
 
-### 1. Frame the real decision
+## Frame the real decision
 
-Restate the request as:
+State: `For <actor>, enable <outcome> under <constraints>, measured by <observable result>.`
 
-`For <actor>, enable <decision/outcome> under <constraints>, measured by <observable result>.`
+Separate facts from assumptions. Identify the user job and current workaround; desired result and non-goals; decision owner; hard constraints (time, budget, skills, integrations, regulation, accuracy, latency); and irreversible decisions. Ask only questions that change those items; otherwise state a reversible assumption.
 
-Identify:
+For specialised domains, model how practitioners make decisions, handle evidence and exceptions, and hand work off. Do not copy surface terminology into software.
 
-- actors, jobs, and current workaround;
-- desired outcome and explicit non-goals;
-- business model or value exchange;
-- hard constraints: time, budget, skills, integrations, regulation, accuracy, latency;
-- irreversible or expensive decisions;
-- evidence supplied versus assumptions being made.
+## Pressure-test the proposition
 
-If the domain depends on specialised practice, research how real practitioners work before translating it into software. Model their decisions, evidence, exceptions, and hand-offs rather than copying surface terminology.
+Test four questions:
 
-### 2. Pressure-test the proposition
+1. **User truth:** Does this solve a repeated job?
+2. **Mechanism:** What creates a meaningful advantage over a generic implementation?
+3. **Economics:** Can acquisition, operation, support, and variable cost fit the model?
+4. **Trust:** Where can bad data, opaque logic, privacy, or overclaiming harm the user?
 
-Check four lenses:
+Name the weakest assumption and the cheapest test that could disprove it. Distinguish an MVP, which tests value, from a demo, which only proves a screen or integration can exist. Include one leverage point and one devil's-advocate counterpoint.
 
-1. **User truth:** Does this solve a repeated job or merely sound attractive?
-2. **Mechanism:** What makes the result materially different from a generic implementation?
-3. **Economics:** Can acquisition, operation, support, and variable compute costs fit the model?
-4. **Trust:** Where can wrong data, opaque logic, privacy, or overclaiming damage the user?
+## Choose a proportionate direction
 
-Name the weakest assumption and design the cheapest test for it. Distinguish MVP from a demo: an MVP must test value, not just prove that screens can be built.
+Define only the system facts needed for the decision: core entities and invariants, important commands or states, sources of truth, external boundaries, sensitive data, and recovery/audit needs. Keep deterministic rules separate from AI composition when both exist.
 
-### 3. Model the system before choosing technology
+Compare no more than three options: baseline, recommended, and scale path only when materially different. Evaluate user value, correctness, delivery speed, operating cost, changeability, and team fit. Prefer a modular monolith and managed services unless a present need proves otherwise.
 
-Define:
+For each consequential choice, state context, chosen and rejected options, accepted trade-off, and revisit trigger. State what not to build.
 
-- core domain entities and invariants;
-- primary commands, queries, and state transitions;
-- system boundary and external actors;
-- source of truth for each important datum;
-- synchronous versus asynchronous work;
-- failure, retry, audit, and manual-recovery paths;
-- sensitive data and authorisation boundaries.
+## Produce the delivery brief
 
-For rule-heavy or interpretive domains, separate layers:
+Hand this compact brief to `$ship-sound-code`:
 
-1. deterministic calculation or canonical data;
-2. versioned rules and profile mappings;
-3. personalised composition or AI generation;
-4. presentation and interaction.
+- **Decision and outcome:** chosen direction, actor, and success evidence.
+- **Scope:** first vertical slice, non-goals, and dependencies.
+- **Invariants:** authorisation, data, workflow, or trust rules that must not break.
+- **Constraints:** accepted architecture, integrations, cost or operational limits, and explicit trade-offs.
+- **Verification:** acceptance criteria, proof required, and key failure/recovery path.
+- **Open decision:** named owner and deadline, if one blocks safe implementation.
 
-Do not let an AI layer become the source of truth when deterministic rules can be encoded and tested.
+Order work by proof: hardest uncertainty, thin deployed path, core outcome, failure/security/recovery, then operational and scale work. Each slice must retire a risk or prove an outcome.
 
-### 4. Select a proportionate architecture
+## Respond efficiently
 
-Generate at most three candidates: baseline, recommended, and scale-path only when materially different. Compare them on correctness, delivery speed, operating burden, cost, changeability, and team fit.
-
-Default to a modular monolith with clear boundaries unless independent scaling, fault isolation, ownership, or deployment cadence justifies services. Prefer managed components when they remove undifferentiated operations without creating unacceptable lock-in or cost.
-
-Record each major decision as:
-
-- context and constraint;
-- chosen option;
-- rejected alternative;
-- trade-off accepted;
-- trigger for revisiting.
-
-### 5. Slice delivery by proof and risk
-
-Build a thin vertical path through UI/API/domain/data first. Order slices to retire uncertainty:
-
-1. feasibility spike for the hardest unknown;
-2. walking skeleton through the real deployment path;
-3. core happy path with acceptance evidence;
-4. failure, security, and recovery paths;
-5. observability and operational readiness;
-6. optimisation and scale only after measurement.
-
-Each work item must contain:
-
-- user or system outcome;
-- scope and explicit exclusions;
-- dependencies and decision owner;
-- acceptance criteria observable from outside the implementation;
-- test/evidence required;
-- risk or unknown retired;
-- size small enough to review and integrate safely.
-
-Split horizontally only for enabling work that cannot produce a vertical outcome. Time-box research spikes and require a decision or artefact as their output.
-
-### 6. Deliver a decision-ready plan
-
-Use the smallest useful set of sections:
-
-1. decision summary and recommendation;
-2. facts, assumptions, and unresolved questions;
-3. domain model and system boundaries;
-4. architecture and key trade-offs;
-5. risk-first delivery slices with acceptance criteria;
-6. leverage point, hidden trap, and devil's-advocate counterpoint;
-7. next decision or first executable step.
-
-Add diagrams only when relationships or sequence are easier to verify visually. Use tables for exact mappings and comparisons.
-
-## Quality gate
-
-Before finalising, verify:
-
-- every component traces to a requirement, constraint, or risk;
-- the recommendation fits the actual team and commercial model;
-- facts and assumptions are visibly distinct;
-- the first slice tests a real uncertainty or user outcome;
-- acceptance criteria describe evidence, not implementation activity;
-- failure and recovery paths exist;
-- future scale is enabled without being prepaid;
-- the plan states what not to build.
-
-Read [examples.md](references/examples.md) when a concrete worked example or output shape would help.
+Return the decision, facts versus assumptions, recommended option with trade-off, delivery brief, leverage/trap, and next decision. Use diagrams only when a relationship or sequence is otherwise unclear. Read [examples.md](references/examples.md) only when a worked output shape would help.
