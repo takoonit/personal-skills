@@ -87,6 +87,20 @@ For example: `calm discovery → a chart gradually forming from connected layers
 
 Use a visual motif that belongs to the product's subject or user goal. Let it inform the composition, depth, colour, typography, shape, and motion. Do not default to a neutral card grid with muted colours merely because the task is serious. Equally, do not paste decoration over a generic layout. The interface should still have a recognisable point of view when its copy is hidden.
 
+### Establish macro impact before micro polish
+
+Before adding any micro-interaction, give the first viewport one **signature scene**: a product-specific composition that makes the central relationship, object, or transformation immediately felt. It can be an interactive map, a meaningful object in motion, a staged transformation, an immersive progress surface, or another visual structure that belongs to the user's job.
+
+The signature scene must do real work. It should orient the user, make an important relationship legible, or invite the first useful action. Do not treat a hero title beside an ordinary card grid as a signature scene.
+
+Apply this felt test before calling a design delightful:
+
+1. At rest, can a user sense a distinct product world or visual point of view without reading a paragraph?
+2. Does the first meaningful action change the composition, relationship, or information state in a visible way—not merely a button colour, shadow, or small translation?
+3. Would removing the scene make the product materially harder to understand or less memorable?
+
+If any answer is no, strengthen the composition or interaction before adding smaller polish. Micro-interactions amplify a scene; they cannot create one.
+
 For a working interactive flow, include at least two of these perceptible moments where they fit:
 
 - **Arrival:** the primary information assembles, reveals its structure, or establishes spatial depth;
@@ -184,5 +198,6 @@ Return a verdict and no more than three material findings by default:
 - **Feedback choice — <interaction>:** user event → level of feedback → real progress or state made visible.
 - **Delight detail — <interaction>:** subtle response → why it fits this moment → non-animated fallback.
 - **Expression plan:** feeling → visual motif → signature moments → restraint rule.
+- **Signature scene:** visible product relationship → first useful action → compositional change → accessibility fallback.
 
 End with the leanest viable screen direction, expression plan, and the two or three moments that make it feel authored. Do not add UX boilerplate, emoji, a generic principle list, or congratulatory reassurance when the interface is already clear.
