@@ -75,9 +75,27 @@ Make feedback feel direct, not theatrical. Target immediate acknowledgement for 
 
 Synchronise feedback with the action and its real result. Use one coherent signal at a time; avoid competing motion, sound, haptics, counters, and badges. Keep routine haptics light and optional where system settings allow. Reserve stronger visual or haptic feedback for rare, consequential milestones.
 
-### Compose quiet delight
+### Compose distinct delight
 
-Make the product feel considered and alive through small, low-aggression details. Delight should arise from a satisfying response to the user's action—not from an announcement that the product is delightful.
+Make the product feel considered, recognisable, and alive through confident but controlled detail. Delight should arise from a satisfying response to the user's action—not from an announcement that the product is delightful.
+
+Before composing a tangible screen, state an **expression plan**:
+
+`Desired feeling → concept-specific visual motif → two or three signature moments → restraint rule.`
+
+For example: `calm discovery → a chart gradually forming from connected layers → pillar selection, relationship trace, and completed insight → no competing celebration.`
+
+Use a visual motif that belongs to the product's subject or user goal. Let it inform the composition, depth, colour, typography, shape, and motion. Do not default to a neutral card grid with muted colours merely because the task is serious. Equally, do not paste decoration over a generic layout. The interface should still have a recognisable point of view when its copy is hidden.
+
+For a working interactive flow, include at least two of these perceptible moments where they fit:
+
+- **Arrival:** the primary information assembles, reveals its structure, or establishes spatial depth;
+- **Direct manipulation:** a pressed, selected, dragged, or changed object visibly reacts and settles into its new state;
+- **Relationship reveal:** a user action traces, connects, expands, or transforms the information it affects;
+- **Progression:** a real result grows, resolves, or becomes more legible as work is completed; or
+- **Milestone:** a rare achievement earns a richer but still optional response.
+
+Treat a bare colour swap, generic fade, or a 150 ms transition as implementation polish—not a signature moment. Make the effect perceptible enough to reward attention, while keeping it subordinate to the task and capable of being ignored. Do not mistake a muted palette, generous whitespace, or lack of movement for intentional design.
 
 Use one or two understated details that fit the interaction and visual system, such as:
 
@@ -87,7 +105,7 @@ Use one or two understated details that fit the interaction and visual system, s
 - a subtle progress fill, completion mark, or count transition that reflects a real result; or
 - a light haptic tick paired exactly with a deliberate direct action, where the platform permits it.
 
-Vary the detail by context; do not apply the same effect mechanically to every control. Keep the effect subordinate to content, short enough to avoid waiting, and visually quiet enough that it can be ignored. Stop at the first satisfying signal—do not stack glow, scale, sound, haptic, confetti, and copy around one action.
+Vary the detail by context; do not apply the same effect mechanically to every control. Give every important interaction an authored sequence: **resting state → anticipation or response → resolved state**. Keep it short enough to avoid waiting, but do not strip the sequence down until it becomes imperceptible. Stop at the first satisfying signal—do not stack glow, scale, sound, haptic, confetti, and copy around one action.
 
 Choose delight only after the essential task, state, and consequence are clear. Do not use it to distract from a delay, failed action, hidden cost, or weak value proposition. Support reduced motion, and ensure the final state remains clear with all animation disabled.
 
@@ -165,5 +183,6 @@ Return a verdict and no more than three material findings by default:
 - **Behavioural bet — <change>:** context → friction → response → user benefit → validation signal.
 - **Feedback choice — <interaction>:** user event → level of feedback → real progress or state made visible.
 - **Delight detail — <interaction>:** subtle response → why it fits this moment → non-animated fallback.
+- **Expression plan:** feeling → visual motif → signature moments → restraint rule.
 
-End with the leanest viable screen direction and, when useful, one state or feedback cue that can replace text. Do not add UX boilerplate, emoji, a generic principle list, or congratulatory reassurance when the interface is already clear.
+End with the leanest viable screen direction, expression plan, and the two or three moments that make it feel authored. Do not add UX boilerplate, emoji, a generic principle list, or congratulatory reassurance when the interface is already clear.
