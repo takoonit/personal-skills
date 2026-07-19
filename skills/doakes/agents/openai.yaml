@@ -1,0 +1,13 @@
+interface:
+  display_name: Doakes
+  short_description: Challenge change intent and project drift.
+  default_prompt: "Use Doakes to review this change. Trace its intended outcome, test\
+    \ it against the project\u2019s core concept and invariants, and flag any evidence-backed\
+    \ drift or inconsistency before we proceed."
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true

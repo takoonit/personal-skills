@@ -1,11 +1,15 @@
 ---
 name: ship-sound-code
-description: "Implement or review a defined change in an existing codebase with proportionate, YAGNI-driven standards. Trigger for repository-backed feature, bug-fix, API, data-model, UI-flow, refactor, or code-review work, including execution of a shape-system-work delivery brief. Do not use for unresolved product, MVP, or architecture direction; use shape-system-work first."
+description: "Deliver a defined repository change with proportionate, YAGNI-driven standards and focused self-verification. Use as the general implementation workflow for features, bug fixes, APIs, data models, UI flows, and refactors when no active local skill owns the same specialised implementation. Do not use for unresolved product or architecture direction."
 ---
 
 # Ship Sound Code
 
 Turn a concrete request or approved delivery brief into the smallest complete, verifiable code change. Optimise for the user's job and the next developer's ability to understand, test, and safely change it.
+
+## Coexist with local skills
+
+If a user-invoked or active local skill has a narrower declared scope, let it own that specialised work. Reuse its confirmed artefacts; do not repeat its planning, edits, or tests. Retain only this skill's general implementation, scope, and hand-off role; ask the user if ownership remains genuinely unclear.
 
 ## Accept the hand-off and plan
 
@@ -14,6 +18,8 @@ Use the delivery brief from `$shape-system-work` as the product decision: preser
 If the request lacks a concrete repository target, acceptance outcome, or an essential product/architecture decision, route it to `$shape-system-work`. If discovery during code work changes the outcome, major boundary, or commercial trade-off, pause and return a concise decision question there.
 
 Before inspecting, reviewing, or changing code, create a concise Codex task list: orient and decide, implement or assess, then verify and hand over. Add a decision item only for a plausible material refactor, migration, or UX/DX conflict. Keep one item in progress and do not implement before the list exists.
+
+Let framework, platform, security, data, or testing skills own their specific mechanics. Do not create a second plan when an active skill already has one; add only the missing cross-cutting acceptance, YAGNI, or hand-off checks. Treat an approved Dextor cleanup as a small specialised change; take ownership again only when it becomes a material refactor.
 
 ## Orient in the repository
 
@@ -41,10 +47,14 @@ If undecided, complete only safe scoped work and record the follow-up. For activ
 
 Expose a material UX/DX conflict or a conflict with the delivery brief; return it as a decision rather than silently expanding scope.
 
+## Feed implementation feedback forward
+
+Report only material feedback as: **finding → evidence → impact → route/owner → required action → closure proof**. Route vague or contradictory intent to `$doakes`, unsettled product/system choices to `$shape-system-work`, and independent proof gaps to `$lundy`. Close a code finding only when the scoped change and its focused verification satisfy the stated invariant or acceptance outcome.
+
 ## Verify and hand over
 
 Add focused tests for the changed behaviour: happy path, key invariant, and likely boundary/failure. Test wiring when wiring is the risk; avoid implementation-trivia tests. For UI, verify the primary journey and relevant states; for contracts, verify types, normal local use, and actionable failures. Run relevant format, type, lint, and test commands; say what was not run and why.
 
 Before completion, challenge malformed/duplicate actions, stale state, partial failure, missing permission, tenant leak, compatibility/rollback break, and hypothetical complexity. Propose the narrowest correction for material risk.
 
-Return only: change, verification, assumptions/risks, and one material follow-up. Use the full refactor case only when its threshold is met.
+Return only: change, verification, assumptions/risks, and one material follow-up. Include the claimed outcome, preserved invariants, changed scope, commands/results, and any unproved boundary so `$lundy` can independently validate without reconstructing the case. Use the full refactor case only when its threshold is met.

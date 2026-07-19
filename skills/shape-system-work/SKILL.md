@@ -1,17 +1,23 @@
 ---
 name: shape-system-work
-description: "Decide what software system to build before implementation. Trigger for ambiguous product ideas, discovery, MVP scope, architecture, build-vs-buy, backlog shaping, or when code work reveals an unresolved outcome, constraint, or business trade-off. Produce an evidence-backed delivery brief for ship-sound-code. Do not use for a defined change in an existing codebase; use ship-sound-code instead."
+description: "Make an evidence-backed product or system decision before implementation. Use for unresolved product outcome, MVP scope, architecture, build-vs-buy, backlog shaping, or material business trade-off when no active local skill already owns that domain decision. Produce a delivery brief for implementation; do not use for a defined repository change."
 ---
 
 # Shape System Work
 
 Decide what to build, why it matters, and what must be proven. Produce a delivery brief; do not design implementation details or edit code.
 
+## Coexist with local skills
+
+If a user-invoked or active local skill has a narrower declared scope, let it own that specialised work. Reuse its confirmed artefacts; do not repeat its planning, edits, or tests. Retain only this skill's decision and delivery-brief role; ask the user if ownership remains genuinely unclear.
+
 ## Plan and route
 
 Create a concise task list: frame the decision, test the proposition, choose a direction, then hand over a delivery brief. Keep one task in progress.
 
 Use this skill before `$ship-sound-code` when the outcome, user value, architecture, scope, or commercial constraint is still uncertain. Hand over once a direction is chosen and the next work is a concrete repository change. If `$ship-sound-code` discovers that a code change would alter the product outcome or a major system decision, return here rather than silently making that choice.
+
+Do not reopen a decision already settled by a more specific active planning skill unless new evidence contradicts it. Treat that skill's brief as the source decision and add only cross-cutting facts it has not addressed.
 
 ## Frame the real decision
 
@@ -52,6 +58,10 @@ Hand this compact brief to `$ship-sound-code`:
 - **Open decision:** named owner and deadline, if one blocks safe implementation.
 
 Order work by proof: hardest uncertainty, thin deployed path, core outcome, failure/security/recovery, then operational and scale work. Each slice must retire a risk or prove an outcome.
+
+## Feed decisions forward
+
+Report only material feedback as: **finding → evidence → impact → route/owner → required decision → closure proof**. Route an unresolved product or system choice to its decision owner; route the accepted delivery brief to `$ship-sound-code`. Close the feedback only when the brief records the chosen outcome, invariants, trade-off, and proof required.
 
 ## Respond efficiently
 
