@@ -23,6 +23,7 @@ Each directory under `skills/` is a portable skill package. Its directory name m
 | [`shape-system-work`](skills/shape-system-work/SKILL.md) | Decide system direction before coding and hand off a delivery brief. |
 | [`clear-tactful-writing`](skills/clear-tactful-writing/SKILL.md) | Draft direct, fact-grounded Thai and English messages with appropriate tact. |
 | [`ship-sound-code`](skills/ship-sound-code/SKILL.md) | Implement defined code changes with YAGNI, DX, UX, and verification gates. |
+| [`intentional-design`](skills/intentional-design/SKILL.md) | Design purposeful, expressive product UI around real user outcomes. |
 
 ## Add or update a skill
 
