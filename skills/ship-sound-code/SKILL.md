@@ -1,6 +1,6 @@
 ---
 name: ship-sound-code
-description: "Implement, review, or refactor application code with proportionate, YAGNI-driven standards. Use for feature, bug-fix, API, data-model, UI-flow, or technical-debt work when Codex must balance codebase consistency, DX, UX, security, tests, and trade-offs without unnecessary complexity."
+description: "Guide implementation and review with proportionate, YAGNI-driven standards. Trigger when asked to build, modify, debug, refactor, review, or plan application code; evaluate a design; or decide whether an abstraction or refactor is worth its cost. Apply to feature, bug-fix, API, data-model, UI-flow, and technical-debt work requiring balance of codebase consistency, DX, UX, security, tests, and trade-offs."
 ---
 
 # Ship Sound Code
