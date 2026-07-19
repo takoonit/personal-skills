@@ -1,0 +1,12 @@
+interface:
+  display_name: Dextor
+  short_description: Find and safely remove code bloat and smells.
+  default_prompt: Use Dextor to inspect this change for code smells, avoidable complexity,
+    unused code, or project bloat. Show evidence and ask before removing anything.
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true
