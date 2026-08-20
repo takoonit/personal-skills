@@ -20,6 +20,7 @@ Each directory under `skills/` is a portable skill package. Its directory name m
 
 | Skill | Purpose |
 | --- | --- |
+| [`strategic-gate`](skills/strategic-gate/SKILL.md) | Decide whether proposed work deserves attention now before planning or execution. |
 | [`shape-system-work`](skills/shape-system-work/SKILL.md) | Decide system direction before coding and hand off a delivery brief. |
 | [`clear-tactful-writing`](skills/clear-tactful-writing/SKILL.md) | Draft direct, fact-grounded Thai and English messages with appropriate tact. |
 | [`ship-sound-code`](skills/ship-sound-code/SKILL.md) | Implement defined code changes with YAGNI, DX, UX, and verification gates. |
@@ -40,4 +41,3 @@ The validation workflow runs automatically for pushes and pull requests.
 ## Security boundary
 
 This repository is public. Store reusable instructions and non-sensitive examples only. Put secrets in environment variables or a secret manager, never in a skill.
-
