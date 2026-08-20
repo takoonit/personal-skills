@@ -20,6 +20,7 @@ Each directory under `skills/` is a portable skill package. Its directory name m
 
 | Skill | Purpose |
 | --- | --- |
+| [`shark-tank`](skills/shark-tank/SKILL.md) | Interview, research, and judge whether a product or business deserves more time or money. |
 | [`strategic-gate`](skills/strategic-gate/SKILL.md) | Decide whether proposed work deserves attention now before planning or execution. |
 | [`shape-system-work`](skills/shape-system-work/SKILL.md) | Decide system direction before coding and hand off a delivery brief. |
 | [`clear-tactful-writing`](skills/clear-tactful-writing/SKILL.md) | Draft direct, fact-grounded Thai and English messages with appropriate tact. |
