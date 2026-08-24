@@ -9,7 +9,7 @@ The collection is designed as a small operating system for recurring work:
 - **Gate** whether work deserves attention before spending effort.
 - **Shape** ambiguous product or system work into a decision-ready direction.
 - **Challenge** weak assumptions, product drift, and unnecessary complexity.
-- **Design** purposeful interactions and diagnose behavioural UX friction.
+- **Design** purposeful interactions and diagnose or audit behavioural UX friction.
 - **Implement** accepted changes with proportionate engineering discipline.
 - **Validate** consequential completed work independently.
 - **Communicate** findings and decisions clearly.
@@ -39,7 +39,7 @@ Each directory under `skills/` is a portable skill package. Its directory name m
 | [`shape-system-work`](skills/shape-system-work/SKILL.md) | System shaper | Product or architecture direction is still ambiguous and needs trade-offs resolved before implementation. |
 | [`doakes`](skills/doakes/SKILL.md) | Intent challenger | A request may be drifting from the project's core outcome or adding complexity without a strong reason. |
 | [`intentional-design`](skills/intentional-design/SKILL.md) | Interaction designer | A product flow needs purposeful hierarchy, state, feedback, restrained delight, or behaviour-aware interaction design. |
-| [`laws-of-ux`](skills/laws-of-ux/SKILL.md) | Behavioural UX diagnostician | A design decision depends on how people find, understand, decide, act, remember, learn, wait, recover, or finish. It diagnoses evidence first, treats UX laws as hypotheses, and may conclude that no law is needed. |
+| [`laws-of-ux`](skills/laws-of-ux/SKILL.md) | Behavioural UX diagnostician & auditor | Use Diagnostic mode when behaviour could materially change a design decision. Use Audit mode to inspect a rendered UI or journey, surface 3–5 evidence-backed candidate laws, and reduce them to the 1–3 highest-value UX changes. The skill may also conclude that no law applies or evidence is insufficient. |
 | [`ship-sound-code`](skills/ship-sound-code/SKILL.md) | Implementation discipline | The intended behaviour is defined and the change now needs clean, proportionate implementation and verification. |
 | [`dextor`](skills/dextor/SKILL.md) | Code-bloat investigator | Existing code may contain evidence-backed duplication, dead weight, or unnecessary complexity that should be investigated before removal. |
 | [`lundy`](skills/lundy/SKILL.md) | Independent validator | Consequential completed work needs an independent acceptance pass using focused validation agents. |
