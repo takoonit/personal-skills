@@ -1,6 +1,6 @@
 ---
 name: laws-of-ux
-description: "Diagnose behavioural UX friction when a design decision depends on how people find, understand, choose, remember, learn, target, wait, recover, or judge an experience. Trigger for confusing navigation, hard-to-compare choices, recall-heavy flows, unfamiliar controls, misclicks, weak grouping, ambiguous feedback, progress pressure, rough endings, or when a named UX law needs validation. Do not trigger for styling, branding, design-system work, implementation-only tasks, generic accessibility compliance, copywriting, or broad UI polish unless a behavioural mechanism could materially change the decision. Use evidence first, select at most three non-duplicative mechanisms, grade confidence, expose conflicts and ethical constraints, and recommend the smallest falsifiable correction."
+description: "Behavioural UX diagnostician for product interfaces and journeys. Use when human perception, attention, memory, choice, motor action, learning, waiting, recovery, or remembered experience could materially change a design decision: confusing navigation, hard-to-compare choices, recall-heavy flows, unfamiliar controls, misclicks, weak grouping, ambiguous feedback, progress pressure, rough endings, or questionable uses of Hick, Fitts, Miller, Jakob, Peak-End, Gestalt, cognitive load, and related UX principles. Do not use for styling, branding, design-system work, implementation-only tasks, generic accessibility compliance, copywriting, or broad UI polish unless a behavioural mechanism is genuinely in dispute. Diagnose evidence before naming laws, select at most three distinct mechanisms, grade confidence, expose competing constraints and ethical risk, prefer the smallest falsifiable correction, and explicitly allow a no-law or insufficient-evidence verdict."
 ---
 
 # Laws of UX
@@ -18,158 +18,148 @@ Canonical friction classes:
 - **Find** — locate, notice, distinguish, scan.
 - **Understand** — interpret meaning, state, hierarchy, or consequence.
 - **Decide** — compare, prioritise, choose, commit.
-- **Act** — acquire, trigger, avoid accidental action.
-- **Remember** — retain information the product could keep visible.
-- **Learn** — understand an unfamiliar control, concept, or workflow.
-- **Wait** — maintain attention and trust during latency or uncertain status.
-- **Recover** — undo, retry, resume, escape, preserve state.
-- **Finish** — understand outcome, confirmation, next step, or remembered ending.
+- **Act** — acquire a target, operate a control, avoid accidental action.
+- **Remember** — retain information or context across the task.
+- **Learn** — understand an unfamiliar concept, feature, or interaction.
+- **Wait** — maintain attention and trust through latency or asynchronous work.
+- **Recover** — undo, retry, resume, escape, or preserve state after failure.
+- **Finish** — understand the outcome, ending, confirmation, or next step.
 
-Also own the task when a user or another agent explicitly cites a behavioural UX law and its applicability needs checking.
+Also own explicit requests to validate a named UX law.
 
-Do not own pure visual styling, branding, colour, typography, design-system consistency, accepted implementation, accessibility conformance as the primary task, copywriting, or generic UI polish.
+Do not own styling, branding, design-system consistency, accepted implementation, generic accessibility compliance, copywriting, or broad visual polish unless one of the nine behavioural questions is materially unresolved.
 
-Routing test: **If identifying a behavioural mechanism would not change the design decision, do not invoke this skill.**
+**Routing test:** if identifying a behavioural mechanism would not change the design decision, do not invoke this skill.
 
 Use `$intentional-design` for expressive task-first UI, hierarchy, feedback, state, and interaction character. Use `$doakes` for product-direction drift. Hand accepted implementation to `$ship-sound-code`.
 
-## Reasoning procedure
+## Run the decision procedure
 
-Run this sequence once. Do not expand it unless the task is genuinely complex.
+Use this sequence internally. Do not narrate it unless useful to the user.
 
 1. **Frame** — `For <user>, in <context>, complete <task> while <constraint>.`
-2. **Observe** — separate visible/measured facts from inference.
-3. **Classify** — choose the dominant friction class above.
-4. **Explain** — identify one to three non-duplicative behavioural mechanisms.
+2. **Observe** — separate supplied or inspected evidence from inference.
+3. **Classify** — choose the dominant friction class; add a second only if it changes the correction.
+4. **Explain** — identify the simplest behavioural mechanism that plausibly explains the friction.
 5. **Grade** — High, Moderate, or Low confidence using `references/evidence-strength.md`.
-6. **Correct** — propose the smallest intervention that addresses the mechanism.
-7. **Challenge** — check collisions, accessibility, ethics, and business constraints.
-8. **Validate** — state what result would support or falsify the recommendation.
+6. **Correct** — choose the smallest intervention that directly addresses the mechanism.
+7. **Challenge** — test the correction against competing needs, accessibility, safety, ethics, and another plausible explanation.
+8. **Validate** — state an observable result that would support or falsify the recommendation.
 
-Use this compact chain for each material finding:
+Stop early when the evidence is already decisive. If no behavioural mechanism improves the decision, return **no law needed**. If evidence cannot distinguish plausible explanations, return **insufficient evidence** and name the smallest useful test.
 
-`Observation -> mechanism [confidence] -> smallest correction -> collision/cost -> validation.`
+## Select mechanisms before laws
 
-If evidence is missing, label the finding **hypothesis**, not diagnosis.
-
-## Evidence rules
-
-Evidence outranks law names.
-
-Prefer, in order:
-
-1. direct task evidence from usability observation, support failures, recordings, experiments, or reliable telemetry;
-2. established behavioural mechanisms that transfer well to the target context;
-3. applied UX heuristics;
-4. aphorisms or weakly specified rules.
-
-A famous law can still be Low confidence for a specific screen.
-
-Never turn rough empirical tendencies into hard interface constants. In particular:
-
-- Miller's 7±2 is not a menu-item limit;
-- 400 ms is not a universal latency SLA;
-- Fitts does not mean every important control should dominate the screen;
-- Hick-style effects do not justify hiding meaningful alternatives;
-- Pareto is not an exact 80/20 acceptance criterion.
-
-## Mechanism routing
-
-Use `references/law-catalogue.md` as an index, not a checklist.
+Choose at most three **non-duplicative mechanisms**. Prefer fewer.
 
 | Friction | Candidate mechanisms |
 | --- | --- |
-| Find | selective attention, proximity, similarity, common region, connectedness, distinctiveness |
-| Understand | mental model, cognitive load, chunking, grouping, familiarity |
-| Decide | choice complexity, comparison cost, defaults, serial position |
-| Act | target acquisition, motor accessibility, accidental activation, immediate acknowledgement |
-| Remember | working memory, externalised state, chunking, recognition over recall |
-| Learn | familiarity, learn-by-doing, contextual guidance, mental model |
-| Wait | acknowledgement, honest status, continuity of attention |
-| Recover | state preservation, reversible action, error tolerance |
-| Finish | outcome clarity, peak-end weighting, serial position, next-step orientation |
+| Find | selective attention; proximity; similarity; common region; connectedness; distinctiveness |
+| Understand | mental model; cognitive load; grouping; familiarity |
+| Decide | choice complexity; comparison cost; defaults; serial position |
+| Act | target acquisition; motor accessibility; accidental activation; acknowledgement |
+| Remember | working memory; recognition over recall; chunking; context preservation |
+| Learn | familiarity; learn-by-doing; contextual guidance; mental model |
+| Wait | acknowledgement; status visibility; perceived latency; continuity of attention |
+| Recover | state preservation; error tolerance; reversibility; retry clarity |
+| Finish | outcome clarity; peak-end weighting; serial position; next-step orientation |
 
-Select mechanisms that imply different corrective actions. Do not stack near-synonyms merely to strengthen rhetoric.
+Use `references/law-catalogue.md` only after the mechanism is clear. A law name must add explanatory or action value; otherwise omit it.
 
-## Collision checks
+Do not stack near-synonyms such as Cognitive Load + Working Memory + Miller + Chunking merely to make a finding sound stronger.
 
-Resolve these before recommending:
+## Require an evidence chain
 
-- **Familiarity vs novelty:** preserve familiar commodity actions; spend novelty only where the learning cost buys material value.
-- **Fewer choices vs discoverability:** group, sequence, recommend, filter, search, or default before hiding options.
-- **Simplicity vs conserved complexity:** remove accidental complexity, not consequential state or control.
-- **Speed vs truth:** acknowledge quickly, but never fake completion or hide pending/failure states.
-- **Progress vs pressure:** support user-chosen goals; reject fake urgency, streak anxiety, artificial incompleteness, and progress theatre.
-- **Aesthetics vs usability:** visual polish cannot override observed task failure or accessibility barriers.
-- **Tolerance vs security:** harmless human-input variation is different from permissive handling at money, identity, permission, protocol, or storage boundaries.
+Every material finding must survive:
 
-## Hard constraints
+`Observation -> mechanism [confidence] -> smallest correction -> collision/cost -> validation.`
 
-Accessibility, safety, informed consent, legal obligations, privacy, data integrity, and truthful system status outrank behavioural heuristics.
+- **Observation:** concrete supplied or inspected evidence, not `this feels confusing`.
+- **Mechanism:** the behavioural explanation that best fits the observation.
+- **Confidence:** strength of evidence *in this context*, not fame of the law.
+- **Correction:** least disruptive change likely to address the mechanism.
+- **Collision/cost:** what the correction could make worse or exclude.
+- **Validation:** what result would support the mechanism and what would falsify it.
 
-Do not weaken:
+Analytics alone can show where behaviour changed, not why. Mark causal explanations as hypotheses unless supported by stronger evidence.
 
-- keyboard or assistive-technology operation;
-- visible and programmatic focus/state;
-- readable labels and error association;
-- reduced-motion or alternate-input support;
-- adequate target size and spacing;
-- honest status messaging;
-- reversible or informed consequential choices.
+## Resolve collisions before optimising
 
-Reject any recommendation whose success depends on making a legitimate alternative harder to notice, understand, choose, undo, or leave.
+- **Familiarity vs novelty:** keep commodity actions recognisable; spend novelty only where its value exceeds learning cost.
+- **Choice reduction vs discoverability:** group, sequence, recommend, filter, search, or use safe defaults before hiding legitimate options.
+- **Simplicity vs complexity:** remove accidental complexity; preserve consequential state, choices, and control.
+- **Speed vs truth:** acknowledge quickly, but expose pending, failure, retry, and reversal honestly.
+- **Progress vs pressure:** support user-chosen progress; reject fake urgency, streak anxiety, artificial incompleteness, and engagement theatre.
+- **Aesthetics vs usability:** polish may improve perceived ease, never override observed task failure or accessibility barriers.
+- **Tolerance vs security:** harmless human-input variation can be forgiving; money, identity, permissions, protocols, storage, and security boundaries require explicit validation.
 
-Examples: false urgency, hidden fees, confirm-shaming, obstructed cancellation, misleading defaults, forced disclosure, disguised advertising, or visual interference that suppresses a legitimate choice.
+## Treat accessibility and ethics as hard constraints
 
-## Smallest-intervention bias
+Behavioural optimisation never outranks accessibility, safety, informed consent, privacy, legal obligations, data integrity, or truthful system state.
 
-Prefer, in order:
+Reject a recommendation whose success depends on making a legitimate alternative harder to notice, understand, select, undo, or leave. This includes hidden fees, false urgency, confirm-shaming, obstructed cancellation, misleading defaults, forced disclosure, disguised advertising, or visual interference designed to suppress a choice.
 
-1. preserve context;
-2. improve grouping or separation;
-3. improve label, hierarchy, spacing, hit area, or placement;
-4. prioritise/filter choices while preserving access;
-5. add contextual guidance;
-6. reuse known information through a safe default or prefill;
-7. improve acknowledgement and honest status;
-8. add undo, retry, resume, or recovery;
-9. clarify confirmation and next action;
-10. redesign navigation or information architecture only if smaller corrections fail.
+Do not weaken keyboard or assistive-technology operation, visible/programmatic state, labels, error association, reduced-motion support, target safety, input alternatives, or recovery.
 
-## Validation
+## Avoid false precision
 
-Match evidence to the friction:
+Read `references/evidence-strength.md` when a recommendation depends on empirical strength or transfer.
 
-| Friction | Useful validation |
-| --- | --- |
-| Find | time to first correct action, wrong-path rate, search reformulation |
-| Understand | comprehension, consequence prediction, error rate |
-| Decide | decision time, comparison success, abandonment, justified confidence |
-| Act | task completion, misclicks, repeated actions, accidental activation |
-| Remember | backtracking, memory errors, copy/paste workarounds |
-| Learn | time to first value, independent success, contextual-help use |
-| Wait | duplicate actions, abandonment, perceived wait, trust in status |
-| Recover | successful retry, preserved data, support contacts |
-| Finish | outcome clarity, next-step success, later recall |
+Never turn a rough tendency into a universal interface constant. In particular:
 
-Conversion, engagement, retention, and time spent are secondary unless paired with task success, comprehension, recovery, and user control.
+- Miller's `7±2` is not a menu-item limit.
+- `400 ms` is not a universal Doherty latency SLA.
+- Fitts does not mean every important control should be visually huge.
+- Hick/Hyman does not mean fewer visible options always produce a better decision.
+- Gestalt principles describe grouping tendencies; they do not justify arbitrary cardification.
+- Peak-End and Zeigarnik are context-sensitive and must not justify pressure or compulsive engagement.
 
-## Output contract
+## Prefer the smallest correction
 
-Default to a compact result:
+Typical moves:
 
-**Verdict:** clear, friction, risk, or evidence gap.
+- preserve context instead of testing memory;
+- group semantically related content and separate unrelated controls;
+- improve labels, hierarchy, spacing, hit area, or placement;
+- prioritise/filter choices without removing legitimate access;
+- reveal unfamiliar guidance when it becomes relevant;
+- reuse known information through safe defaults or prefill;
+- acknowledge actions immediately and show honest progress;
+- add undo, retry, resume, or a clear escape;
+- clarify outcome and next useful action.
 
-**Task:** framed task and context.
+Escalate to information-architecture or navigation redesign only when smaller corrections cannot resolve the observed friction.
+
+## Validate by task
+
+Match validation to the dominant friction:
+
+- **Find:** time to correct action, wrong paths, search reformulation.
+- **Understand:** comprehension, consequence prediction, error rate.
+- **Decide:** decision time, comparison success, abandonment, justified confidence.
+- **Act:** task success, misclicks, repeat submissions, accidental activation.
+- **Remember:** backtracking, memory errors, copy/paste workarounds.
+- **Learn:** time to first value, independent success, contextual-help use.
+- **Wait:** duplicate actions, abandonment, perceived wait, trust in status.
+- **Recover:** successful retry, preserved state, support contacts.
+- **Finish:** outcome clarity, next-step success, later recall.
+
+Conversion, engagement, retention, and time spent alone do not demonstrate better UX. Pair business outcomes with task success, comprehension, error, recovery, and user control.
+
+## Report compactly
+
+Default output:
+
+**Verdict:** clear / friction / risk / evidence gap / no law needed.
+
+**Task:** user + context + task + constraint.
 
 **Evidence:** observed facts versus inference.
 
 Then at most three findings:
 
-`<Mechanism / law> [confidence] - <observation>; <why it matters>; <smallest correction>; <collision/cost>; <validation>.`
+`<Mechanism or law> [confidence] - <observation>; <why>; <smallest correction>; <collision>; <validation>.`
 
-Add one short **Counterpoint** only if it could materially change the decision.
+Add a short counterpoint only when a plausible alternative could change the recommendation.
 
-End with **Direction:** the leanest viable changes in priority order.
-
-Do not output a catalogue of laws, generic UX advice, or extended theory unless explicitly asked.
+End with **Direction:** the leanest viable changes in priority order. For implementation-ready work, hand explicit behaviour, states, constraints, and acceptance checks to `$ship-sound-code`.
