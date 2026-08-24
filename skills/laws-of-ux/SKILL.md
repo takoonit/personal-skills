@@ -1,205 +1,226 @@
 ---
 name: laws-of-ux
-description: "Audit or shape product interfaces and flows using UX psychology heuristics from Laws of UX. Use when a screen or journey feels confusing, slow, crowded, unfamiliar, difficult to learn or scan, easy to misclick, emotionally rough, or overloaded with choices; especially for onboarding, navigation, forms, search, checkout, loading, progress, empty and error states, and familiarity versus novelty. Select only laws supported by observable evidence, expose conflicts and misuse, propose the smallest correction, and define a validation signal. Do not use as a decorative law-name checklist, a substitute for user research or accessibility, or a licence for dark patterns."
+description: "Diagnose behavioural UX friction in an existing or proposed interface or flow. Invoke when the decision depends on how people find, understand, choose, remember, learn, target, wait, recover, or judge an experience; for example confusing navigation, too many hard-to-compare choices, recall-heavy multi-step flows, unfamiliar controls, misclicks, weak grouping, ambiguous feedback, progress pressure, or rough endings. Also invoke when someone explicitly cites a UX law and its applicability needs checking. Do not invoke merely because a task mentions UX/UI, visual styling, layout polish, accessibility compliance, design systems, copywriting, implementation, or generic best practices. Use observed evidence first, treat laws as hypotheses with confidence levels, select at most three non-duplicative mechanisms, expose conflicts and ethical risk, recommend the smallest testable correction, and define a falsifiable validation signal."
 ---
 
 # Laws of UX
 
-Diagnose the user problem first, then use behavioural laws as testable explanations. A law earns its place only when the supplied interface, flow, research, or behaviour contains evidence for its mechanism. Prefer one strong law over a parade of impressive names.
+Use behavioural laws as **candidate explanations**, not commandments. Diagnose the task and friction first. Name a law only when it sharpens the mechanism or changes the correction.
 
-## Coexist with local skills
+A good run should make the interface easier to reason about even if every law name is removed afterwards.
 
-Let a specialised accessibility, design-system, framework, analytics, or user-research skill own its narrower work. Reuse its confirmed constraints.
+## Trigger gate
 
-Use `$intentional-design` when the task is to create expressive, task-first UI, feedback, or interaction character. Use this skill when the task is to explain and correct behavioural friction with applicable UX laws. Use `$doakes` when the proposed interface drifts from the product's core outcome. Hand an accepted implementation to `$ship-sound-code`.
+Before doing anything else, decide whether this skill should own the task.
 
-## Treat laws as hypotheses, not verdicts
+### Trigger when at least one behavioural question is material
 
-UX laws describe recurring human tendencies. They are not universal commands, mathematical guarantees, or substitutes for observing the target users.
+- **Find:** can users locate the right thing or distinguish it from noise?
+- **Understand:** can they predict meaning, state, or consequence?
+- **Decide:** are choices hard to compare, prioritise, or commit to?
+- **Act:** is a control difficult to acquire, ambiguous, error-prone, or easy to trigger accidentally?
+- **Remember:** must users retain information the product could keep visible?
+- **Learn:** does an unfamiliar interaction or concept need to become usable quickly?
+- **Wait:** does latency or uncertain system status interrupt attention or trust?
+- **Recover:** can users safely undo, retry, resume, or escape an error?
+- **Finish:** does confirmation, failure, or the ending distort the remembered experience?
 
-Never cite a law without all three:
+Also trigger when the user or another agent explicitly invokes Hick, Fitts, Miller, Jakob, Peak-End, Gestalt grouping, cognitive load, choice overload, or another behavioural principle and the claim needs validation.
 
-1. a concrete observation from the screen, flow, research, behaviour, or code;
-2. a plausible mechanism linking that observation to user friction; and
-3. a correction that can be validated.
+### Do not trigger for adjacent work with no behavioural uncertainty
 
-Do not use law names to make a personal preference sound scientific. When evidence is missing, label the claim as an assumption and state the smallest test needed.
+Route away when the task is primarily:
 
-Accessibility, safety, informed consent, legal obligations, privacy, data integrity, and truthful system status override a heuristic. A persuasive pattern that improves conversion by reducing user control is a failure, not a clever application of psychology.
+- visual styling, branding, colour palette, typography, or aesthetic direction;
+- component implementation or refactoring with accepted UX behaviour;
+- design-system consistency or token work;
+- accessibility conformance or assistive-technology testing as the primary question;
+- copywriting with no behavioural design decision;
+- analytics reporting with no UX hypothesis;
+- generic "make this UI better" work where the actual need is expressive interaction design rather than behavioural diagnosis.
 
-## Choose the review mode
+Use `$intentional-design` for expressive task-first UI, feedback, state, hierarchy, and interaction character. Use `$doakes` when a requested design drifts from the product's core outcome. Hand accepted implementation requirements to `$ship-sound-code`.
 
-Use the smallest mode that answers the request:
+If uncertain, ask one silent routing question: **Would a behavioural mechanism change the design decision?** If no, do not invoke this skill.
 
-- **Audit:** diagnose an existing screen or journey.
-- **Shape:** improve a proposed flow before implementation.
-- **Compare:** judge variants against the same task and evidence.
-- **Brief:** translate accepted findings into implementation requirements.
+## Evidence outranks law names
 
-When rendered appearance or interaction matters, inspect the running product, prototype, screenshot, or recording. Do not claim visual or behavioural evidence from component names and markup alone.
+Use `references/evidence-strength.md` for evidence grading and limitations.
 
-## Frame the task and evidence
+Never present a law as proof by itself. Every material finding needs:
 
-State the user task as:
+1. **Observation:** what is seen or measured;
+2. **Mechanism:** why a behavioural effect plausibly explains it;
+3. **Correction:** the smallest intervention that addresses that mechanism;
+4. **Collision:** a competing need, law, accessibility constraint, or cost;
+5. **Validation:** a result that could support or falsify the recommendation.
+
+Use this compact chain:
+
+`Observation -> mechanism [confidence] -> smallest correction -> collision/cost -> validation.`
+
+If observation or context is missing, mark the finding as a **hypothesis**, not a diagnosis.
+
+## Grade confidence
+
+Attach one confidence label to each selected mechanism:
+
+- **High:** directly observed task evidence plus a well-established mechanism that matches this context.
+- **Moderate:** mechanism is well established, but context transfer or causal evidence is incomplete.
+- **Low:** useful heuristic, weakly specified effect, indirect evidence, or a named UX "law" with limited direct support.
+
+Confidence describes the **claim in this context**, not the prestige of the law. A famous law can still be Low confidence for a specific screen.
+
+Never turn a rough empirical tendency into a hard interface constant. In particular:
+
+- Miller's 7±2 is not a menu-item limit; later work commonly places focal working-memory capacity nearer three to five chunks under constrained conditions.
+- Doherty's 400 ms figure is not a universal latency SLA; optimise acknowledgement and perceived continuity according to task and system constraints.
+- Fitts predicts target acquisition under a movement model; it does not say every important control should dominate the screen.
+- Hick/Hyman-style choice-time effects do not justify hiding meaningful alternatives or collapsing expert workflows into one path.
+
+## Frame the task
+
+State the smallest useful frame:
 
 `For <user>, in <context>, complete <task> while <constraint>.`
 
-Record the evidence source: direct research, usability observation, support issue, analytics, screenshot, prototype, recording, implementation, or user report. Distinguish fact from inference.
+Record the evidence source: direct research, usability observation, support issue, analytics, screenshot, prototype, recording, implementation, or user report. Separate fact from inference.
 
-Classify the dominant friction before selecting a law:
+When appearance or interaction matters, inspect the rendered product, prototype, screenshot, or recording. Do not claim visual evidence from component names or markup alone.
 
-- **find:** the user cannot locate the relevant thing;
-- **understand:** meaning, hierarchy, or consequence is unclear;
-- **decide:** choices are difficult to compare or commit to;
-- **act:** the intended control is difficult, error-prone, or ambiguous;
-- **wait:** delay or system status breaks attention and trust;
-- **remember:** the interface makes the user retain avoidable information;
-- **learn:** the user must understand an unfamiliar system or feature;
-- **recover:** an error or interruption leaves no safe path forward; or
-- **finish:** the peak, confirmation, or ending damages the remembered experience.
+## Select mechanisms, then laws
 
-If several are present, prioritise the one blocking task completion or creating the greatest user risk.
+Classify the dominant friction first. Then select **one to three non-duplicative mechanisms**. Use `references/law-catalogue.md` as a routing index, not a checklist.
 
-## Select no more than three laws
+Prefer mechanisms that imply different corrective actions. Do not stack Cognitive Load, Working Memory, Miller's Law, and Chunking just because they sound mutually reinforcing.
 
-Use `references/law-catalogue.md` for the complete catalogue and misuse notes. Route quickly by the observed friction:
+Quick routes:
 
-| Friction | Strong candidates |
+| Friction | Candidate mechanisms |
 | --- | --- |
-| Find and scan | Selective Attention, Law of Proximity, Law of Similarity, Law of Common Region, Law of Uniform Connectedness, Von Restorff Effect |
-| Understand and remember | Cognitive Load, Working Memory, Chunking, Mental Model, Miller's Law, Jakob's Law |
-| Decide | Hick's Law, Choice Overload, Chunking, Serial Position Effect |
-| Act | Fitts's Law, Doherty Threshold, Paradox of the Active User |
-| Learn | Paradox of the Active User, Jakob's Law, Mental Model, Cognitive Load |
-| Progress and momentum | Goal-Gradient Effect, Zeigarnik Effect, Flow, Doherty Threshold |
-| Complexity and scope | Tesler's Law, Occam's Razor, Pareto Principle, Parkinson's Law, Postel's Law |
-| Recall and emotion | Peak-End Rule, Serial Position Effect, Aesthetic-Usability Effect |
+| Find / scan | selective attention, proximity, similarity, common region, connectedness, distinctiveness |
+| Understand / remember | working memory, cognitive load, mental model, chunking, familiarity |
+| Decide | choice complexity, comparison cost, defaults, serial position |
+| Act | target acquisition, motor accessibility, immediate acknowledgement |
+| Learn | familiarity, learn-by-doing, contextual guidance, mental model |
+| Wait | acknowledgement, honest status, continuity of attention |
+| Progress | goal proximity, unfinished-task salience, flow |
+| Recover | state preservation, error tolerance, reversible action |
+| Finish / recall | peak-end weighting, serial position, outcome clarity |
 
-Do not select multiple laws that merely rename the same observation. Cognitive Load, Working Memory, Miller's Law, and Chunking often overlap; choose the one that gives the clearest corrective action.
+Use named laws only after the mechanism is clear.
 
-## Apply the evidence chain
-
-For each material finding, write this chain:
-
-`Observation -> law and mechanism -> smallest correction -> collision or cost -> validation.`
-
-A valid finding answers all five:
-
-1. **Observation:** What can be seen or measured? Avoid vague claims such as "too complex".
-2. **Mechanism:** Why is this law relevant to the user's task and context?
-3. **Smallest correction:** What is the least disruptive change that removes the friction?
-4. **Collision or cost:** Which other law, user need, business constraint, or safety requirement could oppose it?
-5. **Validation:** What behaviour would show improvement, and what result would falsify the recommendation?
-
-Reject a finding that cannot move beyond a generic instruction such as "make it simpler", "reduce cognitive load", or "follow Fitts's Law".
-
-## Resolve common law collisions
+## Resolve collisions before recommending
 
 ### Familiarity versus novelty
 
-Jakob's Law favours familiar core patterns, but familiarity is not a ban on invention. Keep commodity actions recognisable. Introduce novelty only when it materially improves the task, enables a new capability, supports deliberate exploration, or creates meaningful differentiation. Test the unfamiliar interaction with the intended audience.
+Keep commodity actions recognisable. Novelty is justified only when it materially improves the task, unlocks a capability, or creates deliberate exploration worth the learning cost.
 
 ### Fewer choices versus discoverability
 
-Hick's Law and Choice Overload do not mean hiding every option. Prioritise, group, sequence, recommend, search, or progressively disclose choices while preserving a clear route to the full set. A clean interface that conceals necessary options has merely exchanged decision cost for discovery cost.
+Reducing decision cost can mean grouping, sequencing, recommending, filtering, search, or safe defaults. Do not simply hide options and call the result "simpler".
 
 ### Simplicity versus conserved complexity
 
-Occam's Razor removes accidental assumptions and unnecessary interface. Tesler's Law warns that inherent complexity still has to live somewhere. Move repeatable work into sensible defaults, automation, remembered context, and system logic, but keep consequential choices and system state visible.
+Remove accidental complexity, but do not hide consequential state or choices. Move repeatable work into sensible defaults and automation while retaining user control.
 
 ### Speed versus truth
 
-The Doherty Threshold supports rapid acknowledgement, not fabricated completion. Respond immediately where possible, then show honest pending, success, failure, and recovery states. Optimistic UI must reconcile with the server and make reversal clear.
+Fast acknowledgement is useful. False completion is not. Optimistic UI must reconcile with the server and expose pending, failure, reversal, and retry states honestly.
 
 ### Progress versus pressure
 
-Goal-Gradient and Zeigarnik effects can support a user-chosen goal with accurate progress and resumability. Do not manufacture incomplete tasks, false urgency, streak anxiety, arbitrary badges, or endless loops merely to increase return frequency.
+Progress indicators may support a user-chosen goal. Reject fake urgency, artificial incompleteness, streak anxiety, forced continuity, and progress theatre used mainly to increase engagement.
 
-### Memorable moments versus root causes
+### Aesthetics versus usability
 
-Peak-End design cannot rescue a broken journey. Fix severe failure, hidden cost, data loss, or confusing recovery before adding humour, animation, celebration, or branded error copy. Delight should reinforce a real success, not camouflage pain.
+Visual coherence can improve perceived ease and trust, but it cannot override observed task failure, accessibility barriers, or unclear recovery.
 
 ### Tolerance versus security
 
-Apply Postel's Law cautiously. Human-facing input may accept harmless formatting variations, but security boundaries, APIs, stored data, and protocol output require explicit validation, canonicalisation, limits, and clear failure. Never turn "be liberal in what you accept" into ambiguous or unsafe parsing.
+Human input may accept harmless formatting variation. Protocols, money, permissions, identity, storage, and security boundaries require explicit validation and canonicalisation.
 
-### High impact versus exclusion
+## Accessibility and ethics are hard constraints
 
-Pareto prioritisation can focus effort on common and costly paths. It does not waive accessibility, safety, privacy, or critical edge cases. Low-frequency catastrophic failures remain high priority.
+Accessibility, safety, informed consent, legal obligations, privacy, data integrity, and truthful system status outrank behavioural heuristics.
 
-## Use article-derived defaults
+At minimum, do not let a UX-law recommendation weaken:
 
-The Laws of UX articles support these practical defaults. See `references/article-synthesis.md` for the source-by-source synthesis.
+- keyboard and assistive-technology operation;
+- visible and programmatic focus/state;
+- readable labels and error association;
+- reduced-motion or input-modality support;
+- adequate target size and spacing;
+- honest status messaging;
+- reversible or informed consequential choices.
 
-- Start with familiar patterns. Spend novelty where it creates real product value, exploration, or a capability that familiar patterns cannot express.
-- Let active users begin. Teach through contextual, progressive, recoverable guidance rather than compulsory tours and front-loaded manuals.
-- Absorb repeatable complexity in the system, but do not abstract away consequential choices, status, or control.
-- Reduce extraneous mental work, not useful information. Prefer grouping, sensible defaults, preserved context, readable type, labelled icons, and fewer avoidable decisions.
-- Make entry, search, status, and results fast to understand and easy to scan. Preserve the user's query and current context.
-- Fix the critical journey first, then design its emotional peak, recovery, and ending deliberately.
-- Edit ruthlessly. Every element should help the user find, understand, decide, act, recover, or finish.
+Do not exploit behavioural effects to steer users against their interests. Reject hidden fees, false urgency, disguised advertising, confirm-shaming, obstructed cancellation, forced disclosure, misleading defaults, or visual interference designed to suppress a legitimate choice.
 
-## Make the smallest intervention
+## Prefer the smallest intervention
 
-Prefer a targeted move over a wholesale redesign:
+Start with the least disruptive correction that addresses the mechanism:
 
-- remove or merge redundant content;
-- group related choices and separate unrelated ones;
-- improve label, hierarchy, spacing, hit area, or control position;
-- reuse known information through a safe default or prefill;
-- preserve current context instead of asking the user to remember it;
-- reveal unfamiliar guidance at the moment it becomes relevant;
-- acknowledge an action immediately and expose honest progress;
-- add undo, retry, resume, or a clear recovery path; or
-- strengthen the final confirmation and next useful action.
+- preserve context instead of testing memory;
+- group semantically related content;
+- separate unrelated controls;
+- improve labels, hierarchy, spacing, hit area, or control placement;
+- prioritise or filter choices without removing legitimate access;
+- reveal unfamiliar guidance when it becomes relevant;
+- reuse known information through safe defaults or prefill;
+- acknowledge actions immediately and show honest progress;
+- add undo, retry, resume, or a clear recovery path;
+- clarify confirmation and the next useful action.
 
-Do not redesign information architecture, introduce novel navigation, or remove consequential explanation unless the evidence requires it. Preserve accessibility names, keyboard operation, reduced-motion support, focus order, contrast, error association, and touch target safety.
+Escalate to navigation or information-architecture redesign only when smaller corrections cannot resolve the observed friction.
 
-## Validate by task, not applause
+## Validate the mechanism, not just the metric
 
-Choose a validation signal that matches the friction:
+Choose a signal aligned to the friction:
 
-| Friction | Useful evidence |
+| Friction | Useful validation |
 | --- | --- |
 | Find | time to first correct action, wrong-path rate, search reformulation |
-| Understand | comprehension, correct prediction of consequence, error rate |
-| Decide | decision time, comparison success, abandonment, confidence with rationale |
+| Understand | comprehension, consequence prediction, error rate |
+| Decide | decision time, comparison success, abandonment, justified confidence |
 | Act | task completion, misclicks, repeat submissions, recovery success |
-| Wait | repeat actions, abandonment, perceived wait, trust in status |
-| Remember | backtracking, copy-and-paste workarounds, memory errors |
-| Learn | time to first value, independent success, contextual help use |
-| Recover | successful retry, data preserved, support contact rate |
-| Finish | completion, clarity of outcome, next-step success, later recall |
+| Wait | duplicate actions, abandonment, perceived wait, trust in status |
+| Remember | backtracking, memory errors, copy/paste workarounds |
+| Learn | time to first value, independent success, contextual-help use |
+| Recover | successful retry, preserved data, support contacts |
+| Finish | outcome clarity, next-step success, later recall |
 
-Conversion, engagement, or time spent alone do not prove better UX. Pair business outcomes with task success, comprehension, error, recovery, and user control.
+Conversion, engagement, retention, or time spent alone do not demonstrate better UX. Pair business outcomes with task success, comprehension, error, recovery, and user control.
 
-## Reject common cargo-cult applications
+## Reject cargo-cult reasoning
 
-- Do not cap menus or navigation at seven items because of Miller's Law.
-- Do not remove necessary choices merely to cite Hick's Law.
-- Do not make every primary action enormous because of Fitts's Law.
-- Do not hide core features behind progressive disclosure to make a screen look clean.
-- Do not use a polished visual layer to dismiss observed usability faults.
-- Do not make every card, colour, border, and animation compete for selective attention.
-- Do not add confetti, mascots, or jokes to an error before repairing recovery.
-- Do not use fake progress, streak loss, unfinished-task anxiety, or fabricated scarcity.
-- Do not apply Postel's Law loosely at trust or security boundaries.
-- Do not present a list of laws without a prioritised recommendation.
+Do not:
+
+- cap menus or navigation at seven because of Miller;
+- remove necessary choices merely to cite Hick;
+- make every primary action enormous because of Fitts;
+- treat 400 ms as a universal performance threshold;
+- hide core features behind progressive disclosure only to make a screen look clean;
+- use polished visuals to dismiss usability faults;
+- cite Gestalt principles to justify arbitrary cardification;
+- add delight before fixing error recovery;
+- use fake progress, streak loss, fabricated scarcity, or unfinished-task anxiety;
+- use Postel loosely at trust or security boundaries;
+- output a parade of law names with no prioritised decision.
 
 ## Report decisively
 
-Return a concise default report:
+Default output:
 
-**Verdict:** Clear, friction, risk, or evidence gap.
+**Verdict:** clear, friction, risk, or evidence gap.
 
-**Task:** The framed user task and context.
+**Task:** framed user task and context.
 
-**Evidence:** What was observed, and which parts are inferred.
+**Evidence:** observed facts versus inference.
 
-Then provide no more than three findings:
+Then no more than three findings:
 
-`<Law> - <observation>; <mechanism>; <smallest correction>; <collision or cost>; <validation signal>.`
+`<Mechanism / law> [confidence] - <observation>; <why it matters>; <smallest correction>; <collision/cost>; <validation>.`
 
-Add one short **Counterpoint** only when a reasonable alternative could change the decision.
+Add one short **Counterpoint** only if a reasonable alternative could change the decision.
 
-End with **Direction:** the leanest viable change, in priority order. When the request is implementation-ready, hand off explicit behaviour, states, constraints, and acceptance checks to `$ship-sound-code` rather than repeating the law catalogue.
+End with **Direction:** the leanest viable changes in priority order. If the behaviour is accepted and the task is implementation-ready, hand explicit states, constraints, and acceptance checks to `$ship-sound-code`.
