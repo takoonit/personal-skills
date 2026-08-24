@@ -1,7 +1,7 @@
 interface:
   display_name: Laws of UX
   short_description: Diagnose behavioural UX friction with evidence
-  default_prompt: Use $laws-of-ux only when a behavioural mechanism could materially change the design decision. Diagnose the observed friction first, select at most three non-duplicative mechanisms, grade confidence, expose collisions and ethical or accessibility constraints, then propose the smallest falsifiable correction. Do not invoke it for styling, generic UI polish, implementation-only work, or accessibility compliance unless a behavioural question is also material.
+  default_prompt: Use $laws-of-ux when a behavioural mechanism could materially change the design decision. Diagnose the dominant friction, use evidence before law names, select at most three distinct mechanisms, grade confidence, check collisions and hard constraints, then recommend the smallest falsifiable correction. Abstain for styling or implementation-only work.
 policy:
   products:
   - chatgpt
