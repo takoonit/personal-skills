@@ -1,6 +1,6 @@
 ---
 name: laws-of-ux
-description: "Behavioural UX diagnostician for product interfaces and journeys. Use when human perception, attention, memory, choice, motor action, learning, waiting, recovery, or remembered experience could materially change a design decision: confusing navigation, hard-to-compare choices, recall-heavy flows, unfamiliar controls, misclicks, weak grouping, ambiguous feedback, progress pressure, rough endings, or questionable uses of Hick, Fitts, Miller, Jakob, Peak-End, Gestalt, cognitive load, and related UX principles. Do not use for styling, branding, design-system work, implementation-only tasks, generic accessibility compliance, copywriting, or broad UI polish unless a behavioural mechanism is genuinely in dispute. Diagnose evidence before naming laws, select at most three distinct mechanisms, grade confidence, expose competing constraints and ethical risk, prefer the smallest falsifiable correction, and explicitly allow a no-law or insufficient-evidence verdict."
+description: "Behavioural UX diagnostician and audit skill for product interfaces and journeys. Use when perception, attention, memory, choice, motor action, learning, waiting, recovery, or remembered experience could materially change a design decision; when a rendered UI should be audited through UX laws; or when a named UX principle needs validation. Do not use for styling, branding, implementation-only work, generic accessibility compliance, copywriting, or design-system work without behavioural uncertainty. May conclude that no law applies or evidence is insufficient."
 ---
 
 # Laws of UX
@@ -11,7 +11,7 @@ The skill succeeds when it makes the design decision clearer even if every law n
 
 ## Ownership gate
 
-Own the task only when a behavioural mechanism could materially change the design decision.
+Own the task only when a behavioural mechanism could materially change the design decision, the user explicitly asks for a behavioural UX audit, or a named UX law needs validation.
 
 Canonical friction classes:
 
@@ -25,13 +25,40 @@ Canonical friction classes:
 - **Recover** — undo, retry, resume, escape, or preserve state after failure.
 - **Finish** — understand the outcome, ending, confirmation, or next step.
 
-Also own explicit requests to validate a named UX law.
-
 Do not own styling, branding, design-system consistency, accepted implementation, generic accessibility compliance, copywriting, or broad visual polish unless one of the nine behavioural questions is materially unresolved.
 
 **Routing test:** if identifying a behavioural mechanism would not change the design decision, do not invoke this skill.
 
 Use `$intentional-design` for expressive task-first UI, hierarchy, feedback, state, and interaction character. Use `$doakes` for product-direction drift. Hand accepted implementation to `$ship-sound-code`.
+
+## Choose a mode
+
+### Diagnostic mode
+
+Default for a specific behavioural problem, decision, or named law.
+
+Use the decision procedure below and select at most three non-duplicative mechanisms. Prefer one strong explanation over several weak ones.
+
+### Audit mode
+
+Use when the user asks to **audit, review, inspect, critique, or improve a rendered interface or journey using UX laws**.
+
+Audit the actual rendered evidence first: screenshot, prototype, recording, or running product. Do not claim visual findings from source code or component names alone.
+
+Audit flow:
+
+1. **Scan the view** across the nine friction classes.
+2. **Identify hotspots** that could materially affect task success, comprehension, control, or recovery.
+3. **Suggest 3–5 candidate UX laws** that could improve the experience, each tied to a specific observed hotspot and confidence level.
+4. **Return fewer than three** if the evidence does not support three distinct laws. Never pad the list.
+5. **Collapse the shortlist into 1–3 priority actions**. Candidate laws are hypotheses; fixes are the decision.
+6. **Call out one collision or risk** where a law could be misapplied.
+
+Audit candidate format:
+
+`<Law> [confidence] — <observed hotspot> -> <why it may apply> -> <practical improvement>`
+
+An Audit must not become a checklist of every law that could theoretically fit.
 
 ## Run the decision procedure
 
@@ -50,19 +77,21 @@ Stop early when the evidence is already decisive. If no behavioural mechanism im
 
 ## Select mechanisms before laws
 
-Choose at most three **non-duplicative mechanisms**. Prefer fewer.
+Use these stable mechanism IDs in evals and internal routing. User-facing output may use natural language.
 
-| Friction | Candidate mechanisms |
+| Friction | Canonical mechanisms |
 | --- | --- |
-| Find | selective attention; proximity; similarity; common region; connectedness; distinctiveness |
-| Understand | mental model; cognitive load; grouping; familiarity |
-| Decide | choice complexity; comparison cost; defaults; serial position |
-| Act | target acquisition; motor accessibility; accidental activation; acknowledgement |
-| Remember | working memory; recognition over recall; chunking; context preservation |
-| Learn | familiarity; learn-by-doing; contextual guidance; mental model |
-| Wait | acknowledgement; status visibility; perceived latency; continuity of attention |
-| Recover | state preservation; error tolerance; reversibility; retry clarity |
-| Finish | outcome clarity; peak-end weighting; serial position; next-step orientation |
+| Find | `find.selective-attention`; `find.proximity`; `find.similarity`; `find.common-region`; `find.connectedness`; `find.distinctiveness` |
+| Understand | `understand.mental-model`; `understand.cognitive-load`; `understand.grouping`; `understand.familiarity` |
+| Decide | `decide.choice-complexity`; `decide.comparison-cost`; `decide.defaults`; `decide.serial-position` |
+| Act | `act.target-acquisition`; `act.motor-accessibility`; `act.accidental-activation`; `act.acknowledgement` |
+| Remember | `remember.working-memory`; `remember.recognition-over-recall`; `remember.chunking`; `remember.context-preservation` |
+| Learn | `learn.familiarity`; `learn.learn-by-doing`; `learn.contextual-guidance`; `learn.mental-model` |
+| Wait | `wait.acknowledgement`; `wait.status-visibility`; `wait.perceived-latency`; `wait.attention-continuity` |
+| Recover | `recover.state-preservation`; `recover.error-tolerance`; `recover.reversibility`; `recover.retry-clarity` |
+| Finish | `finish.outcome-clarity`; `finish.peak-end`; `finish.serial-position`; `finish.next-step` |
+
+In Diagnostic mode, choose at most three **non-duplicative mechanisms**. In Audit mode, 3–5 candidate laws may map to more than three mechanisms, but the final action plan must still be prioritised to 1–3 changes.
 
 Use `references/law-catalogue.md` only after the mechanism is clear. A law name must add explanatory or action value; otherwise omit it.
 
@@ -148,7 +177,7 @@ Conversion, engagement, retention, and time spent alone do not demonstrate bette
 
 ## Report compactly
 
-Default output:
+### Diagnostic mode output
 
 **Verdict:** clear / friction / risk / evidence gap / no law needed.
 
@@ -160,6 +189,16 @@ Then at most three findings:
 
 `<Mechanism or law> [confidence] - <observation>; <why>; <smallest correction>; <collision>; <validation>.`
 
-Add a short counterpoint only when a plausible alternative could change the recommendation.
+### Audit mode output
 
-End with **Direction:** the leanest viable changes in priority order. For implementation-ready work, hand explicit behaviour, states, constraints, and acceptance checks to `$ship-sound-code`.
+**Audit verdict:** strongest UX opportunities and evidence quality.
+
+**Observed hotspots:** concise view-level problems, not generic design preferences.
+
+**3–5 candidate laws:** each with confidence, evidence, why it applies, and one practical improvement. Return fewer if unsupported.
+
+**Priority actions:** the 1–3 changes most likely to improve task success or reduce risk.
+
+**Watch-out:** one likely misuse, collision, accessibility concern, or evidence gap.
+
+For either mode, add a counterpoint only when a plausible alternative could change the recommendation. For implementation-ready work, hand explicit behaviour, states, constraints, and acceptance checks to `$ship-sound-code`.
