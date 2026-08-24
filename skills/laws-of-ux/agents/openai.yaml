@@ -1,7 +1,7 @@
 interface:
   display_name: Laws of UX
-  short_description: Diagnose behavioural UX friction with evidence
-  default_prompt: Use $laws-of-ux when a behavioural mechanism could materially change the design decision. Diagnose the dominant friction, use evidence before law names, select at most three distinct mechanisms, grade confidence, check collisions and hard constraints, then recommend the smallest falsifiable correction. Abstain for styling or implementation-only work.
+  short_description: Diagnose or audit behavioural UX with evidence
+  default_prompt: Use $laws-of-ux when a behavioural mechanism could materially change the design decision, when a rendered UI should be audited through UX laws, or when a named UX principle needs validation. In Diagnostic mode, identify the dominant friction and prioritise the smallest falsifiable correction. In Audit mode, inspect rendered evidence, suggest 3-5 evidence-backed candidate laws without padding, then collapse them into 1-3 priority actions. Abstain for styling or implementation-only work without behavioural uncertainty.
 policy:
   products:
   - chatgpt
