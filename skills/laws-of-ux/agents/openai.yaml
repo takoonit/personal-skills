@@ -1,0 +1,11 @@
+interface:
+  display_name: Laws of UX
+  short_description: Diagnose UX friction with behavioural laws
+  default_prompt: Use $laws-of-ux to audit this interface or flow, apply only laws supported by evidence, and propose the smallest testable correction.
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true

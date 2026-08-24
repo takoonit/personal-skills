@@ -29,6 +29,7 @@ Each directory under `skills/` is a portable skill package. Its directory name m
 | [`doakes`](skills/doakes/SKILL.md) | Challenge vague intent and drift from the project’s core concept. |
 | [`lundy`](skills/lundy/SKILL.md) | Independently validate consequential completed work using focused subagents. |
 | [`intentional-design`](skills/intentional-design/SKILL.md) | Design purposeful, expressive product UI around real user outcomes. |
+| [`laws-of-ux`](skills/laws-of-ux/SKILL.md) | Diagnose UX friction with behavioural laws, trade-off checks, and testable corrections. |
 
 ## Add or update a skill
 
