@@ -4,15 +4,18 @@ cases:
     expect:
       owner: laws-of-ux
       trigger: true
+      mode: diagnostic
       friction: Decide
-      mechanisms_any: ["choice complexity", "comparison cost"]
+      mechanism_ids_any: ["decide.choice-complexity", "decide.comparison-cost"]
 
   - id: trigger-explicit-hick
     prompt: "Does Hick's Law actually justify removing these advanced filters?"
     expect:
       owner: laws-of-ux
       trigger: true
+      mode: diagnostic
       friction: Decide
+      mechanism_ids_any: ["decide.choice-complexity", "decide.comparison-cost"]
       must_challenge: "hiding meaningful alternatives"
 
   - id: trigger-misclick
@@ -20,32 +23,36 @@ cases:
     expect:
       owner: laws-of-ux
       trigger: true
+      mode: diagnostic
       friction: Act
-      mechanisms_any: ["target acquisition", "accidental activation", "motor accessibility"]
+      mechanism_ids_any: ["act.target-acquisition", "act.accidental-activation", "act.motor-accessibility"]
 
   - id: trigger-recall-burden
     prompt: "Step 3 asks users to re-enter a code shown only on step 1."
     expect:
       owner: laws-of-ux
       trigger: true
+      mode: diagnostic
       friction: Remember
-      mechanisms_any: ["working memory", "externalised state", "recognition over recall"]
+      mechanism_ids_any: ["remember.working-memory", "remember.context-preservation", "remember.recognition-over-recall"]
 
   - id: trigger-status
     prompt: "After pressing Pay the button does nothing visible for two seconds, so users tap it again."
     expect:
       owner: laws-of-ux
       trigger: true
+      mode: diagnostic
       friction: Wait
-      mechanisms_any: ["acknowledgement", "honest status"]
+      mechanism_ids_any: ["wait.acknowledgement", "wait.status-visibility", "wait.perceived-latency"]
 
   - id: trigger-recovery
     prompt: "A failed upload clears the form and users have to start over."
     expect:
       owner: laws-of-ux
       trigger: true
+      mode: diagnostic
       friction: Recover
-      mechanisms_any: ["state preservation", "reversible action", "error tolerance"]
+      mechanism_ids_any: ["recover.state-preservation", "recover.reversibility", "recover.error-tolerance"]
 
   - id: trigger-dark-pattern
     prompt: "Make the cancel subscription option less noticeable so more users stay."
@@ -62,6 +69,38 @@ cases:
       trigger: true
       confidence_max: Moderate
       must_label_hypothesis: true
+
+  - id: audit-rendered-view
+    prompt: "Audit this checkout screen with Laws of UX and tell me what could improve the UX."
+    context: "A rendered screenshot or live view is available."
+    expect:
+      owner: laws-of-ux
+      trigger: true
+      mode: audit
+      candidate_laws_min: 3
+      candidate_laws_max: 5
+      priority_actions_max: 3
+      must_require_observed_hotspot_per_law: true
+
+  - id: audit-do-not-pad
+    prompt: "Audit this tiny confirmation screen and suggest 3-5 UX laws to improve it."
+    context: "Only two distinct behavioural issues are visibly supported."
+    expect:
+      owner: laws-of-ux
+      trigger: true
+      mode: audit
+      candidate_laws_max: 2
+      must_not_pad: true
+
+  - id: audit-source-only
+    prompt: "Audit this React component visually using Laws of UX."
+    context: "Only source code is available; no rendered view, screenshot, prototype, or recording."
+    expect:
+      owner: laws-of-ux
+      trigger: true
+      mode: audit
+      must_not_claim_visual_evidence: true
+      must_request_or_use_rendered_evidence: true
 
   - id: abstain-branding
     prompt: "Give this dashboard a retro-futurist visual direction and better colour palette."
@@ -97,12 +136,36 @@ cases:
       trigger: false
       note: "Accessibility specialist owns unless a behavioural design question is also material."
 
+  - id: ambiguous-cluttered
+    prompt: "This settings screen feels cluttered. Improve it."
+    expect:
+      trigger: false
+      route: intentional-design
+      note: "Do not infer cognitive load or choice overload without behavioural evidence or an explicit laws-of-ux audit request."
+
+  - id: ambiguous-onboarding
+    prompt: "Improve our onboarding."
+    expect:
+      trigger: false
+      route: intentional-design
+      note: "Broad design request has no behavioural evidence yet."
+
+  - id: ambiguous-dashboard
+    prompt: "Users say the dashboard is overwhelming, but we do not know what task they were trying to complete."
+    expect:
+      owner: laws-of-ux
+      trigger: true
+      acceptable_verdicts: ["evidence gap", "insufficient evidence"]
+      confidence_max: Low
+      must_not_prescribe_specific_law_without_task_context: true
+
   - id: collision-familiarity-novelty
     prompt: "Should we replace standard bottom navigation with a radial gesture menu to feel unique?"
     expect:
       owner: laws-of-ux
       trigger: true
       friction: Learn
+      mechanism_ids_any: ["learn.familiarity", "learn.mental-model"]
       must_check_collision: "familiarity vs novelty"
 
   - id: no-law-needed
@@ -110,5 +173,5 @@ cases:
     expect:
       owner: laws-of-ux
       trigger: true
-      acceptable_verdicts: ["clear", "evidence gap"]
+      acceptable_verdicts: ["clear", "no law needed", "evidence gap"]
       must_allow_no_law: true
