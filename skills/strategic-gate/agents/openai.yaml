@@ -1,0 +1,6 @@
+interface:
+  display_name: "Strategic Gate"
+  short_description: "Choose which initiative deserves attention"
+  default_prompt: "Use $strategic-gate to decide which proposed work deserves attention now and explain the evidence."
+policy:
+  allow_implicit_invocation: true
