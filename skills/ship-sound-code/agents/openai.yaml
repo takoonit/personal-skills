@@ -1,4 +1,4 @@
 interface:
   display_name: "Ship Sound Code"
-  short_description: "Implement defined code changes safely"
-  default_prompt: "Use $ship-sound-code to implement this repository change from the approved delivery brief."
+  short_description: "Implement and verify an accepted change"
+  default_prompt: "Use $ship-sound-code to implement this accepted repository change and verify the requested outcome."
