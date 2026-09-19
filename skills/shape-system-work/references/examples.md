@@ -46,7 +46,7 @@
 
 ## Suggested invocation prompts
 
-- `Use @shape-system-work to turn this product idea into a realistic architecture and risk-first backlog.`
-- `Use @shape-system-work to challenge this proposed design. Separate facts from assumptions and tell me what not to build.`
-- `Use @shape-system-work to convert this PRD into vertical slices with acceptance evidence and dependencies.`
-- `Use @shape-system-work to compare a modular monolith with services for this team and recommend a revisit trigger.`
+- `Use $shape-system-work to turn this product idea into a realistic architecture and risk-first backlog.`
+- `Use $shape-system-work to challenge this proposed design. Separate facts from assumptions and tell me what not to build.`
+- `Use $shape-system-work to convert this PRD into vertical slices with acceptance evidence and dependencies.`
+- `Use $shape-system-work to compare a modular monolith with services for this team and recommend a revisit trigger.`

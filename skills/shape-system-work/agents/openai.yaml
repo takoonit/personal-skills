@@ -1,12 +1,6 @@
 interface:
-  display_name: Shape System Work
-  short_description: Decide system direction before coding
-  default_prompt: Use $shape-system-work to decide this system direction and create
-    a delivery brief for $ship-sound-code.
+  display_name: "Shape System Work"
+  short_description: "Resolve product and system decisions"
+  default_prompt: "Use $shape-system-work to resolve this product or system decision and prepare a usable delivery brief."
 policy:
-  products:
-  - chatgpt
-  - codex
-  - api
-  - atlas
   allow_implicit_invocation: true

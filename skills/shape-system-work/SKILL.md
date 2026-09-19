@@ -1,68 +1,35 @@
 ---
 name: shape-system-work
-description: "Make an evidence-backed product or system decision before implementation. Use for unresolved product outcome, MVP scope, architecture, build-vs-buy, backlog shaping, or material business trade-off when no active local skill already owns that domain decision. Produce a delivery brief for implementation; do not use for a defined repository change."
+description: Resolve an unsettled product or system decision and prepare an implementation brief. Use for MVP scope, architecture, or build-versus-buy choices; skip already defined repository changes.
 ---
 
 # Shape System Work
 
-Decide what to build, why it matters, and what must be proven. Produce a delivery brief; do not design implementation details or edit code.
+Choose a direction that can be implemented and verified. Reuse accepted domain decisions and constraints from the current task.
 
-## Coexist with local skills
+## Frame the decision
 
-If a user-invoked or active local skill has a narrower declared scope, let it own that specialised work. Reuse its confirmed artefacts; do not repeat its planning, edits, or tests. Retain only this skill's decision and delivery-brief role; ask the user if ownership remains genuinely unclear.
+Establish the actor, desired outcome, observable success, and hard constraints. Separate facts from assumptions and identify the decision that actually blocks progress. Ask only when a missing answer would materially change the outcome; state reversible assumptions for routine details.
 
-## Plan and route
+Learn enough about the domain to preserve its rules, evidence, exceptions, and sources of truth. Read architecture, data, or deployment documentation when the decision touches those boundaries.
 
-Create a concise task list: frame the decision, test the proposition, choose a direction, then hand over a delivery brief. Keep one task in progress.
+## Choose a direction
 
-Use this skill before `$ship-sound-code` when the outcome, user value, architecture, scope, or commercial constraint is still uncertain. Hand over once a direction is chosen and the next work is a concrete repository change. If `$ship-sound-code` discovers that a code change would alter the product outcome or a major system decision, return here rather than silently making that choice.
+- Test whether the proposal addresses a real user job and improves on the current workaround.
+- Examine economics or trust when they affect feasibility. Name the weakest important assumption and the cheapest useful test.
+- Compare the baseline and recommended approach; add another option only when it presents a materially different trade-off.
+- Describe only the system facts needed to decide: entities, invariants, important states, external boundaries, and recovery needs.
+- Prefer a direct design. Add services or abstractions for current constraints, not an imagined future.
+- Record consequential choices with their rationale, accepted cost, and revisit trigger.
 
-Do not reopen a decision already settled by a more specific active planning skill unless new evidence contradicts it. Treat that skill's brief as the source decision and add only cross-cutting facts it has not addressed.
+Scale planning to the uncertainty. A small decision may need a paragraph. Use a task list or diagram only when it makes dependencies or choices easier to follow.
 
-## Frame the real decision
+## Deliver the brief
 
-State: `For <actor>, enable <outcome> under <constraints>, measured by <observable result>.`
+Include the chosen outcome, first useful slice, non-goals, invariants, dependencies, accepted trade-offs, and acceptance evidence. Name any unresolved decision and its owner. Order slices to prove the hardest uncertainty before committing to dependent work.
 
-Separate facts from assumptions. Identify the user job and current workaround; desired result and non-goals; decision owner; hard constraints (time, budget, skills, integrations, regulation, accuracy, latency); and irreversible decisions. Ask only questions that change those items; otherwise state a reversible assumption.
+Read [worked examples](references/examples.md) only when a concrete brief would help.
 
-For specialised domains, model how practitioners make decisions, handle evidence and exceptions, and hand work off. Do not copy surface terminology into software.
+A planning-only request finishes with a usable brief or a clearly bounded missing decision. When implementation is also authorized, continue from the accepted brief without reopening settled choices or requesting the same permission again. `ship-sound-code` can guide that implementation if needed.
 
-## Pressure-test the proposition
-
-Test four questions:
-
-1. **User truth:** Does this solve a repeated job?
-2. **Mechanism:** What creates a meaningful advantage over a generic implementation?
-3. **Economics:** Can acquisition, operation, support, and variable cost fit the model?
-4. **Trust:** Where can bad data, opaque logic, privacy, or overclaiming harm the user?
-
-Name the weakest assumption and the cheapest test that could disprove it. Distinguish an MVP, which tests value, from a demo, which only proves a screen or integration can exist. Include one leverage point and one devil's-advocate counterpoint.
-
-## Choose a proportionate direction
-
-Define only the system facts needed for the decision: core entities and invariants, important commands or states, sources of truth, external boundaries, sensitive data, and recovery/audit needs. Keep deterministic rules separate from AI composition when both exist.
-
-Compare no more than three options: baseline, recommended, and scale path only when materially different. Evaluate user value, correctness, delivery speed, operating cost, changeability, and team fit. Prefer a modular monolith and managed services unless a present need proves otherwise.
-
-For each consequential choice, state context, chosen and rejected options, accepted trade-off, and revisit trigger. State what not to build.
-
-## Produce the delivery brief
-
-Hand this compact brief to `$ship-sound-code`:
-
-- **Decision and outcome:** chosen direction, actor, and success evidence.
-- **Scope:** first vertical slice, non-goals, and dependencies.
-- **Invariants:** authorisation, data, workflow, or trust rules that must not break.
-- **Constraints:** accepted architecture, integrations, cost or operational limits, and explicit trade-offs.
-- **Verification:** acceptance criteria, proof required, and key failure/recovery path.
-- **Open decision:** named owner and deadline, if one blocks safe implementation.
-
-Order work by proof: hardest uncertainty, thin deployed path, core outcome, failure/security/recovery, then operational and scale work. Each slice must retire a risk or prove an outcome.
-
-## Feed decisions forward
-
-Report only material feedback as: **finding → evidence → impact → route/owner → required decision → closure proof**. Route an unresolved product or system choice to its decision owner; route the accepted delivery brief to `$ship-sound-code`. Close the feedback only when the brief records the chosen outcome, invariants, trade-off, and proof required.
-
-## Respond efficiently
-
-Return the decision, facts versus assumptions, recommended option with trade-off, delivery brief, leverage/trap, and next decision. Use diagrams only when a relationship or sequence is otherwise unclear. Read [examples.md](references/examples.md) only when a worked output shape would help.
+Commercial viability belongs to `shark-tank`; choosing between competing initiatives belongs to `strategic-gate`. Consult them only when their question remains unresolved.
