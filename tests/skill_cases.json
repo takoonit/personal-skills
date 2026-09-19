@@ -1,0 +1,404 @@
+{
+  "status": "scenario specifications; model runs not executed",
+  "cases": [
+    {
+      "id": "strategic-gate-competing-initiatives",
+      "skill": "strategic-gate",
+      "prompt": "Choose which of these two initiatives deserves attention this month.",
+      "context": "Both compete for the same team; evidence and budget are supplied.",
+      "should_trigger": true,
+      "expected": [
+        "Choose a supported priority and name the decisive trade-off.",
+        "State what evidence would reopen the decision."
+      ],
+      "forbidden": [
+        "Start implementation or invent a requirement for both initiatives."
+      ]
+    },
+    {
+      "id": "strategic-gate-reject-weak-work",
+      "skill": "strategic-gate",
+      "prompt": "Decide whether we should build this feature now.",
+      "context": "Evidence shows no relevant demand and the current workflow already meets the user's need.",
+      "should_trigger": true,
+      "expected": [
+        "Allow reject, defer, or a deliberate hold without manufacturing a build task."
+      ],
+      "forbidden": [
+        "Require a new experiment merely to fill a Now slot."
+      ]
+    },
+    {
+      "id": "strategic-gate-accepted-fix",
+      "skill": "strategic-gate",
+      "prompt": "Implement this accepted typo correction.",
+      "context": "Exact file and desired text are supplied; no priority decision remains.",
+      "should_trigger": false,
+      "expected": [
+        "Proceed with the defined task or its implementation owner."
+      ],
+      "forbidden": [
+        "Reopen strategic priority."
+      ]
+    },
+    {
+      "id": "shark-tank-commercial-review",
+      "skill": "shark-tank",
+      "prompt": "Use $shark-tank to assess this paid product's next investment.",
+      "context": "Customer behavior, current pricing, costs, and substitutes are supplied.",
+      "should_trigger": true,
+      "expected": [
+        "Use Hook, Moat, and Ledger to identify the binding constraint.",
+        "State an evidence-based verdict and the next bounded commitment."
+      ],
+      "forbidden": [
+        "Force disagreement or average perspective scores."
+      ]
+    },
+    {
+      "id": "shark-tank-thin-pitch",
+      "skill": "shark-tank",
+      "prompt": "Can this business work?",
+      "context": "The pitch lacks customer or payment evidence; public research cannot establish founder observations.",
+      "should_trigger": true,
+      "expected": [
+        "Ask material founder-specific questions or state that evidence is insufficient."
+      ],
+      "forbidden": [
+        "Invent CAC, LTV, revenue, willingness to pay, or market certainty."
+      ]
+    },
+    {
+      "id": "shark-tank-technical-review",
+      "skill": "shark-tank",
+      "prompt": "Review the timeout handling in this API client.",
+      "context": "The commercial decision is accepted; only technical correctness is in scope.",
+      "should_trigger": false,
+      "expected": [
+        "Leave the work to technical review."
+      ],
+      "forbidden": [
+        "Interview the founder or deliver investment verdicts."
+      ]
+    },
+    {
+      "id": "shape-system-work-system-choice",
+      "skill": "shape-system-work",
+      "prompt": "Choose build versus buy for this reporting workflow.",
+      "context": "Constraints and two feasible approaches are supplied.",
+      "should_trigger": true,
+      "expected": [
+        "Recommend a direction with accepted trade-offs, invariants, and acceptance evidence."
+      ],
+      "forbidden": [
+        "Implement a planning-only request."
+      ]
+    },
+    {
+      "id": "shape-system-work-missing-choice",
+      "skill": "shape-system-work",
+      "prompt": "Plan the data retention architecture.",
+      "context": "A consequential retention requirement is missing and changes the solution.",
+      "should_trigger": true,
+      "expected": [
+        "Ask the smallest question that resolves the missing decision.",
+        "Continue independent analysis with uncertainty labeled."
+      ],
+      "forbidden": [
+        "Invent a retention commitment."
+      ]
+    },
+    {
+      "id": "shape-system-work-defined-change",
+      "skill": "shape-system-work",
+      "prompt": "Add the approved validation rule to this form.",
+      "context": "Acceptance criteria and existing implementation are supplied.",
+      "should_trigger": false,
+      "expected": [
+        "Use the accepted scope without requiring another delivery brief."
+      ],
+      "forbidden": [
+        "Reopen product planning."
+      ]
+    },
+    {
+      "id": "doakes-intent-conflict",
+      "skill": "doakes",
+      "prompt": "Use $doakes to review this proposed fallback. Report only.",
+      "context": "Accepted contract requires explicit unavailable state; fallback silently substitutes sample data.",
+      "should_trigger": true,
+      "expected": [
+        "Identify the invariant, actual mismatch, consequence, and smallest resolution."
+      ],
+      "forbidden": [
+        "Edit files or manufacture unrelated concerns."
+      ]
+    },
+    {
+      "id": "doakes-new-authority",
+      "skill": "doakes",
+      "prompt": "Review this direction for consistency.",
+      "context": "The user explicitly supersedes an older brief; no additional unresolved constraint exists.",
+      "should_trigger": true,
+      "expected": [
+        "Recognize the newer accepted direction.",
+        "Judge fit against current intent."
+      ],
+      "forbidden": [
+        "Treat an old brief as automatically overriding the user's explicit decision."
+      ]
+    },
+    {
+      "id": "doakes-routine-style",
+      "skill": "doakes",
+      "prompt": "Reformat this file with the project's formatter.",
+      "context": "No behavior, scope, or semantic change is proposed.",
+      "should_trigger": false,
+      "expected": [
+        "Allow the routine task without an intent investigation."
+      ],
+      "forbidden": [
+        "Ask a product-intent question without evidence of ambiguity."
+      ]
+    },
+    {
+      "id": "dexter-review-only",
+      "skill": "dexter",
+      "prompt": "Use $dexter to find removable complexity. Give me the report first.",
+      "context": "A disposable fixture contains a plausible unused helper and a dynamically loaded plugin.",
+      "should_trigger": true,
+      "expected": [
+        "Report evidence, consumers, cost, and removal safety.",
+        "Account for dynamic loading before declaring code unused."
+      ],
+      "forbidden": [
+        "Change files or delete a plugin based only on text search."
+      ]
+    },
+    {
+      "id": "dexter-authorized-removal",
+      "skill": "dexter",
+      "prompt": "Use $dexter to remove the confirmed unused helper and its dead import, then verify.",
+      "context": "The helper and import are named, removal is explicitly authorized, and focused checks are available.",
+      "should_trigger": true,
+      "expected": [
+        "Perform only the authorized cleanup and focused verification."
+      ],
+      "forbidden": [
+        "Ask again for the same removal approval or expand to a broad refactor."
+      ]
+    },
+    {
+      "id": "dexter-general-feature",
+      "skill": "dexter",
+      "prompt": "Implement the approved search filter.",
+      "context": "No suspected bloat or cleanup request is present.",
+      "should_trigger": false,
+      "expected": [
+        "Use normal implementation guidance."
+      ],
+      "forbidden": [
+        "Launch a general cleanup review."
+      ]
+    },
+    {
+      "id": "lundy-completed-change",
+      "skill": "lundy",
+      "prompt": "Use $lundy to independently validate this completed change.",
+      "context": "The acceptance criteria, diff, and implementation test output are supplied.",
+      "should_trigger": true,
+      "expected": [
+        "Verify the relevant claim with evidence and give a bounded verdict."
+      ],
+      "forbidden": [
+        "Repair code during the independent validation phase or imply deployment was verified."
+      ]
+    },
+    {
+      "id": "lundy-no-delegation",
+      "skill": "lundy",
+      "prompt": "Use $lundy to validate this change without subagents.",
+      "context": "Source and focused local tests are available; delegation is prohibited.",
+      "should_trigger": true,
+      "expected": [
+        "Perform focused checks directly.",
+        "Report any unproven claims accurately."
+      ],
+      "forbidden": [
+        "Spawn agents or claim that lack of agents alone blocks validation."
+      ]
+    },
+    {
+      "id": "lundy-plan-new-work",
+      "skill": "lundy",
+      "prompt": "Split this new feature into implementation tasks.",
+      "context": "No completed result or acceptance claim exists yet.",
+      "should_trigger": false,
+      "expected": [
+        "Leave planning to the appropriate owner."
+      ],
+      "forbidden": [
+        "Act as general task orchestration."
+      ]
+    },
+    {
+      "id": "ship-sound-code-accepted-fix",
+      "skill": "ship-sound-code",
+      "prompt": "Use $ship-sound-code to fix this defined bug and verify it.",
+      "context": "Disposable fixture has a reproducible bug, accepted expected behavior, and focused test command.",
+      "should_trigger": true,
+      "expected": [
+        "Implement the scoped fix, verify it, and correct failures introduced by the change."
+      ],
+      "forbidden": [
+        "Stop after a first draft or demand a formal brief for a clear small fix."
+      ]
+    },
+    {
+      "id": "ship-sound-code-scope-expansion",
+      "skill": "ship-sound-code",
+      "prompt": "Implement the scoped adapter change.",
+      "context": "Discovery reveals an optional public API redesign; the scoped adapter can still be completed safely.",
+      "should_trigger": true,
+      "expected": [
+        "Complete unaffected authorized work.",
+        "Present the broader choice before expanding scope."
+      ],
+      "forbidden": [
+        "Silently redesign the public API or block independent safe work."
+      ]
+    },
+    {
+      "id": "ship-sound-code-unresolved-product",
+      "skill": "ship-sound-code",
+      "prompt": "Should this product sell subscriptions or one-off reports?",
+      "context": "The commercial model is undecided and no code change has been accepted.",
+      "should_trigger": false,
+      "expected": [
+        "Route to the relevant commercial or product decision."
+      ],
+      "forbidden": [
+        "Begin implementation."
+      ]
+    },
+    {
+      "id": "intentional-design-rendered-flow",
+      "skill": "intentional-design",
+      "prompt": "Use $intentional-design to improve this form's hierarchy. Report only.",
+      "context": "Rendered desktop and mobile views and target task are supplied.",
+      "should_trigger": true,
+      "expected": [
+        "Tie material recommendations to observed friction and preserve essential labels."
+      ],
+      "forbidden": [
+        "Claim unobserved states were inspected or edit the interface."
+      ]
+    },
+    {
+      "id": "intentional-design-honest-feedback",
+      "skill": "intentional-design",
+      "prompt": "Design feedback for this save action.",
+      "context": "The request completes asynchronously, can fail, and must support reduced motion.",
+      "should_trigger": true,
+      "expected": [
+        "Distinguish pending, success, failure, and retry.",
+        "Keep state understandable with motion disabled."
+      ],
+      "forbidden": [
+        "Celebrate before confirmed success or stack unrelated effects."
+      ]
+    },
+    {
+      "id": "intentional-design-defined-backend",
+      "skill": "intentional-design",
+      "prompt": "Implement the accepted database index migration.",
+      "context": "No interface design decision is in scope.",
+      "should_trigger": false,
+      "expected": [
+        "Leave implementation to the relevant owner."
+      ],
+      "forbidden": [
+        "Add UI design work."
+      ]
+    },
+    {
+      "id": "laws-of-ux-observed-friction",
+      "skill": "laws-of-ux",
+      "prompt": "Use $laws-of-ux to diagnose repeated Pay taps.",
+      "context": "Rendered state and recording show no acknowledgment during a two-second pending request.",
+      "should_trigger": true,
+      "expected": [
+        "Connect observed waiting friction to a plausible mechanism, correction, and validation signal."
+      ],
+      "forbidden": [
+        "Present a universal 400 ms SLA as proven."
+      ]
+    },
+    {
+      "id": "laws-of-ux-source-only-audit",
+      "skill": "laws-of-ux",
+      "prompt": "Audit this component visually with Laws of UX.",
+      "context": "Only source code is supplied; there is no rendered view.",
+      "should_trigger": true,
+      "expected": [
+        "State the visual evidence limitation and use or request the smallest useful rendered evidence."
+      ],
+      "forbidden": [
+        "Invent visual observations or pad candidate laws."
+      ]
+    },
+    {
+      "id": "laws-of-ux-palette-only",
+      "skill": "laws-of-ux",
+      "prompt": "Give this dashboard a warmer palette.",
+      "context": "No behavioral uncertainty or explicit law review exists.",
+      "should_trigger": false,
+      "expected": [
+        "Use visual design guidance if needed."
+      ],
+      "forbidden": [
+        "Invent a behavioral diagnosis."
+      ]
+    },
+    {
+      "id": "clear-tactful-writing-english-boundary",
+      "skill": "clear-tactful-writing",
+      "prompt": "Use $clear-tactful-writing to make this email concise.",
+      "context": "Draft agrees to review a proposal but makes no implementation commitment.",
+      "should_trigger": true,
+      "expected": [
+        "Return a usable draft preserving the limited commitment and relevant qualifications."
+      ],
+      "forbidden": [
+        "Invent enthusiasm, availability, or implementation agreement."
+      ]
+    },
+    {
+      "id": "clear-tactful-writing-thai-request",
+      "skill": "clear-tactful-writing",
+      "prompt": "Use $clear-tactful-writing to write a polite Thai scheduling follow-up.",
+      "context": "Two times were proposed; neither is confirmed.",
+      "should_trigger": true,
+      "expected": [
+        "Use natural Thai and keep the exact request visible.",
+        "Preserve the fact that scheduling remains unconfirmed."
+      ],
+      "forbidden": [
+        "Imply the meeting is booked or send the message."
+      ]
+    },
+    {
+      "id": "clear-tactful-writing-algorithm-task",
+      "skill": "clear-tactful-writing",
+      "prompt": "Implement binary search and test its boundary cases.",
+      "context": "No authored message or prose revision is requested.",
+      "should_trigger": false,
+      "expected": [
+        "Leave the task to implementation."
+      ],
+      "forbidden": [
+        "Add a writing workflow."
+      ]
+    }
+  ]
+}

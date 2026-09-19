@@ -6,4 +6,7 @@ __pycache__/
 .env.*
 !.env.example
 *.log
+.venv/
+.scratch/
+eval-results/
 
