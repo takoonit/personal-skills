@@ -1,93 +1,36 @@
 ---
 name: clear-tactful-writing
-description: "Draft or revise Thai and English writing in a confirmed clear and tactful style: direct, fact-grounded, concise, natural, and free from corporate or AI-like phrasing. Use for emails, replies, follow-ups, requests, scheduling, boundary-setting, conflict handling, professional chat, status updates, requirement clarification, and other practical messages."
+description: Draft or revise practical Thai and English messages in Takoon's direct, tactful voice. Use for correspondence, requests, difficult conversations, and status updates where wording matters.
 ---
 
 # Clear Tactful Writing
 
-Write to create correct understanding and a clear next decision. Preserve the intended substance; adjust the social impact to suit the recipient.
+Produce a usable message that preserves the user's meaning and makes the recipient's next decision clear.
 
-## Core voice
+## Voice and factual boundaries
 
-- Be direct without sounding careless or confrontational.
-- Provide only the context needed to understand the request.
-- Prefer facts, constraints, and practical consequences over persuasive decoration.
-- State what is meant and, when ambiguity carries risk, what is not meant.
-- Use short paragraphs with one function each.
-- Keep warmth restrained and genuine. Do not overpraise, oversell, or manufacture enthusiasm.
-- Avoid vague, generic, over-poetic, over-designed, robotic, and excessively corporate language.
-- Never invent interest, experience, reasons, availability, agreement, or commitments.
-- Correct grammar and typing artefacts without making the result sound unlike Takoon.
+Use plain words, concrete facts, and short paragraphs with a clear purpose. Be direct without unnecessary sting. Add warmth and politeness where they help the relationship; keep the substantive request or boundary visible.
 
-## Choose the register
+Never invent motives, experience, interest, availability, agreement, or commitments. Preserve qualifications and consequential distinctions. Correct grammar without flattening the user's voice into corporate language.
 
-### Close working chat
+Avoid filler, exaggerated enthusiasm, repeated apologies, generic praise, and explanations that the recipient does not need.
 
-Lead with the issue. Say what is unclear or ineffective, why it matters, and the expected correction. Keep it compact. A direct correction is acceptable; remove unnecessary sting.
+## Draft or edit
 
-Suggested movement:
+1. Infer the recipient, relationship, purpose, and desired outcome from the supplied context. Ask only when missing information materially changes the message; otherwise omit it or use a clear placeholder.
+2. Write the substantive request, decision, correction, or update first. Add the context needed to understand it fairly.
+3. Adjust register:
+   - **Working chat:** lead with the issue, concrete reason, and needed action.
+   - **Thai professional:** use natural contemporary Thai and appropriate polite particles such as `ครับ`. Use `ขออนุญาต` or `ถ้าสะดวก` only when they serve a real social purpose.
+   - **English professional:** use plain international English with a suitable greeting and close. Do not mimic grammatical errors.
+   - **Formal or consequential:** distinguish confirmed facts, included scope, exclusions where necessary, and the exact requested action.
+4. For an existing draft, make the smallest useful changes. Soften phrasing without weakening the user's position.
+5. Check once for altered meaning, invented facts, ambiguity, repetition, and an unclear next step.
 
-`problem -> concrete reason -> required direction`
+Read [register examples](references/register-examples.md) when tone is difficult to calibrate or a boundary could be mistaken for a broader commitment.
 
-### Thai professional writing
+## Finish
 
-Use natural, contemporary Thai with polite particles such as `ครับ`. Add tact through phrasing such as `ขออนุญาต`, `ถ้าสะดวก`, or `ไม่เป็นไรครับ` only where it performs a real social function.
+Return one polished draft by default. Include alternatives or an explanation only when requested or when a meaningful choice affects the message. Preserve any required delivery format.
 
-Suggested movement:
-
-`brief greeting -> relevant context -> exact request/boundary -> reason or consequence -> practical next step -> concise thanks`
-
-Do not bury the request under repeated apologies or ceremonial language.
-
-### English professional writing
-
-Use plain international English: professional, warm, and restrained. Prefer simple sentences and ordinary words over corporate jargon. Use `Hi <name>` or a context-appropriate formal opening, and normally close with `Best regards`.
-
-Suggested movement:
-
-`brief acknowledgement -> fact/context -> clear request or decision -> next step -> simple close`
-
-Do not preserve non-native grammatical errors merely to imitate the source voice.
-
-### Formal or high-risk writing
-
-Prioritise scope control. Identify the exact statement, distinguish included from excluded meaning, state the requested action, and preserve a factual record. Remain calm and non-accusatory.
-
-Suggested movement:
-
-`reference -> clarification -> this means -> this does not mean -> requested action -> close`
-
-## Drafting workflow
-
-1. Identify the recipient, relationship, purpose, desired outcome, and risk of misinterpretation.
-2. Separate confirmed facts from assumptions. Ask only if a missing fact materially changes the message; otherwise use a neutral placeholder or omit it.
-3. Write the substantive sentence first: the request, decision, boundary, correction, or update.
-4. Add only the context necessary to make that sentence fair and intelligible.
-5. Add tact proportionate to the relationship. Do not weaken the substantive sentence.
-6. Make the next action explicit when one exists.
-7. Remove repetition, filler, artificial warmth, and claims the user did not make.
-8. Check whether a reasonable recipient could interpret the message more broadly than intended. Narrow the wording if so.
-
-## Editing an existing draft
-
-- Preserve the user's real position and factual claims.
-- Diagnose what feels wrong: vague, robotic, too blunt, too apologetic, over-formal, or strategically weak.
-- Change the smallest amount needed to fix the problem.
-- When tact is requested, soften the transition or framing, not the underlying truth.
-- When brevity is requested, retain the decision, constraint, and next step before cutting anything else.
-
-## Quality gate
-
-Before returning a draft, verify:
-
-- the purpose is clear on one reading;
-- the actual request or decision is visible;
-- no fact, motive, enthusiasm, or commitment was invented;
-- politeness does not create ambiguity;
-- directness does not sound needlessly hostile;
-- each paragraph has one job;
-- Thai sounds natural rather than ceremonial;
-- English sounds clean rather than corporate;
-- the ending gives an appropriate next step or closes cleanly.
-
-Return one polished draft by default. Explain choices or provide variants only when requested or when a meaningful strategic trade-off exists.
+Drafting a message does not authorize sending it. Stop when the copy is ready to use.

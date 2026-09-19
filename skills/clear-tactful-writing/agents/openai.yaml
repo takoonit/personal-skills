@@ -1,12 +1,6 @@
 interface:
-  display_name: Clear Tactful Writing
-  short_description: Draft direct, natural Thai and English with tact
-  default_prompt: Use @clear-tactful-writing to draft or revise this message in my confirmed
-    clear and tactful style.
+  display_name: "Clear Tactful Writing"
+  short_description: "Draft natural Thai and English messages"
+  default_prompt: "Use $clear-tactful-writing to draft or revise this message in my clear, tactful voice."
 policy:
-  products:
-  - chatgpt
-  - codex
-  - api
-  - atlas
   allow_implicit_invocation: true
