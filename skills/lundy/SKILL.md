@@ -1,58 +1,39 @@
 ---
 name: lundy
-description: "Independently validate high-risk or cross-boundary completed code work—especially a Dextor cleanup, refactor, migration, or feature—using focused subagent evidence lanes. Use when independent proof is needed beyond the implementer's own checks; do not use for routine completion or as a replacement for a specialised test skill. Return a clear verdict and smallest next action."
+description: Independently validate consequential completed changes against their acceptance criteria. Use when correctness or removal safety remains unproven beyond existing checks; skip routine completion and general task orchestration.
 ---
 
 # Lundy
 
-Lead a small forensic validation task force after the work is done. Treat the implementation, test results, and claim of completion as evidence to examine, not proof in themselves. The primary agent owns the verdict and user communication; subagents supply independent, bounded checks.
+Decide whether a completion claim is supported by evidence. Lundy is the independent validator in the group inspired by the TV series *Dexter*: Doakes investigates intent; Dexter (`dexter`) investigates cleanup.
 
-## Coexist with local skills
+## Open the validation
 
-If a user-invoked or active local skill has a narrower declared scope, let it own that specialised work. Reuse its confirmed artefacts; do not repeat its planning, edits, or tests. Retain only this skill's independent validation and verdict role; ask the user if ownership remains genuinely unclear.
+Establish the claimed result, accepted scope, invariants, changed files, existing checks, and unresolved risks. Reuse reliable artifacts rather than rerunning checks by default. Independence comes from testing the claim against evidence, not from a fixed number of agents.
 
-## Open validation only when it earns its cost
+Choose only questions that could change the verdict:
 
-Use Lundy after a meaningful feature, refactor, bug fix, migration, dependency/configuration change, or Dextor removal. Prefer it when failure would be costly, the change crosses boundaries, or the implementer’s tests do not independently prove the claimed result.
+- **Behavior:** Does the user or API path produce the promised result and state?
+- **Failure:** What plausible permission, retry, compatibility, recovery, or boundary case could contradict the claim?
+- **Evidence:** Do the tests and artifacts prove the result? After cleanup, do runtime entry points, dynamic loading, and public contracts support removal safety?
 
-Do not form a task force for a trivial local edit with focused tests and an obvious result. Do not use Lundy to decide what to build—that belongs to `$shape-system-work` and `$doakes` before implementation.
+## Gather proof
 
-Let framework-specific test, browser, security, performance, and deployment skills run their specialised checks. Lundy chooses only the independent questions still unproved, coordinates them without overlapping writes, and reconciles their evidence into one verdict.
+Inspect the relevant implementation and run focused checks when available and authorized. Keep evaluation read-only apart from disposable test outputs. Do not repair the implementation during an independent validation pass.
 
-State the completion claim, intended observable outcome, changed scope, invariants, and available proof: diff, commands run, test results, contracts, and acceptance criteria. Separate verified facts from the implementer's assertions.
+Use subagents only when the user or governing project instructions permit delegation and separate questions would benefit from it. Otherwise perform the checks directly. Give any permitted reviewer a bounded question, raw artifacts, and acceptance criteria, without suggesting a preferred verdict. Verify their findings.
 
-## Assign independent evidence lanes
+Do not equate a passing unit test with deployment success, or a missing check with a confirmed defect. Name precisely what each piece of evidence establishes.
 
-Create a concise task list, then use two or three non-overlapping, read-only lanes by default. Give each lane a question, scope, and proof required. Never let validation agents edit the same files or repair the work while validating it.
+## Finish
 
-- **Behaviour tracer:** follow the primary user/API path from input through response and persisted state. Compare observed behaviour with the completion claim and acceptance criteria.
-- **Breaker:** search for likely regression, failure, permission, tenancy, compatibility, rollback, boundary, or duplicate-action cases. Use `$doakes` only when the completed change may have drifted from project intent.
-- **Evidence auditor:** check tests, contracts, build/deploy configuration, documentation, and claimed removals. After `$dextor`, trace references, runtime entry points, scripts, dynamic loading, and public contracts before accepting that a deletion is safe.
+Return one verdict:
 
-Pass raw artifacts and the claimed result, not a preferred verdict. Delegate only questions that could change the validation outcome. Treat each response as evidence to verify against source files, test output, or a reproducible path.
+- **Validated:** relevant proof supports the outcome and invariants.
+- **Partly verified:** a named part is proven, but a material claim lacks evidence.
+- **Not validated:** evidence contradicts the claim or exposes an unresolved material risk.
+- **Blocked:** a necessary environment, fixture, permission, or source is unavailable.
 
-## Reach a verdict
+Include decisive proof, material gaps, and the smallest next action. Resolve disagreements from evidence rather than vote counts.
 
-Reconcile findings without averaging opinions:
-
-- **Validated:** the intended outcome and invariants have direct, relevant proof; no material contradiction remains.
-- **Partly verified:** the primary path is proven, but a named boundary, environment, or compatibility claim lacks proof.
-- **Not validated:** evidence contradicts the claim, an invariant fails, or the removal/change has an unaddressed material risk.
-- **Blocked:** the required environment, access, fixture, or source of truth is missing; name exactly what would unblock it.
-
-For each unverified or failed item, state the evidence, impact, and smallest next action. Do not turn minor test gaps into a redesign. Route fixes to `$ship-sound-code`; route a changed product decision to `$shape-system-work`.
-
-## Feed validation feedback forward
-
-Report only material feedback as: **finding → proof or missing proof → impact → route/owner → required action → closure proof**. Route a defect or unproved technical claim to `$ship-sound-code`, a changed product decision to `$shape-system-work`, and a suspected intent mismatch to `$doakes`. Close `partly verified` or `not validated` only when the named proof is rerun and the verdict changes or the remaining limitation is explicitly accepted.
-
-## Report the case file
-
-Return only:
-
-- **Verdict:** validated, partly verified, not validated, or blocked.
-- **Proof:** the decisive checks and what they establish.
-- **Gap or failure:** only material missing or contradictory evidence.
-- **Next action:** the smallest test, clarification, or fix needed.
-
-Mention the subagent task force only when independent review materially strengthens the result or reveals a disagreement. Do not report internal activity as progress.
+A validation-only request stops with this verdict. If fixes were also requested, finish the independent verdict before entering a separate repair phase, then recheck the affected claims. Consult Doakes only for a real intent conflict; cleanup evidence belongs to Dexter. Never imply that validation authorizes merging, deployment, or other external actions.
