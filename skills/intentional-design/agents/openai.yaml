@@ -1,11 +1,6 @@
 interface:
-  display_name: Intentional Design
-  short_description: Create expressive, mature user feedback
-  default_prompt: Use $intentional-design to design a purposeful, expressive product flow for these users.
+  display_name: "Intentional Design"
+  short_description: "Design clear tasks, states, and feedback"
+  default_prompt: "Use $intentional-design to design or critique this product flow around the user's task."
 policy:
-  products:
-  - chatgpt
-  - codex
-  - api
-  - atlas
   allow_implicit_invocation: true
