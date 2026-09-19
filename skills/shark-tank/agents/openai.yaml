@@ -1,0 +1,6 @@
+interface:
+  display_name: "Shark Tank"
+  short_description: "Assess a business before investing further"
+  default_prompt: "Use $shark-tank to assess whether this business deserves further time or capital using the evidence available."
+policy:
+  allow_implicit_invocation: true
