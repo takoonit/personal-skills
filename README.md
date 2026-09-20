@@ -1,80 +1,193 @@
 # Personal Skills
 
-A version-controlled collection of reusable skills for ChatGPT and Codex. Each skill gives an agent a focused job, clear ownership boundaries, decision rules, and hand-offs to neighbouring skills instead of one giant catch-all prompt.
+My collection of agent skills for building software, product decisions, design, and writing. Pick what you need.
 
-## How the skills fit together
+[Install](#install) · [Dexter team](#the-dexter-team) · [Planning](#planning) · [Build and design](#build-and-design) · [Writing](#writing)
 
-The collection is designed as a small operating system for recurring work:
+## Install
 
-- **Gate** whether work deserves attention before spending effort.
-- **Shape** ambiguous product or system work into a decision-ready direction.
-- **Challenge** weak assumptions, product drift, and unnecessary complexity.
-- **Design** purposeful interactions and diagnose or audit behavioural UX friction.
-- **Implement** accepted changes with proportionate engineering discipline.
-- **Validate** consequential completed work independently.
-- **Communicate** findings and decisions clearly.
-
-Skills may invoke or hand off to one another when ownership changes. A specialised skill should stay narrow rather than absorbing adjacent responsibilities.
-
-## Layout
-
-```text
-skills/
-  <skill-name>/
-    SKILL.md
-    agents/openai.yaml       # optional invocation and UI metadata
-    references/              # optional supporting knowledge and evidence
-    scripts/                 # optional deterministic utilities
-    assets/                  # optional reusable files
+```sh
+npx skills@latest add takoonit/personal-skills
 ```
 
-Each directory under `skills/` is a portable skill package. Its directory name must match the `name` field in `SKILL.md`.
+## The Dexter team
 
-## Included skills
+A little *Dexter* for better codebase. Call in whoever the case needs.
 
-| Skill | Role | Use it when... |
-| --- | --- | --- |
-| [`strategic-gate`](skills/strategic-gate/SKILL.md) | Attention gate | A proposed task, feature, or initiative needs a quick decision on whether it deserves effort now. |
-| [`shark-tank`](skills/shark-tank/SKILL.md) | Business challenger | An early product or business idea needs evidence, sharper questions, commercial pressure-testing, and a realistic invest / test / pass judgement. |
-| [`shape-system-work`](skills/shape-system-work/SKILL.md) | System shaper | Product or architecture direction is still ambiguous and needs trade-offs resolved before implementation. |
-| [`doakes`](skills/doakes/SKILL.md) | Intent challenger | A request may be drifting from the project's core outcome or adding complexity without a strong reason. |
-| [`intentional-design`](skills/intentional-design/SKILL.md) | Interaction designer | A product flow needs purposeful hierarchy, state, feedback, restrained delight, or behaviour-aware interaction design. |
-| [`laws-of-ux`](skills/laws-of-ux/SKILL.md) | Behavioural UX diagnostician & auditor | Use Diagnostic mode when behaviour could materially change a design decision. Use Audit mode to inspect a rendered UI or journey, surface 3–5 evidence-backed candidate laws, and reduce them to the 1–3 highest-value UX changes. The skill may also conclude that no law applies or evidence is insufficient. |
-| [`ship-sound-code`](skills/ship-sound-code/SKILL.md) | Implementation discipline | The intended behaviour is defined and the change now needs clean, proportionate implementation and verification. |
-| [`dextor`](skills/dextor/SKILL.md) | Code-bloat investigator | Existing code may contain evidence-backed duplication, dead weight, or unnecessary complexity that should be investigated before removal. |
-| [`lundy`](skills/lundy/SKILL.md) | Independent validator | Consequential completed work needs an independent acceptance pass using focused validation agents. |
-| [`clear-tactful-writing`](skills/clear-tactful-writing/SKILL.md) | Communication | Facts, decisions, requests, or difficult messages need concise Thai or English wording with appropriate tact. |
+### Dexter
 
-## Design principles
+Ask an agent to simplify something and sometimes you get another abstraction. I want the dead weight gone.
 
-### Narrow ownership
+Dexter hunts unused code, duplicated logic, and complexity that has no job. He traces the evidence, builds a kill list, and takes out approved targets. Then he checks that the survivors still work.
 
-A skill should trigger because its specialised reasoning can materially change the decision, not merely because the prompt contains a related keyword. Explicit negative triggers and hand-offs reduce accidental overlap.
+**Prompt example**
 
-### Evidence before ceremony
+```text
+$dexter
+We moved checkout to Stripe, but src/payments still has the old provider
+and two wrapper layers. Can the legacy path go? Existing subscriptions
+must keep working. Report first.
+```
 
-Skills should distinguish observation from inference, challenge unsupported assumptions, and prefer the smallest useful intervention. Named frameworks, personas, laws, or patterns are tools for reasoning, not decorations.
+[Skill →](skills/dexter/SKILL.md)
 
-### Proportionate reasoning
+### Doakes
 
-Do not force every workflow through every checkpoint. Straightforward work should stay straightforward; consequential or ambiguous work earns deeper scrutiny.
+It starts as a small fix. Somewhere in the diff, the agent changes a rule nobody asked it to change.
 
-### Explicit stopping conditions
+"Surprise, Mother Fucker!" Doakes checks the implementation against the brief, catches the drift, and shows exactly where the story stopped adding up. Suspicion gets him looking. Evidence makes the case.
 
-A good skill can abstain, reject a weak premise, ask for missing evidence, or hand ownership to another skill. More output is not automatically better output.
+**Prompt example**
 
-## Add or update a skill
+```text
+$doakes
+This PR was only supposed to add CSV export, but it also touches download
+permissions. The agreed rule is "workspace admins only."
+Is that still true? Don't edit.
+```
 
-1. Add or replace its complete directory under `skills/<skill-name>/`.
-2. Keep the skill's ownership narrow and state both positive and negative trigger conditions.
-3. Put deep supporting material in `references/` rather than bloating the operational `SKILL.md`.
-4. Keep machine-specific paths, credentials, private customer data, and generated output out of the skill.
-5. Add representative eval cases when routing, abstention, or judgement quality matters.
-6. Run `python scripts/validate_skills.py`.
-7. Review the diff before committing.
+[Skill →](skills/doakes/SKILL.md)
 
-The validation workflow runs automatically for pushes and pull requests.
+### Lundy
 
-## Security boundary
+The agent says it's done. I still want to know what was actually checked.
 
-This repository is public. Store reusable instructions and non-sensitive examples only. Put secrets in environment variables or a secret manager, never in a skill.
+Lundy takes a fresh look at the requirements, implementation, and test evidence. He follows the gaps, checks the failure paths that matter, and tells you what holds up. The case stays open where proof is missing.
+
+**Prompt example**
+
+```text
+$lundy
+The retry fix is marked done and unit tests pass. The requirement is:
+retrying a timed-out payment must never charge twice.
+Does the current diff have enough proof to accept it? No fixes yet.
+```
+
+[Skill →](skills/lundy/SKILL.md)
+
+## Planning
+
+### Strategic Gate
+
+An idea can be worth doing and still be the wrong thing to work on now.
+
+Strategic Gate weighs the evidence, effort, and work you'd give up to pursue it. Use it when priorities compete or the reason to act is weak. You get a decision to pursue, defer, replace, or reject, with a reason.
+
+**Prompt example**
+
+```text
+$strategic-gate
+I have five dev-days. CSV export takes two and blocks renewals for two
+paying customers. An onboarding rewrite takes five; signups drop off
+there, but we haven't interviewed users. What gets this week?
+```
+
+[Skill →](skills/strategic-gate/SKILL.md)
+
+### Shark Tank
+
+A convincing pitch doesn't tell me whether anyone will pay for it.
+
+Shark Tank challenges a business through customer demand, competitive advantage, and economics. Bring an idea or traction data before committing more time or money. It gives you a commercial verdict, the weakest assumption, and the next test worth running.
+
+**Prompt example**
+
+```text
+$shark-tank
+I'm considering a $15/month invoicing app for freelance designers.
+Five interviewees liked the idea; none has paid. They use spreadsheets now.
+I can spend two weekends on it. Is a build justified yet?
+```
+
+[Skill →](skills/shark-tank/SKILL.md)
+
+### Shape System Work
+
+"Build an MVP" leaves a lot for an agent to decide on its own. Those decisions get expensive once they're buried in code.
+
+Shape System Work resolves unclear scope, architecture, or build-versus-buy choices. It compares the options and turns the chosen direction into a brief with boundaries, trade-offs, and checks for success.
+
+**Prompt example**
+
+```text
+$shape-system-work
+We already send one-off invoices. Customers now want monthly recurring ones.
+Keep the existing database and email provider. No automatic card charges
+in v1. Where should the first release stop?
+```
+
+[Skill →](skills/shape-system-work/SKILL.md)
+
+## Build and design
+
+### Ship Sound Code
+
+Once the direction is agreed, I want the change built and checked.
+
+Ship Sound Code handles defined features, fixes, and refactors. It follows the repo's conventions, implements the scoped change, tests the affected behavior, and fixes regressions it introduces. It finishes with what works and what couldn't be verified.
+
+**Prompt example**
+
+```text
+$ship-sound-code
+In POST /invoices, reject a due date earlier than the invoice date with
+HTTP 422. Equal dates stay valid, and existing error-response fields must
+stay unchanged. Implement this in the current repo. Don't commit.
+```
+
+[Skill →](skills/ship-sound-code/SKILL.md)
+
+### Intentional Design
+
+A screen can look finished while leaving users guessing what to click or whether anything happened.
+
+Intentional Design inspects the actual interface and improves its hierarchy, states, and feedback within the existing design system. Use it to review a flow or implement an agreed improvement, with checks on the affected interactions.
+
+**Prompt example**
+
+```text
+$intentional-design
+At /checkout, the total sits below Pay on mobile and failed payments
+erase the form. Keep our existing components and branding.
+Propose a layout and failure state before changing code.
+```
+
+[Skill →](skills/intentional-design/SKILL.md)
+
+### Laws of UX
+
+"This feels confusing" is a useful signal. It doesn't tell us what to change yet.
+
+Laws of UX examines a rendered journey or recording, connects the observed friction to a behavioral mechanism, and recommends a correction with a way to test it. If the evidence is too thin, it says so instead of attaching a law to everything.
+
+**Prompt example**
+
+```text
+$laws-of-ux
+In the attached checkout recording, a shopper taps Pay three times during
+a two-second wait with no visible response. What's the most likely
+friction here, and what would disprove that explanation?
+```
+
+[Skill →](skills/laws-of-ux/SKILL.md)
+
+## Writing
+
+### Clear Tactful Writing
+
+Ask an agent to polish a message and it can come back sounding like someone else. Sometimes it even adds a promise I never made.
+
+Clear Tactful Writing rewrites emails, chats, and difficult requests in natural Thai or English. It adjusts the tone, cuts filler, and keeps the facts and commitments intact. You get a draft ready to use.
+
+**Prompt example**
+
+```text
+$clear-tactful-writing
+Write a Thai LINE message to a client: the extra dashboard is outside
+our agreed scope. I can quote it separately, but Friday's delivery covers
+only the original work. Friendly and firm, under four sentences.
+```
+
+[Skill →](skills/clear-tactful-writing/SKILL.md)
+
+[Contributing](CONTRIBUTING.md) · [Evaluation](docs/evaluation.md)
