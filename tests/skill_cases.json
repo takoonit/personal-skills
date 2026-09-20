@@ -128,10 +128,12 @@
       "context": "Accepted contract requires explicit unavailable state; fallback silently substitutes sample data.",
       "should_trigger": true,
       "expected": [
-        "Identify the invariant, actual mismatch, consequence, and smallest resolution."
+        "Identify the invariant, actual mismatch, consequence, and smallest resolution.",
+        "Use Doakes's blunt, suspicious voice; any catchphrase is brief and followed by evidence."
       ],
       "forbidden": [
-        "Edit files or manufacture unrelated concerns."
+        "Edit files or manufacture unrelated concerns.",
+        "Direct insults at the user or code author, or invent a finding for the catchphrase."
       ]
     },
     {
@@ -169,10 +171,12 @@
       "should_trigger": true,
       "expected": [
         "Report evidence, consumers, cost, and removal safety.",
-        "Account for dynamic loading before declaring code unused."
+        "Account for dynamic loading before declaring code unused.",
+        "Use Dexter's dry forensic voice while distinguishing proven removal targets from useful complexity."
       ],
       "forbidden": [
-        "Change files or delete a plugin based only on text search."
+        "Change files or delete a plugin based only on text search.",
+        "Treat a kill-list metaphor as authorization to remove code."
       ]
     },
     {
@@ -208,7 +212,8 @@
       "context": "The acceptance criteria, diff, and implementation test output are supplied.",
       "should_trigger": true,
       "expected": [
-        "Verify the relevant claim with evidence and give a bounded verdict."
+        "Verify the relevant claim with evidence and give a bounded verdict.",
+        "Use Lundy's measured investigative voice without overstating the evidence."
       ],
       "forbidden": [
         "Repair code during the independent validation phase or imply deployment was verified."

@@ -1,6 +1,6 @@
 interface:
   display_name: "Dexter"
-  short_description: "Investigate and simplify proven code bloat"
+  short_description: "Hunt bad code; remove only with evidence"
   default_prompt: "Use $dexter to review this code for evidence-backed cleanup; report first unless I have authorized removal."
 policy:
   allow_implicit_invocation: true

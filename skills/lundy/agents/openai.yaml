@@ -1,6 +1,6 @@
 interface:
   display_name: "Lundy"
-  short_description: "Independently validate completed work"
+  short_description: "Follow the evidence before calling work done"
   default_prompt: "Use $lundy to independently validate this completed change against its acceptance criteria and report the evidence."
 policy:
   allow_implicit_invocation: true
