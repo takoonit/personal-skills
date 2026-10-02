@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to use Personal Skills</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500&amp;display=swap">
+<style>
+* { box-sizing: border-box; }
+:root { --paper:#e6d9cc; --paper-2:#ddcebe; --ink:#443218; --ink-strong:#1a1715; --muted:#675540; --soft:#675540; --rule:rgba(68,50,24,.18); --rule-solid:#a99a87; --accent:#fd4319; --accent-tint:rgba(253,67,25,.08); --link:#443218; --sans:'Geist',sans-serif; --mono:'Geist Mono',monospace; }
+body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.5 var(--sans); }
+main { max-width:1360px; margin:auto; padding:40px; min-width:0; }
+nav { display:flex; flex-wrap:wrap; justify-content:space-between; gap:16px; padding-bottom:24px; border-bottom:1px solid var(--rule); font-size:12px; text-transform:uppercase; }
+a { color:inherit; text-underline-offset:4px; }
+a:hover { text-decoration-thickness:2px; }
+a:focus-visible, summary:focus-visible, .diagram-container:focus-visible { outline:2px solid var(--ink); outline-offset:4px; }
+h1 { font-size:clamp(42px,6vw,84px); line-height:1.03; letter-spacing:-.055em; font-weight:500; max-width:840px; margin:56px 0 24px; }
+.intro { max-width:660px; font-size:20px; margin:0 0 56px; }
+.diagram-container { width:100%; min-width:0; overflow-x:auto; margin:0; }
+svg { display:block; width:100%; min-width:1280px; height:720px; }
+svg text { fill:var(--ink); font-family:var(--sans); }
+.diagram-title { font-size:28px; font-weight:500; letter-spacing:-.025em; }
+.node-name { font-size:12px; font-weight:600; }
+.group-name { font-size:14px; font-weight:600; }
+.annotation { font-size:11px; }
+.question { font-size:12px; }
+.command { font:9px var(--mono); }
+.tag,.node-tag { font:8px var(--mono); letter-spacing:.1em; }
+.arrow-label { font:8px var(--mono); letter-spacing:.06em; }
+.node-box { fill:var(--paper); stroke:var(--ink); stroke-width:1; }
+.focal .node-box { fill:var(--accent); stroke:var(--accent); }
+.focal text { fill:var(--ink-strong); }
+.focal .node-rule { stroke:rgba(26,23,21,.3); }
+.node-rule,.rule { stroke:var(--rule); stroke-width:1; }
+.connector { fill:none; stroke:var(--muted); stroke-width:1; }
+.route-root .node-box { fill:var(--accent-tint); stroke:var(--accent); }
+.route-group .node-box { fill:var(--paper-2); }
+.specialist-node .node-box { stroke-width:.8; }
+.mobile-hint { font-size:12px; color:var(--muted); margin:0 0 32px; }
+.text-guide { border-top:1px solid var(--rule); padding:28px 0 36px; }
+.text-guide h2 { font-size:28px; line-height:1.15; letter-spacing:-.03em; font-weight:500; margin:0 0 16px; }
+.text-guide p { max-width:760px; }
+dl { display:grid; grid-template-columns:200px 1fr; gap:10px 28px; margin:24px 0; }
+dt { font-weight:600; } dd { margin:0; max-width:720px; }
+details { border-top:1px solid var(--rule); padding:18px 0; }
+summary { cursor:pointer; font-weight:500; }
+pre { white-space:pre-wrap; overflow-wrap:anywhere; font:13px/1.65 var(--mono); padding:20px; background:var(--paper-2); color:var(--ink); }
+footer { border-top:1px solid var(--rule); padding-top:24px; font-size:12px; color:var(--muted); }
+@media(max-width:640px) { main { padding:20px; } h1 { margin-top:40px; } .intro { font-size:18px; margin-bottom:36px; } dl { display:block; } dt { margin-top:18px; } dd { margin-top:4px; } }
+@media print { .diagram-container { overflow:visible; } svg { min-width:0; height:auto; } main { padding:0; } details { break-inside:avoid; } }
+</style>
+</head>
+<body><main>
+<nav aria-label="Guide navigation"><span>Personal Skills / How to use</span><a href="../README.md">Readme + installation</a></nav>
+<h1>Choose the skill for your task.</h1>
+<p class="intro">Start where you need help. Use another skill if you still have a different question. Stop when the work you asked for is done.</p>
+<div class="diagram-container" tabindex="0" aria-label="Product-change workflow; scroll horizontally on narrow screens"><svg id="skills-workflow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" role="img" aria-labelledby="skills-workflow-title skills-workflow-desc">
+<title id="skills-workflow-title">Choose, plan, build, check.</title>
+<desc id="skills-workflow-desc">Strategic Gate helps choose the work, Shape System Work makes a plan, Ship Sound Code builds and tests it, and Lundy checks the result separately when needed.</desc>
+<defs>
+<marker id="skills-workflow-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#675540"/></marker>
+<marker id="skills-workflow-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#fd4319"/></marker>
+<marker id="skills-workflow-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#443218"/></marker>
+</defs>
+<rect width="1280" height="720" fill="#e6d9cc"/>
+<text x="64" y="64" class="tag" text-anchor="start">01 / ONE WAY TO USE THE SKILLS</text><text x="64" y="112" class="diagram-title" text-anchor="start">Choose, plan, build, check.</text><text x="64" y="144" class="annotation" text-anchor="start">Start where you need help. Stop when the work you asked for is done.</text><path d="M 240 220 V 216 Q 240 208 248 208 H 440 Q 448 208 448 216 V 220" class="connector" marker-end="url(#skills-workflow-arrow)" stroke-dasharray="5 4"/><path d="M 536 220 V 216 Q 536 208 544 208 H 736 Q 744 208 744 216 V 220" class="connector" marker-end="url(#skills-workflow-arrow)" stroke-dasharray="5 4"/><path d="M 832 220 V 216 Q 832 208 840 208 H 1032 Q 1040 208 1040 216 V 220" class="connector" marker-end="url(#skills-workflow-arrow)" stroke-dasharray="5 4"/><rect x="296" y="184" width="96" height="16" fill="#e6d9cc"/><text x="344" y="196" class="arrow-label" text-anchor="middle">PLAN NEEDED</text><rect x="592" y="184" width="96" height="16" fill="#e6d9cc"/><text x="640" y="196" class="arrow-label" text-anchor="middle">ASKED TO BUILD</text><rect x="888" y="184" width="96" height="16" fill="#e6d9cc"/><text x="936" y="196" class="arrow-label" text-anchor="middle">SECOND CHECK</text><a href="../skills/strategic-gate/SKILL.md"><g class="stage-node"><rect x="64" y="220" width="264" height="280" class="node-box"/><text x="88" y="252" class="node-tag" text-anchor="start">01 / CHOOSE</text><text x="88" y="292" class="node-name" text-anchor="start">Strategic Gate</text><text x="88" y="316" class="command" text-anchor="start">$strategic-gate</text><text x="88" y="360" class="question" text-anchor="start">What should we</text>
+<text x="88" y="380" class="question" text-anchor="start">work on next?</text><line x1="88" y1="404" x2="304" y2="404" class="node-rule"/><text x="88" y="428" class="node-tag" text-anchor="start">BRING</text><text x="88" y="448" class="annotation" text-anchor="start">Options + reasons to do them</text><text x="88" y="468" class="node-tag" text-anchor="start">LEAVE WITH</text><text x="88" y="488" class="annotation" text-anchor="start">Do it, wait, change it, or stop</text></g></a><a href="../skills/shape-system-work/SKILL.md"><g class="stage-node"><rect x="360" y="220" width="264" height="280" class="node-box"/><text x="384" y="252" class="node-tag" text-anchor="start">02 / PLAN</text><text x="384" y="292" class="node-name" text-anchor="start">Shape System Work</text><text x="384" y="316" class="command" text-anchor="start">$shape-system-work</text><text x="384" y="360" class="question" text-anchor="start">What should we</text>
+<text x="384" y="380" class="question" text-anchor="start">build first?</text><line x1="384" y1="404" x2="600" y2="404" class="node-rule"/><text x="384" y="428" class="node-tag" text-anchor="start">BRING</text><text x="384" y="448" class="annotation" text-anchor="start">Goal + what must stay the same</text><text x="384" y="468" class="node-tag" text-anchor="start">LEAVE WITH</text><text x="384" y="488" class="annotation" text-anchor="start">Plan + checks for success</text></g></a><a href="../skills/ship-sound-code/SKILL.md"><g class="stage-node focal"><rect x="656" y="220" width="264" height="280" class="node-box"/><text x="680" y="252" class="node-tag" text-anchor="start">03 / BUILD</text><text x="680" y="292" class="node-name" text-anchor="start">Ship Sound Code</text><text x="680" y="316" class="command" text-anchor="start">$ship-sound-code</text><text x="680" y="360" class="question" text-anchor="start">How do we build</text>
+<text x="680" y="380" class="question" text-anchor="start">the agreed change?</text><line x1="680" y1="404" x2="896" y2="404" class="node-rule"/><text x="680" y="428" class="node-tag" text-anchor="start">BRING</text><text x="680" y="448" class="annotation" text-anchor="start">Agreed change + request to build</text><text x="680" y="468" class="node-tag" text-anchor="start">LEAVE WITH</text><text x="680" y="488" class="annotation" text-anchor="start">Working code + test results</text></g></a><a href="../skills/lundy/SKILL.md"><g class="stage-node"><rect x="952" y="220" width="264" height="280" class="node-box"/><text x="976" y="252" class="node-tag" text-anchor="start">04 / CHECK</text><text x="976" y="292" class="node-name" text-anchor="start">Lundy</text><text x="976" y="316" class="command" text-anchor="start">$lundy</text><text x="976" y="360" class="question" text-anchor="start">Does the finished work</text>
+<text x="976" y="380" class="question" text-anchor="start">meet the requirements?</text><line x1="976" y1="404" x2="1192" y2="404" class="node-rule"/><text x="976" y="428" class="node-tag" text-anchor="start">BRING</text><text x="976" y="448" class="annotation" text-anchor="start">Requirements + code + test results</text><text x="976" y="468" class="node-tag" text-anchor="start">LEAVE WITH</text><text x="976" y="488" class="annotation" text-anchor="start">What passed + what needs work</text></g></a><line x1="64" y1="552" x2="1216" y2="552" class="rule"/><text x="64" y="588" class="group-name" text-anchor="start">Give the next skill the result from the previous step.</text><text x="64" y="620" class="annotation" text-anchor="start">If you already know what to build, start at Ship Sound Code. It builds and tests the change.</text><text x="64" y="644" class="annotation" text-anchor="start">Ask Lundy for a separate check when the existing checks do not prove an important result.</text><line x1="64" y1="676" x2="100" y2="676" class="connector" stroke-dasharray="5 4"/><text x="112" y="680" class="annotation" text-anchor="start">Use the next skill only if you need it. Say what you want it to do.</text></svg></div>
+<p class="mobile-hint">Scroll the diagram on a narrow screen. Select a skill name to open its instructions.</p>
+<section class="text-guide" aria-labelledby="workflow-context"><h2 id="workflow-context">Use the steps you need.</h2>
+<dl><dt>Strategic Gate</dt><dd>Choose what to work on. If you need a plan for the chosen work, ask Shape System Work.</dd>
+<dt>Shape System Work</dt><dd>Plan what to include and how to check that it works. Ask Ship Sound Code to build it when you agree with the plan.</dd>
+<dt>Ship Sound Code</dt><dd>Build and test the agreed change. Ask Lundy for a separate check when the existing checks do not prove an important result.</dd>
+<dt>Lundy</dt><dd>Compare the requirements with the code and test results. Say what passed, what is uncertain, and what to check next.</dd></dl></section>
+<div class="diagram-container" tabindex="0" aria-label="Specialist skill routes; scroll horizontally on narrow screens"><svg id="skills-specialists" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" role="img" aria-labelledby="skills-specialists-title skills-specialists-desc">
+<title id="skills-specialists-title">Find the skill for your task.</title>
+<desc id="skills-specialists-desc">Shark Tank checks business ideas, Laws of UX explains where users struggle, Intentional Design improves screens, Dexter checks code removal, Doakes checks agreed rules, and Clear Tactful Writing drafts messages.</desc>
+<defs>
+<marker id="skills-specialists-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#675540"/></marker>
+<marker id="skills-specialists-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#fd4319"/></marker>
+<marker id="skills-specialists-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#443218"/></marker>
+</defs>
+<rect width="1280" height="720" fill="#e6d9cc"/>
+<text x="64" y="64" class="tag" text-anchor="start">02 / SKILLS FOR OTHER TASKS</text><text x="64" y="112" class="diagram-title" text-anchor="start">Find the skill for your task.</text><path d="M 600 220 V 252 Q 600 260 592 260 H 352 Q 344 260 344 268 V 300" class="connector" marker-end="url(#skills-specialists-arrow)"/><path d="M 680 220 V 252 Q 680 260 688 260 H 928 Q 936 260 936 268 V 300" class="connector" marker-end="url(#skills-specialists-arrow)"/><rect x="436" y="236" width="72" height="16" fill="#e6d9cc"/><text x="472" y="248" class="arrow-label" text-anchor="middle">PRODUCT</text><rect x="760" y="236" width="96" height="16" fill="#e6d9cc"/><text x="808" y="248" class="arrow-label" text-anchor="middle">CODE &amp; WRITING</text><path d="M 276 364 V 412 Q 276 420 268 420 H 152 Q 144 420 144 428 V 480" class="connector" marker-end="url(#skills-specialists-arrow)"/><path d="M 344 364 V 480" class="connector" marker-end="url(#skills-specialists-arrow)"/><path d="M 412 364 V 412 Q 412 420 420 420 H 536 Q 544 420 544 428 V 480" class="connector" marker-end="url(#skills-specialists-arrow)"/><path d="M 868 364 V 412 Q 868 420 860 420 H 744 Q 736 420 736 428 V 480" class="connector" marker-end="url(#skills-specialists-arrow)"/><path d="M 936 364 V 480" class="connector" marker-end="url(#skills-specialists-arrow)"/><path d="M 1004 364 V 412 Q 1004 420 1012 420 H 1128 Q 1136 420 1136 428 V 480" class="connector" marker-end="url(#skills-specialists-arrow)"/><g class="route-root"><rect x="520" y="156" width="240" height="64" class="node-box"/><text x="544" y="184" class="group-name" text-anchor="start">What do you need help with?</text><text x="544" y="204" class="annotation" text-anchor="start">Choose a task below.</text></g><g class="route-group"><rect x="208" y="300" width="272" height="64" class="node-box"/><text x="232" y="328" class="group-name" text-anchor="start">Product &amp; design</text><text x="232" y="348" class="annotation" text-anchor="start">Business, user behavior, screens</text></g><g class="route-group"><rect x="800" y="300" width="272" height="64" class="node-box"/><text x="824" y="328" class="group-name" text-anchor="start">Code &amp; writing</text><text x="824" y="348" class="annotation" text-anchor="start">Code cleanup, rules, messages</text></g><a href="../skills/shark-tank/SKILL.md"><g class="specialist-node"><rect x="64" y="480" width="160" height="136" class="node-box"/><text x="76" y="508" class="node-name" text-anchor="start">Shark Tank</text><text x="76" y="552" class="command" text-anchor="start">$shark-tank</text><text x="76" y="580" class="annotation" text-anchor="start">Is this business</text>
+<text x="76" y="598" class="annotation" text-anchor="start">worth investing in?</text></g></a><a href="../skills/laws-of-ux/SKILL.md"><g class="specialist-node"><rect x="264" y="480" width="160" height="136" class="node-box"/><text x="276" y="508" class="node-name" text-anchor="start">Laws of UX</text><text x="276" y="552" class="command" text-anchor="start">$laws-of-ux</text><text x="276" y="580" class="annotation" text-anchor="start">Why is this</text>
+<text x="276" y="598" class="annotation" text-anchor="start">confusing to users?</text></g></a><a href="../skills/intentional-design/SKILL.md"><g class="specialist-node"><rect x="464" y="480" width="160" height="136" class="node-box"/><text x="476" y="508" class="node-name" text-anchor="start">Intentional Design</text><text x="476" y="552" class="command" text-anchor="start">$intentional-design</text><text x="476" y="580" class="annotation" text-anchor="start">How can we improve</text>
+<text x="476" y="598" class="annotation" text-anchor="start">this screen?</text></g></a><a href="../skills/dexter/SKILL.md"><g class="specialist-node"><rect x="656" y="480" width="160" height="136" class="node-box"/><text x="668" y="508" class="node-name" text-anchor="start">Dexter</text><text x="668" y="552" class="command" text-anchor="start">$dexter</text><text x="668" y="580" class="annotation" text-anchor="start">Can we safely</text>
+<text x="668" y="598" class="annotation" text-anchor="start">remove this code?</text></g></a><a href="../skills/doakes/SKILL.md"><g class="specialist-node"><rect x="856" y="480" width="160" height="136" class="node-box"/><text x="868" y="508" class="node-name" text-anchor="start">Doakes</text><text x="868" y="552" class="command" text-anchor="start">$doakes</text><text x="868" y="580" class="annotation" text-anchor="start">Does this change</text>
+<text x="868" y="598" class="annotation" text-anchor="start">follow our rules?</text></g></a><a href="../skills/clear-tactful-writing/SKILL.md"><g class="specialist-node"><rect x="1056" y="480" width="160" height="136" class="node-box"/><text x="1068" y="508" class="node-name" text-anchor="start">Clear Tactful</text>
+<text x="1068" y="524" class="node-name" text-anchor="start">Writing</text><text x="1068" y="552" class="command" text-anchor="start">$clear-tactful-writing</text><text x="1068" y="580" class="annotation" text-anchor="start">How should I</text>
+<text x="1068" y="598" class="annotation" text-anchor="start">word this message?</text></g></a><line x1="64" y1="648" x2="1216" y2="648" class="rule"/><text x="64" y="680" class="annotation" text-anchor="start">Choose the skill for your task. You do not need to use every skill.</text></svg></div>
+<p class="mobile-hint">Choose the skill that answers your question.</p>
+<section class="text-guide" aria-labelledby="specialist-context"><h2 id="specialist-context">Skills for other tasks.</h2>
+<dl><dt>Shark Tank</dt><dd>Check whether a business is worth pursuing or spending more money on.</dd>
+<dt>Laws of UX</dt><dd>Explain where users struggle, why, and how to test the explanation.</dd>
+<dt>Intentional Design</dt><dd>Improve a screen's layout and how it shows progress, success, or errors.</dd>
+<dt>Dexter</dt><dd>Find unused, repeated, or overly complicated code. Review first; remove code when asked.</dd>
+<dt>Doakes</dt><dd>Check whether the code follows the agreed plan and rules.</dd>
+<dt>Clear Tactful Writing</dt><dd>A Thai or English message needs a clear, natural draft. Sending is a separate action.</dd></dl></section>
+<section class="text-guide" aria-labelledby="prompt-examples"><h2 id="prompt-examples">Example requests.</h2><p>These examples show how to choose, plan, build, and check an admin-only invoice export. Open the request you need.</p><details><summary>Strategic Gate · choose</summary><pre>$strategic-gate
+I have five dev-days. Two customers need CSV export; an onboarding rewrite may help signups, but evidence is weak. What deserves this week?</pre></details><details><summary>Shape System Work · plan</summary><pre>$shape-system-work
+We have decided to add admin-only invoice export. Keep our login system and database. Plan the first version: what to include, what to leave out, who can use it, and how to check that it works. Planning only.</pre></details><details><summary>Ship Sound Code · build</summary><pre>$ship-sound-code
+Implement the accepted admin-only CSV export in this repo. Preserve existing permissions and export only invoices the admin can access. Verify rejection for non-admins. Don&#x27;t commit.</pre></details><details><summary>Lundy · check</summary><pre>$lundy
+The export is marked complete. Check whether only admins can use it, whether it includes only invoices they can access, and whether the CSV is valid. Review the code and test results separately; don&#x27;t edit.</pre></details></section>
+<footer>Design based on Optikka (optikka.com), checked on 2 October 2026: beige #e6d9cc, brown #443218, orange #fd4319, square corners, and large headings. Geist replaces the site's Neue Montreal font; commands use Geist Mono. <a href="skills-guide-design.md">Design notes and image files</a>.</footer>
+</main></body></html>
