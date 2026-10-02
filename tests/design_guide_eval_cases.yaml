@@ -1,0 +1,69 @@
+# Behavioural cases for task execution; no substring tests or claims of host-level invocation guarantees.
+skill: design-guide
+cases:
+  - id: new-system
+    setup: A brief identifies the audience, main action and target project, with style choice delegated and no existing visual system.
+    request: Choose an appropriate style and write practical design instructions for the builder.
+    assess:
+      - Selects one primary style from evidence and labels selection provenance.
+      - Resolves all six techniques and three to five concrete binding style rules.
+      - Produces DESIGN.md, concise guardrails and one scoped instruction pointer.
+      - Labels proposed tokens and components without claiming implementation or runtime verification.
+  - id: each-pinned-style
+    parameters:
+      style:
+        - Neoskeuomorphism
+        - Kinetic typography
+        - Intentional minimalism
+        - Editorial design
+        - Story-driven animation
+        - Human-made design
+        - Expressive design
+    setup: A clear brief pins the selected style and supplies the same content and main action.
+    request: Document this direction using the selected style; propose concrete design rules.
+    assess:
+      - Honours the pinned style and loads its relevant guide rather than defaulting to minimalism.
+      - Applies all six techniques with distinct project decisions.
+      - Carries the style's distinctive rules into concise builder guardrails.
+      - Preserves accessible, usable mobile and reduced-motion equivalents where applicable.
+  - id: ongoing-fix-without-docs
+    setup: A working component has coherent local tokens and a clipped mobile label, but no design documents.
+    request: Fix the label wrapping while preserving existing colours, typography and corners.
+    assess:
+      - Applies relevant design guidance to the authorised fix.
+      - Changes only the affected implementation and verifies proportionately.
+      - Does not require style selection, an interview, new variations or governance files.
+      - Reports unavailable rendered evidence as unverified.
+  - id: incumbent-documentation
+    setup: A coherent existing interface has Design.md, authored product facts and no depth treatment or animation.
+    request: Document the current system and add concise builder guardrails without redesigning it.
+    assess:
+      - Preserves code, product facts, the incumbent filename and visual identity.
+      - Records a missing technique honestly with a concrete advisory proposal and unresolved adoption.
+      - Keeps advisory alternatives out of binding implementation obligations.
+      - Maps observed rules to real sources and adds only one instruction pointer.
+  - id: read-only-review
+    setup: A page diverges from documented tokens and its reduced-motion state hides essential content.
+    request: Audit compliance and identify the smallest corrections; do not make changes.
+    assess:
+      - Reports rule, evidence, consequence and scoped correction.
+      - Leaves repository files and policy unchanged.
+      - Distinguishes source evidence from rendered checks and missing evidence.
+  - id: design-advice
+    request: How should expressive design differ between a festival landing page and its checkout?
+    assess:
+      - Answers directly without requiring a project target or writing files.
+      - Preserves a coherent identity while reducing competing expression around critical actions.
+      - Avoids unsupported demographic or conversion claims.
+  - id: other-medium
+    setup: A presentation task has an existing brand template and a format-specific skill controlling the deck workflow.
+    request: Improve the hierarchy and visual consistency of these slides.
+    assess:
+      - Contributes relevant design guidance while preserving template authority and specialist ownership.
+      - Does not create web design files, CSS tokens or a compulsory seven-style classification.
+      - Does not duplicate the active plan or ask again for settled approvals.
+  - id: internal-architecture
+    request: Design a database indexing strategy without changing any user-facing interface or experience.
+    assess:
+      - Does not start visual discovery or impose visual style requirements.
+      - Leaves the task to the relevant engineering workflow.

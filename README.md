@@ -9,7 +9,7 @@ The collection is designed as a small operating system for recurring work:
 - **Gate** whether work deserves attention before spending effort.
 - **Shape** ambiguous product or system work into a decision-ready direction.
 - **Challenge** weak assumptions, product drift, and unnecessary complexity.
-- **Design** purposeful interactions and diagnose or audit behavioural UX friction.
+- **Design** with consistent visual rules across planning, implementation and review; shape purposeful interactions and diagnose behavioural UX friction.
 - **Implement** accepted changes with proportionate engineering discipline.
 - **Validate** consequential completed work independently.
 - **Communicate** findings and decisions clearly.
@@ -38,12 +38,31 @@ Each directory under `skills/` is a portable skill package. Its directory name m
 | [`shark-tank`](skills/shark-tank/SKILL.md) | Business challenger | An early product or business idea needs evidence, sharper questions, commercial pressure-testing, and a realistic invest / test / pass judgement. |
 | [`shape-system-work`](skills/shape-system-work/SKILL.md) | System shaper | Product or architecture direction is still ambiguous and needs trade-offs resolved before implementation. |
 | [`doakes`](skills/doakes/SKILL.md) | Intent challenger | A request may be drifting from the project's core outcome or adding complexity without a strong reason. |
+| [`design-guide`](skills/design-guide/SKILL.md) | Visual direction and ongoing design guidance | Any task affects visual design or UX, including routine implementation, fixes, assets, reviews and visual work in other media. Reuse existing rules; establish a full system only when needed. |
 | [`intentional-design`](skills/intentional-design/SKILL.md) | Interaction designer | A product flow needs purposeful hierarchy, state, feedback, restrained delight, or behaviour-aware interaction design. |
 | [`laws-of-ux`](skills/laws-of-ux/SKILL.md) | Behavioural UX diagnostician & auditor | Use Diagnostic mode when behaviour could materially change a design decision. Use Audit mode to inspect a rendered UI or journey, surface 3–5 evidence-backed candidate laws, and reduce them to the 1–3 highest-value UX changes. The skill may also conclude that no law applies or evidence is insufficient. |
 | [`ship-sound-code`](skills/ship-sound-code/SKILL.md) | Implementation and engineering standards | A defined change needs proportionate implementation and verification, or a repository needs coding standards, concise guardrails and executable quality gates. Audit requests stay read-only unless fixes are authorised. |
 | [`dextor`](skills/dextor/SKILL.md) | Code-bloat investigator | Existing code may contain evidence-backed duplication, dead weight, or unnecessary complexity that should be investigated before removal. |
 | [`lundy`](skills/lundy/SKILL.md) | Independent validator | Consequential completed work needs an independent acceptance pass using focused validation agents. |
 | [`clear-tactful-writing`](skills/clear-tactful-writing/SKILL.md) | Communication | Facts, decisions, requests, or difficult messages need concise Thai or English wording with appropriate tact. |
+
+## Using Design Guide
+
+[Design Guide](skills/design-guide/SKILL.md) contributes design guidance throughout work with visual or UX impact. It works alongside Intentional Design for interaction decisions, Laws of UX for behavioural diagnosis, and Ship Sound Code or Impeccable for implementation. Companion skills are optional; each keeps ownership of its specialised work.
+
+- **Ongoing work:** reuse the current visual authority, tokens and components; review only affected rules and states. A small fix does not require an interview, a new style or new documentation.
+- **New or revised web/app system:** inspect the brief/repository, ask only material questions, select one primary style and resolve all six techniques. Write `DESIGN.md` and concise `DESIGN-GUARDRAILS.md`, preserving an incumbent filename such as `Design.md`, and add one project instruction pointer.
+- **Advice or audit:** answer or report evidence without changing files unless changes are requested. For documents, presentations and assets, follow that medium's conventions rather than forcing a web design system.
+
+The [seven detailed guides](skills/design-guide/references/styles.md) cover neoskeuomorphism, kinetic typography, intentional minimalism, editorial design, story-driven animation, human-made design and expressive design. Each includes typography, a meaningful focal element, visual rhyming, subtle depth, text emphasis and design variations, with responsive, interaction and review guidance. Existing absent treatments are recorded honestly rather than silently added.
+
+Example requests:
+
+- “Fix this mobile layout while preserving the current design.”
+- “Use editorial design for this site and write its design rules.”
+- “Audit this page against its design guardrails; do not change it.”
+
+Implicit invocation is enabled in the package for supporting hosts. Explicit invocation uses `$design-guide`. Invocation and enforcement still depend on the host and project workflow; Markdown alone does not install CI checks or guarantee every agent follows it.
 
 ## Design principles
 
