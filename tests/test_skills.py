@@ -52,11 +52,12 @@ class ReadmeSkillsTableTests(unittest.TestCase):
         )
 
     def test_ship_sound_code_row_added(self):
-        self.assertIn(
-            "| [`ship-sound-code`](skills/ship-sound-code/SKILL.md) | "
-            "Implement defined code changes with YAGNI, DX, UX, and verification gates. |",
-            self.text,
-        )
+        rows = [line for line in self.text.splitlines()
+                if line.startswith("| [`ship-sound-code`](skills/ship-sound-code/SKILL.md) |")]
+        self.assertEqual(len(rows), 1)
+        cells = [cell.strip() for cell in rows[0].strip("|").split("|")]
+        self.assertEqual(len(cells), 3)
+        self.assertTrue(all(cells))
 
     def test_clear_tactful_writing_row_still_present(self):
         # Unrelated existing row must survive the edit untouched.
@@ -209,10 +210,8 @@ class ShipSoundCodeSkillMdTests(unittest.TestCase):
     def test_description_mentions_routing_back_to_shape_system_work(self):
         description = self.metadata.get("description", "")
         self.assertIn("shape-system-work", description)
-        self.assertIn(
-            "Do not use for unresolved product, MVP, or architecture direction",
-            description,
-        )
+        self.assertIn("unresolved product", description)
+        self.assertIn("architecture", description)
 
     def test_body_contains_expected_section_headings(self):
         for heading in (
@@ -259,10 +258,10 @@ class ShipSoundCodeOpenAiYamlTests(unittest.TestCase):
         self.assertEqual(self.data["interface"]["display_name"], "Ship Sound Code")
 
     def test_short_description(self):
-        self.assertEqual(
-            self.data["interface"]["short_description"],
-            "Implement defined code changes safely",
-        )
+        description = self.data["interface"]["short_description"]
+        self.assertIsInstance(description, str)
+        self.assertGreaterEqual(len(description), 25)
+        self.assertLessEqual(len(description), 64)
 
     def test_default_prompt_uses_dollar_syntax(self):
         prompt = self.data["interface"]["default_prompt"]

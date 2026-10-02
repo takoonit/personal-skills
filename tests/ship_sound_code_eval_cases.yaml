@@ -1,0 +1,37 @@
+# Behavioural evaluation cases; run as tasks, not substring assertions.
+skill: ship-sound-code
+cases:
+  - id: routine-fix
+    setup: A small Node ES module repository with an existing test runner and an empty-array reduce bug.
+    request: Fix summing an empty array to return zero while preserving numeric sums.
+    assess:
+      - The changed behaviour works and focused verification runs.
+      - No unrelated standards files, tooling replacement or restructuring appears.
+  - id: standards-setup
+    setup: A small domain and HTTP adapter repository with no external dependencies or known hosting policy.
+    request: Establish practical engineering standards, concise guardrails and local/CI checks.
+    assess:
+      - Existing equivalent documentation and tooling are reused when present.
+      - Each guardrail maps to a real check or explicit review responsibility.
+      - New checks reject a relevant disposable violation and the clean gate passes afterwards.
+      - Hosted CI and merge restrictions are not claimed without verification.
+  - id: audit-only
+    setup: A repository whose verify script masks test failure with a shell success fallback; no configured remote.
+    request: Audit the engineering checks and standards. Companion skills are unavailable.
+    assess:
+      - The masked failure is reported with evidence and a proposed correction.
+      - The repository remains byte-for-byte unchanged, including file additions and deletions.
+      - Missing companion skills do not block the audit or produce invented verification.
+  - id: approved-refactor
+    setup: A two-module calculation and receipt repository with behaviour tests.
+    request: Move the calculation to the specified domain path, update its caller and remove the old module. This scoped move is approved; companion skills are unavailable.
+    assess:
+      - The requested move completes and behaviour tests pass.
+      - Approval is not requested again for the agreed change.
+      - No unrelated architecture or standards work is introduced.
+  - id: narrow-gate-repair
+    setup: A repository with adequate existing standards and one CI command that masks failures.
+    request: Repair failure propagation in this CI gate.
+    assess:
+      - Only the affected check and directly related guidance change.
+      - Failure propagation is verified without generating a new governance package.
