@@ -1,0 +1,48 @@
+{
+  "capture_id": "choices",
+  "tool": "playwright",
+  "phase": "after",
+  "outcome": "passed",
+  "environment": "local-fixture",
+  "url": "http://localhost:3005/REPLACE_WITH_APPROVED_CASE_URL",
+  "captured_at": "2026-10-20T00:00:00.000Z",
+  "git_head": "0000000000000000000000000000000000000000",
+  "locale": "en",
+  "timezone": "Asia/Bangkok",
+  "viewport": {
+    "width": 1440,
+    "height": 1000
+  },
+  "steps": [
+    "Opened the employee section",
+    "Opened Benefit Name",
+    "Applied plan and Search"
+  ],
+  "observed": "Replace with actual browser observation, data context and source-build evidence.",
+  "assertions": [
+    {
+      "expected": "Only employee-section plans appear",
+      "actual": "Replace with actual inspected options",
+      "passed": true
+    },
+    {
+      "expected": "Search filters the table correctly",
+      "actual": "Replace with observed table result",
+      "passed": true
+    }
+  ],
+  "artifacts": [
+    {
+      "kind": "screenshot",
+      "path": "/replace/with/after-dropdown.png"
+    },
+    {
+      "kind": "trace",
+      "path": "/replace/with/trace.zip"
+    },
+    {
+      "kind": "network",
+      "path": "/replace/with/network-summary.json"
+    }
+  ]
+}

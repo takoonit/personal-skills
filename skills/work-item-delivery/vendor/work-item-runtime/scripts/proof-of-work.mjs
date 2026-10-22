@@ -1,0 +1,199 @@
+#!/usr/bin/env node
+import { readFile, writeFile, mkdir, realpath, lstat, stat, access } from "node:fs/promises";
+import { constants } from "node:fs";
+import { createHash } from "node:crypto";
+import { dirname, resolve, relative, isAbsolute, sep, join } from "node:path";
+import { pathToFileURL } from "node:url";
+import { execFileSync } from "node:child_process";
+import { parseArgs } from "node:util";
+import { Delivery, validatePlan } from "../lib/delivery.mjs";
+import { parseTestReport } from "./test-report.mjs";
+
+const need=(condition,message)=>{if(!condition) throw new Error(message);};
+const text=value=>typeof value==="string"&&Boolean(value.trim());
+const sha=bytes=>createHash("sha256").update(bytes).digest("hex");
+const key=row=>JSON.stringify([row.unit,row.check]);
+const implemented=new Set(["implemented","verified","reviewed","published"]);
+const git=(path,...args)=>execFileSync("git",["-C",path,...args],{encoding:"utf8",stdio:["ignore","pipe","pipe"]}).trim();
+const array=(value,label)=>{need(Array.isArray(value),label+" must be an array");return value;};
+const unique=(rows,label)=>need(new Set(rows).size===rows.length,"Duplicate "+label);
+const md=value=>String(value).replace(/[\r\n]+/g," ").replace(/[<>|`]/g,char=>({"<":"&lt;",">":"&gt;","|":"\\|","`":"\\`"}[char]));
+
+async function inputs(run,repo,file) {
+  const ledgerPath=join(resolve(run),"delivery.json"),ledgerBytes=await readFile(ledgerPath);
+  const state=JSON.parse(ledgerBytes);validatePlan(state.plan);
+  const delivery=new Delivery(run);
+  await delivery.requireApproval(state);
+  const workspace=delivery.workspace(state,repo,{clean:true});
+  const units=state.plan.units.filter(unit=>unit.repo===repo);
+  need(!state.repos[repo].verification_running&&!units.some(unit=>state.units[unit.id].state==="active"),"Finish active verification/writers before gathering proof");
+  need(await delivery.dependenciesReady(state,units.filter(unit=>implemented.has(state.units[unit.id].state)),{certifyingRepo:repo}),"Dependency evidence is stale or blocked");
+  const scopeBytes=await readFile(file),scope=JSON.parse(scopeBytes);
+  need(scope.schema==="work-item-delivery.proof.v1"&&scope.repository===repo&&scope.plan_hash===state.plan_hash,"Proof scope schema/repository/plan mismatch");
+  need(["local","local-fixture","local-real-data"].includes(scope.environment),"Declare the local evidence environment");
+  const planned=units.flatMap(unit=>unit.checks.map(check=>({unit:unit.id,check:check.id,definition:check,case_ids:unit.case_ids})));
+  unique(planned.map(key),"approved check identity");
+  const mapped=array(scope.checks,"Scoped checks");unique(mapped.map(key),"scoped check identity");
+  need(mapped.length===planned.length&&mapped.length>0,"Scope must map every approved repository check");
+  for(const row of mapped) {
+    const expected=planned.find(check=>key(check)===key(row));
+    need(expected&&["unit","regression","blast-radius"].includes(row.kind)&&["tap","jest-json"].includes(row.format),"Unknown check/type/report format");
+    need(array(row.case_ids,"Check case IDs").length&&row.case_ids.every(id=>expected.case_ids.includes(id)),"Check has missing or foreign case IDs");
+    unique(row.case_ids,"mapped case ID");
+  }
+  if(scope.blast_radius) {
+    need(text(scope.blast_radius.fact),"Blast-radius safety fact is required");
+    const refs=array(scope.blast_radius.checks,"Blast-radius checks");unique(refs.map(key),"blast-radius check reference");
+    need(refs.every(row=>mapped.some(check=>key(row)===key(check))),"Blast-radius references unknown check");
+    for(const field of ["references","risks","cleared"]) need(array(scope.blast_radius[field],"Blast-radius "+field).every(text),"Invalid blast-radius prose");
+  }
+  const caseIds=[...new Set(units.flatMap(unit=>unit.case_ids))];
+  for(const row of array(scope.observations??[],"Observations")) {
+    need(caseIds.includes(row.case_id)&&["before","after"].includes(row.phase)&&row.environment===scope.environment&&text(row.expected)&&text(row.actual),"Invalid authored observation");
+    need(/^[a-f0-9]{40,64}$/.test(row.head),"Observation requires source commit identity");
+    git(workspace.path,"merge-base","--is-ancestor",row.head,workspace.head);
+    need(row.phase!=="after"||row.head===workspace.head,"After observation is for a stale source head");
+    await receipt(row.artifact,"Observation");
+    if(row.test) await receipt(row.test,"Observation test snapshot");
+  }
+  return {run,repo,file,ledgerPath,ledgerBytes,scopeBytes,state,delivery,workspace,units,planned,scope,caseIds};
+}
+
+async function receipt(record,label) {
+  need(record&&text(record.path)&&/^[a-f0-9]{64}$/.test(record.sha256),label+": invalid artifact receipt");
+  const path=await realpath(record.path),bytes=await readFile(path);
+  need(bytes.length&&sha(bytes)===record.sha256&&(record.bytes===undefined||record.bytes===bytes.length),label+": missing/changed artifact bytes");
+  return {path,sha256:record.sha256,bytes:bytes.length,content:bytes.toString("utf8")};
+}
+
+export async function collectProof(run,repo,file) {
+  const context=await inputs(run,repo,file);
+  const {state,scope,planned,units,workspace,caseIds}=context;
+  const verification=state.repos[repo].verification;
+  need(verification&&verification.head===workspace.head,"No verification for the current source head");
+  need(verification.source_unchanged===true,"Source changed while checks ran");
+  const expected=planned.filter(row=>implemented.has(state.units[row.unit].state));
+  const results=array(verification.results,"Verification results");unique(results.map(key),"executed check identity");
+  need(results.length===expected.length&&results.length>0&&results.every(row=>expected.some(check=>key(row)===key(check))),"Missing/unknown executed checks");
+  const checks=[];
+  for(const item of results) {
+    const plan=planned.find(row=>key(row)===key(item)),mapping=scope.checks.find(row=>key(row)===key(item));
+    const log=await receipt(item.evidence,"Check log");
+    const match=/^COMMAND ([^\n]+)\nEXIT ([^\n]+)\n/.exec(log.content);
+    need(match&&JSON.stringify(JSON.parse(match[1]))===JSON.stringify(plan.definition.argv)&&match[2]===String(item.exit_code),"Log command/exit contradicts approved check");
+    let report;
+    try {report=parseTestReport(log.content.slice(match[0].length),mapping.format);}
+    catch(error) {report={status:"INCOMPLETE",counts:null,reason:error.message};}
+    if(item.exit_code!==0) report.status="FAILED";
+    const {content,...evidence}=log;
+    checks.push({...mapping,argv:plan.definition.argv,purpose:plan.definition.purpose,exit_code:item.exit_code,report,evidence});
+  }
+  const gaps=[];
+  if(verification.passed!==true) gaps.push("Recorded verification did not pass");
+  for(const unit of units) if(!implemented.has(state.units[unit.id].state)) gaps.push("Unit "+unit.id+" is not implemented");
+  for(const blocker of state.blockers.filter(row=>!row.resolved&&row.units.some(id=>units.some(unit=>unit.id===id)))) gaps.push("Unresolved blocker "+blocker.id);
+  for(const check of checks) if(check.report.status!=="PASSED") gaps.push("Check "+check.unit+"/"+check.check+" is "+check.report.status);
+  for(const kind of ["unit","regression"]) if(!checks.some(row=>row.kind===kind&&row.report.status==="PASSED")) gaps.push("No passing "+kind+" test evidence");
+  const cases=caseIds.map(id=>{
+    const mapped=checks.filter(row=>row.case_ids.includes(id));
+    const passed=mapped.length>0&&mapped.every(row=>row.report.status==="PASSED");
+    if(!passed) gaps.push("Case "+id+" has incomplete authored check mapping/results");
+    return {id,checks:mapped.map(row=>({unit:row.unit,check:row.check})),status:passed?"MAPPED_CHECKS_PASSED":"INCOMPLETE"};
+  });
+  let blast_radius={status:"UNPROVEN",fact:null,checks:[],references:[],risks:[],cleared:[]};
+  if(scope.blast_radius) {
+    const supported=scope.blast_radius.checks.length>0&&scope.blast_radius.checks.every(ref=>checks.some(row=>key(row)===key(ref)&&row.report.status==="PASSED"));
+    blast_radius={...scope.blast_radius,status:supported?"SUPPORTED_BY_CHECKS":"UNPROVEN"};
+    if(!supported) gaps.push("Blast-radius safety fact remains unproven");
+  } else gaps.push("No blast-radius safety fact/check supplied");
+  const observations=[];
+  for(const row of scope.observations??[]) {
+    const {content,...artifact}=await receipt(row.artifact,"Observation");
+    let test;
+    if(row.test) {const {content,...value}=await receipt(row.test,"Observation test snapshot");test=value;}
+    observations.push({...row,artifact,...(test?{test}:{})});
+  }
+  const final=await inputs(run,repo,file);
+  need(final.ledgerBytes.equals(context.ledgerBytes)&&final.scopeBytes.equals(context.scopeBytes)&&final.workspace.head===workspace.head,"Evidence context changed during collection");
+  const index={schema:"work-item-delivery.proof-index.v1",status:gaps.length?"CHECKS_INCOMPLETE":"CHECKS_PASSED",work_item:state.plan.work_item,
+    repository:repo,workspace:workspace.path,head:workspace.head,plan_hash:state.plan_hash,environment:scope.environment,
+    input_sha256:{ledger:sha(context.ledgerBytes),scope:sha(context.scopeBytes)},checks,cases,blast_radius,observations,gaps,
+    limits:["Case mappings, safety facts and observations are authored; test quality/acceptance is not certified",
+      "Counts are observed runner results, not inferred assertions; skips/todos remain gaps",
+      "Local private artifacts are not uploaded PR attachments; review before sharing",
+      "SIT/deployment, real model execution and human consent provenance are not certified"]};
+  const markdown=renderProof(index);
+  index.draft_utf16_units=markdown.length;
+  return {index,outputs:{"evidence-index.json":Buffer.from(JSON.stringify(index,null,2)+"\n"),"proof-of-works.md":Buffer.from(markdown)}};
+}
+
+function renderProof(index) {
+  const lines=["## Proof of Works","",`Declared scope: ${md(index.environment)}. Tested source: \`${index.head}\`.`,
+    `Test execution: ${index.status}. Local evidence; SIT/deployment not verified.`,"",
+    "| Check | Type | Cases (authored) | Result | Runner counts |","| --- | --- | --- | --- | --- |"];
+  for(const row of index.checks) lines.push(`| ${row.unit}/${row.check} | ${row.kind} | ${row.case_ids.join(", ")} | ${row.report.status} | ${row.report.counts?Object.entries(row.report.counts).map(([key,value])=>key+"="+value).join(", "):"unavailable"} |`);
+  lines.push("","| Case | Test mapping (authored) | Execution |","| --- | --- | --- |");
+  for(const row of index.cases) lines.push(`| ${row.id} | ${row.checks.map(check=>check.unit+"/"+check.check).join(", ")||"none"} | ${row.status} |`);
+  lines.push("",`Blast-radius fact (authored): ${md(index.blast_radius.fact??"not supplied")}.`,
+    `Evidence: ${index.blast_radius.status} (${index.blast_radius.checks.map(row=>row.unit+"/"+row.check).join(", ")||"none"}).`,
+    `Observations (authored, artifact hashes checked): ${index.observations.filter(row=>row.phase==="before").length} before; ${index.observations.filter(row=>row.phase==="after").length} after.`,"",
+    "Gaps: "+(index.gaps.length?index.gaps.map(md).join("; "):"none in this recorded test-execution scope")+".","",
+    "Evidence index: [evidence-index.json](evidence-index.json), a private local file, not an uploaded attachment.",
+    "Behavioral quality, acceptance and authored observations require review. Missing before/after observations are not inferred from passing tests.","");
+  return lines.join("\n");
+}
+
+async function resolvedDestination(path) {
+  try {return await realpath(path);} catch(error) {if(error.code!=="ENOENT") throw error;return join(await resolvedDestination(dirname(path)),relative(dirname(path),path));}
+}
+
+async function preflightOutput(directory,state,execute,check) {
+  need(!(execute&&check),"--execute and --check are mutually exclusive");
+  const destination=await resolvedDestination(resolve(directory));
+  for(const root of [...state.plan.repositories.map(row=>row.path),...Object.values(state.repos).map(row=>row.path)]) {
+    const relation=relative(await realpath(root),destination);
+    need(relation!==""&&(relation===".."||relation.startsWith(".."+sep)||isAbsolute(relation)),"Keep proof outputs outside every product workspace");
+  }
+  let existing=0;
+  for(const name of ["evidence-index.json","proof-of-works.md"]) {
+    try {const info=await lstat(join(directory,name));need(info.isFile()&&!info.isSymbolicLink(),"Refusing non-file/symlink output");existing++;}
+    catch(error) {if(error.code!=="ENOENT") throw error;}
+  }
+  need(existing===0||existing===2,"Partial bundle exists; preserve it and choose a new output directory");
+  need(!execute||existing===0,"Choose a fresh output directory before --execute");
+  if(execute) {
+    let parent=destination;
+    for(;;) {
+      try {need((await stat(parent)).isDirectory(),"Output parent must be a directory");await access(parent,constants.W_OK|constants.X_OK);break;}
+      catch(error) {if(error.code!=="ENOENT") throw error;parent=dirname(parent);}
+    }
+  }
+}
+
+export async function writeProof(outputs,directory,check=false) {
+  for(const [name,bytes] of Object.entries(outputs)) {
+    try {const info=await lstat(join(directory,name));need(info.isFile()&&!info.isSymbolicLink(),"Refusing non-file/symlink output");need((await readFile(join(directory,name))).equals(bytes),"Output differs; inspect it or choose a new output directory: "+name);}
+    catch(error) {if(error.code!=="ENOENT") throw error;need(!check,"Required proof output missing: "+name);}
+  }
+  if(!check) {
+    await mkdir(directory,{recursive:true,mode:0o700});
+    for(const [name,bytes] of Object.entries(outputs)) {
+      try {await writeFile(join(directory,name),bytes,{flag:"wx",mode:0o600});}
+      catch(error) {if(error.code!=="EEXIST"||!(await readFile(join(directory,name))).equals(bytes)) throw error;}
+    }
+  }
+}
+
+if(process.argv[1]&&import.meta.url===pathToFileURL(resolve(process.argv[1])).href) {
+  try {
+    const {values:v}=parseArgs({options:{run:{type:"string"},repo:{type:"string"},file:{type:"string"},out:{type:"string"},execute:{type:"boolean"},check:{type:"boolean"}}});
+    need(v.run&&v.repo&&v.file&&v.out,"Required: --run RUN --repo REPO --file SCOPE --out OUTPUT");
+    const context=await inputs(v.run,v.repo,v.file);
+    await preflightOutput(v.out,context.state,v.execute,v.check);
+    if(v.execute) await new Delivery(v.run).verify(v.repo);
+    const result=await collectProof(v.run,v.repo,v.file);
+    await writeProof(result.outputs,v.out,v.check);
+    console.log(JSON.stringify({status:result.index.status,head:result.index.head,checks:result.index.checks.length,gaps:result.index.gaps,out:resolve(v.out)}));
+    if(result.index.status!=="CHECKS_PASSED") process.exitCode=1;
+  } catch(error) {console.error("INCOMPLETE: "+error.message);process.exitCode=1;}
+}

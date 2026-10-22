@@ -1,0 +1,16 @@
+{
+  "name": "work-item-delivery",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "work-item-delivery": "bin/wid.mjs"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "check": "node --check lib/delivery.mjs && node --check lib/evidence.mjs && node --check lib/cursor-workflow.mjs && node --check bin/wid.mjs"
+  }
+}

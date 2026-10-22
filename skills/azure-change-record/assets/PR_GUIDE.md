@@ -197,7 +197,7 @@ stateDiagram-v2
 
 ## 8. Worked example
 
-Full change record: [`docs/changes/EXAMPLE-2026-10-15-412-payment-idempotency.md`](changes/EXAMPLE-2026-10-15-412-payment-idempotency.md)
+Full illustrative change record: [`EXAMPLE-2026-10-15-412-payment-idempotency.md`](EXAMPLE-2026-10-15-412-payment-idempotency.md)
 
 ### PR description
 

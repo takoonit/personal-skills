@@ -1,6 +1,6 @@
 interface:
   display_name: "azure-pr-format"
-  short_description: "Preserve the full Azure PR documentation conventions"
+  short_description: "Apply the three-section team PR format"
   default_prompt: "Use $azure-pr-format to apply my full documentation format."
 policy:
   allow_implicit_invocation: true

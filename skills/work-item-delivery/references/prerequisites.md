@@ -1,0 +1,24 @@
+# Prerequisites
+
+The included skills are `work-item-delivery`, `work-item-start-safety`, `proof-of-work`, `azure-pr-format`, `azure-pr-write`, `azure-pr-review`, `azure-commit-message` and `azure-change-record`. The setup installer installs these together; the two thin entry skills depend on the canonical implementations inside the delivery package's vendored runtime.
+
+| Requirement | Source and setup | Verification boundary |
+| --- | --- | --- |
+| Git, Node 22+ and Python 3 | Install through your platform's normal package manager; use a current supported Node 22 or 24 release. No npm packages are required by the runtime. | Installed launcher and actual offline tests must run. Node needs `node:sqlite`; an old Node 22 minor may lack it. |
+| Bash on Linux/WSL | Run the setup script from that environment. | Native Windows execution is not tested; Windows agents invoke the Linux runtime through WSL. |
+| pstack | [Upstream installation](https://github.com/michael-denyer/pstack-claude#codex), [runtime reference](https://github.com/michael-denyer/pstack-claude/blob/main/docs/reference.md). Inspected local version: **0.9.101**. Install the complete plugin so relative principle/agent references remain intact. | Confirm actual session skill loading, native delegation, available models and optional hook trust. A cached folder is not sufficient. |
+| Matt Pocock skills | [Upstream installation](https://github.com/mattpocock/skills#installation-30-second-setup). Inspected local version: **1.3.1**. | Require `to-spec` and `wizard`; `to-spec` existed on disk but was absent from one author's active skill catalog. Resolve discovery before that stage. |
+| Azure DevOps read/write capability | Configure the current host's connector or official MCP server and authenticate through its supported login. | Read the actual Work Item/revision and repository metadata. Publishing needs its separate exact-content approval. No connector, token or credentials are bundled. |
+| Business specifications and knowledge | Connect the sources linked by the Work Item. For Obsidian, [claude-obsidian](https://github.com/AgriciDaniel/claude-obsidian) version **3.0.1** supplied `wiki-query` and `think` in the inspected setup. | Read versioned primary requirements; record missing/inapplicable sources in the plan rather than inventing citations. |
+| Browser/capture driver | Configure the host's supported Playwright/browser tools and the actual local app/test data. | Required for affected UI cases. A login page, mock unrelated app or screenshot alone cannot certify the complete case. |
+| Java or Docker, optional formal guard check | The checker downloads checksum-pinned TLA+ tools 1.7.4; its fallback container is digest-pinned. | `python3 .agents/skills/work-item-start-safety/scripts/check.py` from the installed runtime. Network is needed for an uncached tool/image download. |
+
+For pstack, the workflow directly uses: `poteto-mode`, `setup-pstack`, `how`, `why`, `teach`, `architect`, `arena`, `interrogate`, `figure-it-out`, `show-me-your-work`, `swarm`, `tdd`, `deslop`, `blast-radius`, `create-formal-verification-skill`, and the build-the-lever, fix-root-causes, guard-the-context-window, prove-it-works and test-behavior-not-implementation principles. Keep the complete upstream package because those skills invoke further shared references.
+
+Use the upstream commands appropriate to the host. Their current documentation lists Codex plugin commands, but an inspected local Codex CLI did not expose a `plugin` subcommand. Do not run unsupported commands or invent UI controls; use the host's supported plugin path or upgrade it, then verify a new session. Skills-only installs do not include automatic routing hooks. Installing both native and copied versions may duplicate skills.
+
+The versions above identify inspected sources, not a guarantee that a plugin manager installs those exact versions. Upstream plugins update independently. Recheck the required capabilities after updates; the workflow's existing review gates still apply. The setup script never installs credentials, creates CI secrets, grants data access or approves product work.
+
+Model configuration belongs to `pstack:setup-pstack` and the current host. Required design rows include `architect runners`, `arena cross-judge pool` and `interrogate reviewers`; swarm uses `swarm workers`. Choose only models actually available to the account, with effort and concurrency appropriate to the task. Independent review remains required where the workflow says so; unavailable reviewers remain a gap.
+
+The bundled orchestration store retains its original MIT license and provenance under `vendor/work-item-runtime/vendor/pstack/`. The setup wizard preserves the Matt Pocock wizard library, with LF line endings, and its MIT notice under `licenses/`. No external plugin skill tree or private run evidence is redistributed.

@@ -1,0 +1,24 @@
+{
+  "tracker": {
+    "provider": "azure-devops",
+    "organization": "REPLACE_WITH_ORGANIZATION",
+    "project": "REPLACE_WITH_PROJECT"
+  },
+  "repositories": {},
+  "default_target_ref": "origin/main",
+  "branch_prefixes": {
+    "Bug": "fix/"
+  },
+  "default_pr_grouping": "one-per-repo",
+  "default_execution": "plan-then-approved-execution",
+  "runtime": "local",
+  "knowledge": {
+    "vault": "",
+    "confluence_site": ""
+  },
+  "browser_evidence": {
+    "tool": "playwright",
+    "scope": "Actual local app/component; explicit fixture or real-data scope"
+  },
+  "note": "Public discovery example. Setup renders local organization/project values only in the installed copy. Verify all repository refs, policies and access for each real plan."
+}

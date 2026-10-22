@@ -1,0 +1,15 @@
+{
+  "action": "create",
+  "url": "https://dev.azure.com/ORG/PROJECT/_apis/git/repositories/REPO_ID/pullRequests",
+  "repository_id": "REPLACE_WITH_VERIFIED_REPOSITORY_ID",
+  "title": "REPLACE_WITH_REVIEWED_OWNING_WORK_ITEM_OUTCOME",
+  "description": "## What Happened\n\nREPLACE_WITH_REVIEWED_CASE_COVERAGE\n\n## Insight\n\nREPLACE_WITH_SUPPORTED_FLOW_AND_FIX\n\n## Proof of Works\n\nREPLACE_WITH_ACTUAL_OR_ATTRIBUTED_EVIDENCE",
+  "head": "REPLACE_WITH_CURRENT_VERIFIED_AND_REVIEWED_SHA",
+  "source_branch": "codex/100-employee-history",
+  "target_branch": "develop",
+  "is_draft": true,
+  "work_item_ids": ["100", "101"],
+  "attachments": [
+    { "name": "evidence.zip", "path": "/replace/with/approved-evidence.zip" }
+  ]
+}

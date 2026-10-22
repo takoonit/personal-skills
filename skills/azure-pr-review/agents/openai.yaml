@@ -1,6 +1,6 @@
 interface:
   display_name: "Review Azure PR documentation"
-  short_description: "Check PR reasoning, diagrams, and test evidence"
+  short_description: "Check PR flow, anti-patterns and evidence"
   default_prompt: "Use $azure-pr-review for this Azure DevOps PR and apply the documentation rules."
 policy:
   allow_implicit_invocation: true

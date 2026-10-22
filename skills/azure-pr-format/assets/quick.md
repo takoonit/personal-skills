@@ -1,23 +1,11 @@
-## 📌 TL;DR
+## What Happened
 
->
+[Small change, purpose, affected area and requirement link when available.]
 
-**Type:** chore / docs / deps · **Work item:** #  · **Risk:** 🟢 Low
+## Insight
 
-## 🟦 Why
+[What changes and why; explain the relevant flow without a file inventory.]
 
-- 🔵
+## Proof of Works
 
-## 🟩 Changes
-
-- ✅
-
-## 🟨 Test
-
-- ⏳ Not run — reason: · ⬜ Manual check:
-
-**Change record:** n/a — reason:
-
----
-
-Use this only for small, low-risk changes. Anything that changes behaviour uses the default template and a change record.
+- ⏳ Not run — [reason; replace only with actual or attributed checks].

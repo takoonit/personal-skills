@@ -1,6 +1,6 @@
 interface:
   display_name: "Write Azure PR documentation"
-  short_description: "Write concise PRs with reasoning and evidence"
+  short_description: "Write PR behavior flow and honest evidence"
   default_prompt: "Use $azure-pr-write for this Azure DevOps PR and apply the documentation rules."
 policy:
   allow_implicit_invocation: true
