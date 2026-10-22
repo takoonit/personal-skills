@@ -12,6 +12,16 @@ For each case, model **actor → trigger → preconditions → user action → b
 
 In v2 JSON, `knowledge.second_brain` and `knowledge.confluence` record `status` (`read` or `gap`), `query`, `summary`, `source_refs`, plus `gap` when applicable. Sources identify their provider with `kind: "second_brain"` or `"confluence"`. `knowledge.business_flows[]` contains `id`, `case_ids`, `actor`, `trigger`, `preconditions`, `steps[{action,business_rule,source_refs}]`, and `outcome`. Every case needs a cited flow. Gaps are visible planning inputs: block conclusions that need missing evidence, rather than manufacturing a citation or blocking unrelated cases.
 
+## Keep business questions within the ticket
+
+Use the ticket's explicit acceptance and the user's latest approved scope for the affected flow. Compare rules for the same actor, trigger and state before calling sources contradictory. A creation grant and a termination recalculation can have different rules; that difference alone does not require reconfirming the termination requirement or changing creation.
+
+Before raising a business question as a blocker, identify the exact missing or conflicting in-scope decision and explain why the approved fix or its verification cannot proceed without the answer. If the ticket already specifies the result and the fix can preserve other flows, retain broader lifecycle questions as impact notes or separate follow-up work. Investigate a concrete regression on its evidence; do not turn an unproved concern into new acceptance criteria.
+
+Assess review concerns against this scope test rather than copying them wholesale into mandatory plan amendments. A user-requested scope change or release condition still applies, but later user clarification supersedes an earlier hold. Reconcile stale blockers with the ticket and current instruction instead of asking the user to approve the same requirement again.
+
+Historical-data repair, test-data patches, new settlement rules and QA-owned SIT are separate obligations unless explicitly part of the approved delivery or an enforced repository policy. Their absence is not proof that the scoped code fix lacks a business requirement.
+
 ## Plan and capture observable evidence
 
 Use the available Playwright skill and its actual installed runtime. Detect configured dev ports as well as defaults; identify the application before interacting with it. An unrelated server is not the requested app. Run the relevant build locally for screenshots. The runtime requires a loopback URL and an explicit local-fixture/local-real-data/local scope; Use the actual repository app/components, not a separate unrelated prototype prototype or remote screenshot target. Start the isolated local baseline/fixed app or the actual-component harness when needed, then use its source build, role, locale/timezone and suitable employee/test dataset. Reuse an authorized session through supported browser tooling; if access or a test person is missing, record the blocker and keep other investigations moving.

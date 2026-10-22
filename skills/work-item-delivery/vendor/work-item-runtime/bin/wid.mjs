@@ -10,7 +10,7 @@ const help = `work-item-delivery <command> --run <directory> [options]
 intake                 Preserve an exact source snapshot: --file --url --revision
 init                   Initialize from --file <plan.json>
 status / next          Show ready units, blockers, repo publication holds
-cursor                 Print the one next Cursor action; human hooks are not agent-resumable
+cursor                 Print the next action; reuse approval and check only new blockers
 plan                   Render the case/spec/task/dependency plan as Markdown
 approve-plan           Record human approval: --hash --evidence
 replan                 Replace scope/baseline from --file; branch rename also needs --evidence; invalidates approval
@@ -26,6 +26,9 @@ review                 Ingest standards/specification reports: --repo --file
 stage-publication      Freeze exact PR payload and attachments: --repo --file
 approve-publication    Record human approval: --repo --hash --evidence
 published              Verify direct PR read-back: --repo --file
+approve-action         Record approval already given for publish/approve-and-merge: --repo --file --evidence
+check-action           Record one live check for new blockers: --repo --file
+action-completed       Record the authorized action's direct read-back: --repo --file
 
 Local runtime bookkeeping only, except verify runs the approved command argv.
 Forge reads/writes and Git changes are performed by the agent through its tools.
@@ -253,6 +256,15 @@ try {
       break;
     case "approve-publication":
       result = await run.approvePublication(v.repo, v.hash, v.evidence);
+      break;
+    case "approve-action":
+      result = await run.approveAction(v.repo, v.file, v.evidence);
+      break;
+    case "check-action":
+      result = await run.checkAction(v.repo, v.file);
+      break;
+    case "action-completed":
+      result = await run.completeAction(v.repo, v.file);
       break;
     case "published":
       result = await run.published(v.repo, v.file);

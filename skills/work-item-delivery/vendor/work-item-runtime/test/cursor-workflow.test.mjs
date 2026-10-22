@@ -18,6 +18,44 @@ test("a missing plan stays in intake", () => {
   assert.equal(nextCursorAction({}).action, "intake");
 });
 
+test("an explicitly approved action checks only new blockers before execution", () => {
+  const status = {
+    plan_hash: "abc",
+    approved: true,
+    units: [{ id: "A", repo: "be", state: "blocked" }],
+    publication: [repo({ verification: "failed", review: "not-run" })],
+    approved_actions: [{ repo: "be", operation: "approve-and-merge", phase: "preflight" }],
+  };
+  assert.equal(nextCursorAction(status).action, "check-new-blockers");
+  status.approved_actions[0].phase = "ready";
+  assert.equal(nextCursorAction(status).action, "execute-approved-action");
+  status.approved_actions[0].phase = "blocked";
+  status.approved_actions[0].blockers = [{ reason: "New required CI failure" }];
+  const blocked = nextCursorAction(status);
+  assert.equal(blocked.action, "blocked");
+  assert.deepEqual(blocked.blockers, status.approved_actions[0].blockers);
+});
+
+test("recorded action approval is not replaced by a stale plan approval prompt", () => {
+  const action = nextCursorAction({
+    plan_hash: "abc",
+    approved: false,
+    approved_actions: [{ repo: "be", operation: "publish", phase: "ready" }],
+  });
+  assert.equal(action.action, "execute-approved-action");
+});
+
+test("completed authorized work reports instead of restarting old gates", () => {
+  const action = nextCursorAction({
+    plan_hash: "abc",
+    approved: false,
+    units: [{ id: "A", repo: "be", state: "blocked" }],
+    publication: [repo({ verification: "failed", review: "not-run" })],
+    approved_actions: [{ repo: "be", operation: "approve-and-merge", phase: "completed" }],
+  });
+  assert.equal(action.action, "report");
+});
+
 test("plan approval is a human stop", () => {
   const action = nextCursorAction({ plan_hash: "abc", approved: false, ready_to_implement: [{ id: "A", repo: "be" }] });
   assert.deepEqual(

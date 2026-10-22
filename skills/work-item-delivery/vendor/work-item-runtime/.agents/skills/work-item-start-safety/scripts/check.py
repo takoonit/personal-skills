@@ -28,8 +28,8 @@ def run(command, root, log):
 def tests(root, names, log):
     pattern = "^(?:" + "|".join(re.escape(name) for name in names) + ")$"
     return run(["node", "--test", "--test-reporter=tap", "--test-concurrency=1",
-                "--test-name-pattern", pattern, "test/delivery.test.mjs",
-                "test/cursor-workflow.test.mjs", SELF_TEST_FILE], root, log)
+                "--test-name-pattern", pattern,
+                *map(str, sorted((root / "test").glob("*.test.mjs"))), SELF_TEST_FILE], root, log)
 
 
 def require_tests(result, names):
@@ -91,17 +91,17 @@ def main():
 
     if args.self_test:
         mutations = [
-            ("approval", "lib/delivery.mjs", "async start(unit, owner)", "  brief(",
+            ("approval", "lib/delivery-execution.mjs", "async start(unit, owner)", "  brief(",
              "await this.requireApproval(s);", "",
              "source snapshots are bound to the approved plan content", "Missing expected rejection"),
-            ("readiness", "lib/delivery.mjs", "async start(unit, owner)", "  brief(",
+            ("readiness", "lib/delivery-execution.mjs", "async start(unit, owner)", "  brief(",
              "assert(ready.ready, JSON.stringify(ready));", "",
              "missing before capture holds only affected UI work; real artifact receipt unlocks it", "Missing expected rejection"),
-            ("workspace", "lib/delivery.mjs", "async start(unit, owner)", "  brief(",
+            ("workspace", "lib/delivery-execution.mjs", "async start(unit, owner)", "  brief(",
              "const w = this.workspace(s, u.repo, { clean: true });",
              "const w = this.workspace(s, u.repo, { clean: false });",
              "execution starts clean without discarding existing tracked or untracked work", "Missing expected rejection"),
-            ("writer", "lib/delivery.mjs", "async readiness(s, u)", "async summarize(s)",
+            ("writer", "lib/delivery-readiness.mjs", "async readiness(s, u)", "async summarize(s)",
              's.units[v.id].state === "active"', 's.units[v.id].state === "never-active"',
              "only one writer per repo, while another repo can progress", "Missing expected rejection"),
             ("adviser", "lib/cursor-workflow.mjs", "export function nextCursorAction", None,

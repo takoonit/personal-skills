@@ -21,9 +21,11 @@ An unrelated connector's cancelled call does not establish the configured MCP se
 
 Use Azure DevOps operations rather than GitHub or Cursor-only forge commands. If direct source access remains missing, record the affected conclusions and required source/access while progressing independent work. MCP availability does not authorize tracker changes or PR publication; retain the existing exact-content approval gates.
 
-After `init`, Cursor's next step is whatever `work-item-delivery cursor --run RUN` prints. That command only reads the ledger. It does not approve a plan, create a branch, or call Azure DevOps. `await-human` stops the turn until the user decides.
+After `init`, Cursor's next step is whatever `work-item-delivery cursor --run RUN` prints, subject to [Approval to action](playbook.md#approval-to-action). That command only reads the ledger. It does not approve a plan, create a branch, or call Azure DevOps. `await-human` stops the turn only while the required user decision is missing; record an approval already given instead of requesting it again.
 
-A single agent can perform the complete workflow sequentially. Subagents are not a runtime requirement and are never spawned by the CLI. Keep the session's existing model configuration unless the user specifies otherwise. The active user/repo instructions override upstream pstack's cloud placement, automatic landing or gate-default assumptions.
+A single agent can perform the complete workflow sequentially. Subagents are not a runtime requirement and are never spawned by the CLI. Keep the session's existing model configuration unless the user specifies otherwise. The active user/repo instructions and this workflow's approval-to-action rule override upstream pstack's cloud placement, automatic landing and gate-default assumptions, including another shipping verifier after the user has accepted completed review.
+
+The approved-action runtime returns `check-new-blockers`, then `execute-approved-action` once the live preflight is clear. Use `approve-action` only to record the user's existing decision, not to ask again. Normalize actual forge responses into `check-action`; execute the returned request natively under its expected source-head condition, then retain direct read-back with `action-completed`. Unknown or failed reads are not empty checks. Completed reviews and legacy publication approvals remain accepted; missing legacy certification is never relabelled as passed.
 
 ## Normalizing a direct Azure PR read-back
 

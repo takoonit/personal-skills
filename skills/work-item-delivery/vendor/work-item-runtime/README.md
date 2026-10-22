@@ -16,6 +16,8 @@ The default is one approved branch and one grouped PR per affected repository, i
 
 The runtime coordinates agents; it is not a background daemon. It does not choose models, spawn cloud agents, change Git, call tracker write APIs, merge, deploy or schedule later work. The active agent uses its authenticated tools for those separately authorized steps. `verify` actually executes the exact command argv approved in the plan and retains exit codes and logs.
 
+Once reviewed work is approved and the user says go ahead, [check for new blockers and execute](docs/playbook.md#approval-to-action). Reuse completed reviews, including review confirmed by the user; do not add another panel, shipping verifier or approval gate. Clear ticket acceptance governs the scoped defect. Differences in other lifecycle flows do not automatically require reconfirmation or expand the fix into data repair or QA-owned SIT.
+
 ## Install and run
 
 Requires Node 22+ and Git. There are no npm dependencies. WSL is the tested runtime on this machine; native Windows execution has not been tested.
@@ -65,6 +67,25 @@ Publication packages bind the repository, source/target, source SHA, title, comp
 Human approval is evidenced by the actual user message or reviewed artifact, then recorded with its hash. The CLI binds bytes and records that decision; it cannot authenticate who wrote an approval file. Agents must never generate their own approval or infer one from elapsed time. Work Item field/comment/link mutations require their own exact-content review under the project instructions. A plan containing hyperlinks does not write links into Azure DevOps.
 
 External writes use the session's real connectors. The runtime verifies the supplied read-back; it does not independently fetch Azure DevOps. Once recorded, a PR's URL/repository identity survives re-verification and replanning; subsequent publication must update that same PR. After an uncertain create response, read/search the current PR state before retrying. Preserve unrelated PR metadata. Publishing a PR is separate from merging or deployment.
+
+## Execute already-approved work
+
+After the user confirms review and says go ahead, record that actual instruction and use the approved-action path. It does not request another approval or run another review. Existing `approve-publication` receipts are reused automatically.
+
+```sh
+work-item-delivery approve-action --run RUN --repo backend --file /absolute/action.json --evidence /absolute/existing-user-instruction.txt
+work-item-delivery cursor --run RUN
+# Read live forge state once; retain its responses and normalize that observation.
+work-item-delivery check-action --run RUN --repo backend --file /absolute/live-preflight.json
+# If ready, the agent executes the returned request through its authenticated forge tools.
+work-item-delivery action-completed --run RUN --repo backend --file /absolute/direct-readback.json
+```
+
+[Action](templates/approved-action.example.json) and [preflight](templates/action-preflight.example.json) examples contain fictional placeholders; replace every value with the approved PR and directly read live state. `operation` is `publish` or `approve-and-merge`. Publish requests also carry `action: create|update`, title, full description, work-item IDs and attachment paths. Draft defaults to false; an explicitly requested Draft remains true.
+
+Preflight records are fresh for five minutes. Checks use `{id, required, state}` with state `passed|failed|pending|not-applicable|unknown`; comments use `{id, blocking, resolved}`. Other concrete new blockers use `{id, reason}`. Empty arrays mean none were reported, not that CI passed. Merge observations require an active, mergeable PR. Unknown data, changed remote head/identity, changed approved assets, new runtime blockers and unresolved required checks stop execution while preserving approval. Unrelated local checkout/worktree changes and target advancement alone do not restart review; native merge must use the returned `expected_head` condition and enforce repository policies. An invalid refresh replaces an older clean result.
+
+For merges, normalize read-back as `status: completed`, `approved: true`, `merge_commit` and the approved PR/repository/branches/head. Confirm the commit is present on the fetched destination. Publish read-back retains the existing exact fields and remote attachment manifest. Completion is recorded separately from legacy test/review certification, so this path never manufactures missing receipts or changes initial plan-before-code requirements. The runtime remains local: the active agent performs forge reads/writes and stops the babysitter after verified completion.
 
 ## Durable state and ownership
 

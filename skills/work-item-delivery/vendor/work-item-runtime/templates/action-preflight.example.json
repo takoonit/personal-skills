@@ -1,0 +1,13 @@
+{
+  "observed_at": "REPLACE_WITH_LIVE_UTC_TIMESTAMP",
+  "repository_id": "REPLACE_WITH_REPOSITORY_ID",
+  "head": "0000000000000000000000000000000000000000",
+  "source_branch": "fix/100-example",
+  "target_branch": "develop",
+  "pr_url": "https://dev.azure.com/ORG/PROJECT/_git/REPO/pullrequest/100",
+  "status": "active",
+  "mergeable": true,
+  "checks": [],
+  "comments": [],
+  "blockers": []
+}

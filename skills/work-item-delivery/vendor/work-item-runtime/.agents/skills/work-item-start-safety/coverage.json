@@ -1,21 +1,36 @@
 {
   "baseline": {
-    "git_commit": "3ef7c10f3e511731a32916051491000f0384c08e",
-    "reason": "Adapted public export; source also contained untracked runtime. Packaged file hashes below identify this snapshot."
+    "git_commit": "35bf7b4b86bf28f1ccec1d2e62f670fc69261b62",
+    "reason": "Portable export of the committed workflow. File hashes include the module split; implementation admission rules remain unchanged."
   },
   "files": {
-    "lib/delivery.mjs": "6ffd5b638dcd91dc3f34f8b3ea8d730c53d7e4404d1d810fbd16b324081c9a45",
+    "lib/delivery.mjs": "4de232d8d584e6a98344448c5baa2de2b48ce059ad450d2a8f10acc8414bcba6",
     "lib/evidence.mjs": "20d2f23405aadc5f9664648216735a5698a6fb773e04ade0f750453e23876e50",
-    "lib/cursor-workflow.mjs": "180424b3ca3f8f354bbdeb37722ef265c34149b58a34580c69feeeea041fe7d6",
+    "lib/cursor-workflow.mjs": "4ae7b11d3958bbbf194880a6f04faf0f951870d97807fa9651d3242be0022e5e",
     "vendor/pstack/store.mjs": "a8094d1ab2f753f9dbbd3c548df57b93ad9e32b67283a4b42687035d8d0a77aa",
-    "bin/wid.mjs": "c1966981c74e832b1b027e3956b3ce598c9857fae781e2fa8f1893c44b30ed13",
+    "bin/wid.mjs": "1306f7b12691ea8b10fc9589da3a4560fd1fe9dcf518ed9ec0dcc3e50a98a86e",
     "config.json": "4c2e0e6608066ffae828f32b3e966597037c13e1e04b3feb0cb09e306126b84d",
-    "package.json": "da8ff11fcb8afc40659e5fbb1cbe4c5995d258f48c861992d0409aa528b7fa08",
+    "package.json": "2b80e5f4c144be7b2848cf7b9d88603c347e34fa1bff130a395d56663ea9f3a4",
     "templates/plan.example.json": "a0c23b95672c7e564973e3301353c7df81aef951e6661c704c9b5c2bf509edaa",
-    "test/delivery.test.mjs": "643085cad470eccd5ef1e11810feb4528602c0a862519fdbafc9f4bd20980e3b",
-    "test/cursor-workflow.test.mjs": "f66ceb4b82e789c89586ad6d63eed5a7d610c5dbcc4d29516ce152bd320889d1",
-    "docs/playbook.md": "7ba7638b1ca6d94c5ce9060056260d3793fc53a6b6197557b52522f02c873e21",
+    "test/delivery.test.mjs": "401402e4f2a6cd34dc6e753ae0462348be0ef96bd6059951f1d34f50ddf568a3",
+    "test/cursor-workflow.test.mjs": "99f0693005478ba4e88aade560c2ae3d41b46d0402a496fb9203a278149691f6",
+    "docs/playbook.md": "624dde3a3e829c4fe135f068126f82ab75fa6ab3ae44aec7367212959bd82541",
     "docs/repository-conventions.md": "5cdf242f554a6b42ef255a07cc7f60b05764ac360f27dd7bec61a6c9da7ca46b",
-    "docs/business-evidence.md": "0a80002f211e503abdc84826dc9669e02095efaff7fccf6973d13d7c64b96f13"
+    "docs/business-evidence.md": "7348a41a70c173ef06f488961224bd2288e5fc3cf47841abbb9243ddbfe24c1c",
+    "lib/delivery-plan.mjs": "3654ffb2d9acbdd17dc10551df36321050a71a29ba62f739258e7bd7843d3348",
+    "lib/delivery-common.mjs": "e60ee556b4d5ee415c76e1bc0d4531d882e0b33845338032d0a945313ad35596",
+    "lib/approved-action.mjs": "5ff92eb2f2cfdddcf613fe27def53aee3aa7fab98dd17161dcd1f721074046e8",
+    "lib/delivery-publication.mjs": "d8acea28397af1aa577876e0e20a6d9279d28f44dffe8e2ee5b371bfcc94dc75",
+    "lib/delivery-execution.mjs": "189730a7cbb2eb85817e58a2e4c4609799bd9bf220fa5635979cf077030a9a64",
+    "lib/delivery-verification.mjs": "366b92050995095985f9ac4e13cc068cef189f6e267a6ce3a321974971dea3d8",
+    "lib/delivery-readiness.mjs": "f23a15074f58ed018304d22ab11f9be82fdc8456d0af03e1afceb9e0675607d1",
+    "test/delivery-dependencies.test.mjs": "6eab2894adc1de684022740be001cba826e404ad4bef36072596773b3ad48001",
+    "test/delivery-publication.test.mjs": "0087c5fe3f1368bc62261f9e073dc88d1c3eabf93ed369c9a756285bc0043633",
+    "test/delivery-evidence.test.mjs": "683efbf97325c1b5ad9f892fe8b2b60e5038bc378505a188040ac8f269406203",
+    "test/delivery-fixture.mjs": "705197df0a35ccb52eb75d0eb4b5ac4967a4c07f1380741804ffdd2ae136aaae",
+    "test/delivery-approved-actions.test.mjs": "1254c407e76c438f685a51cec13d751a668de7072a4d8dc65c206ea150f98222",
+    "test/approved-action.test.mjs": "fc61ac5abcb231fe65103787fb98429d51b43f18d9e8ec110358e2da875cc3f4",
+    "templates/action-preflight.example.json": "d81d7fac7574553a85b3363df511951c664893b6fcca352bc4367ab4059c3e4f",
+    "templates/approved-action.example.json": "d93d7b7aa152e77d80093e60a4ae34acaf9ff9c3179e8623e69fb729889b043d"
   }
 }

@@ -16,6 +16,39 @@ export function nextCursorAction(status) {
       actor: "cursor",
       detail: "No initialized plan. Read the Work Item, sources, and flows, then intake and init.",
     };
+  const approvedActions = status.approved_actions ?? [];
+  const execution = approvedActions.find((row) => row.phase !== "completed");
+  if (execution) {
+    const actions = {
+      preflight: "check-new-blockers",
+      ready: "execute-approved-action",
+      readback: "read-back-approved-action",
+      blocked: "blocked",
+    };
+    return {
+      ...execution,
+      action: actions[execution.phase],
+      actor: "cursor",
+      detail: execution.phase === "ready"
+        ? "Execute the authorized action now, guarded by expected_head and repository policies, then record its direct read-back. Do not repeat reviews or request approval again."
+        : execution.phase === "preflight"
+          ? "Refresh live PR identity, blocking comments, required checks/policies and mergeability once. Record check-action; reuse completed reviews."
+          : execution.phase === "readback"
+            ? "The requested state may already exist. Read it back and record action-completed; do not repeat the external write."
+            : "Resolve only these new blockers. Keep the existing approval; do not restart review or add gates.",
+    };
+  }
+  const completed = new Set(approvedActions.map((row) => row.repo));
+  if (completed.size) {
+    status = {
+      ...status,
+      units: (status.units ?? []).filter((row) => !completed.has(row.repo)),
+      ready_to_implement: (status.ready_to_implement ?? []).filter((row) => !completed.has(row.repo)),
+      publication: repos(status).filter((row) => !completed.has(row.repo)),
+    };
+    if (!repos(status).length)
+      return { action: "report", actor: "cursor", detail: "Authorized actions have verified read-backs. Report the outcome; do not reopen completed gates." };
+  }
   if (!status.approved)
     return {
       action: "await-human",
