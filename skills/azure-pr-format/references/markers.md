@@ -1,4 +1,6 @@
-# Full marker vocabulary
+# Legacy colored-format marker vocabulary
+
+Use this only for an explicitly selected older colored format or detailed record. The default team PR has What Happened, Insight and Proof of Works; see [the team convention](team-writing.md).
 
 | Marker | Meaning | ASCII for commits | Required treatment |
 |---|---|---|---|

@@ -1,0 +1,21 @@
+{
+  "baseline": {
+    "git_commit": "3ef7c10f3e511731a32916051491000f0384c08e",
+    "reason": "Adapted public export; source also contained untracked runtime. Packaged file hashes below identify this snapshot."
+  },
+  "files": {
+    "lib/delivery.mjs": "6ffd5b638dcd91dc3f34f8b3ea8d730c53d7e4404d1d810fbd16b324081c9a45",
+    "lib/evidence.mjs": "20d2f23405aadc5f9664648216735a5698a6fb773e04ade0f750453e23876e50",
+    "lib/cursor-workflow.mjs": "180424b3ca3f8f354bbdeb37722ef265c34149b58a34580c69feeeea041fe7d6",
+    "vendor/pstack/store.mjs": "a8094d1ab2f753f9dbbd3c548df57b93ad9e32b67283a4b42687035d8d0a77aa",
+    "bin/wid.mjs": "c1966981c74e832b1b027e3956b3ce598c9857fae781e2fa8f1893c44b30ed13",
+    "config.json": "4c2e0e6608066ffae828f32b3e966597037c13e1e04b3feb0cb09e306126b84d",
+    "package.json": "da8ff11fcb8afc40659e5fbb1cbe4c5995d258f48c861992d0409aa528b7fa08",
+    "templates/plan.example.json": "a0c23b95672c7e564973e3301353c7df81aef951e6661c704c9b5c2bf509edaa",
+    "test/delivery.test.mjs": "643085cad470eccd5ef1e11810feb4528602c0a862519fdbafc9f4bd20980e3b",
+    "test/cursor-workflow.test.mjs": "f66ceb4b82e789c89586ad6d63eed5a7d610c5dbcc4d29516ce152bd320889d1",
+    "docs/playbook.md": "7ba7638b1ca6d94c5ce9060056260d3793fc53a6b6197557b52522f02c873e21",
+    "docs/repository-conventions.md": "5cdf242f554a6b42ef255a07cc7f60b05764ac360f27dd7bec61a6c9da7ca46b",
+    "docs/business-evidence.md": "0a80002f211e503abdc84826dc9669e02095efaff7fccf6973d13d7c64b96f13"
+  }
+}

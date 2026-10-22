@@ -1,38 +1,12 @@
 
-
-Why:
-
-How:
-
-Log:
-
-Test:
-
-Refs:
-# ─────────────────────────────────────────────────────────────────
-# FIRST LINE: <type>(<scope>): <imperative summary, max 72 chars>
-#   type: feat | fix | refactor | perf | test | docs | chore | build | ci
-#   e.g.  fix(payment): prevent double capture on client retry
-#
-# Why:  1-3 lines. The problem or root cause, not the code.
-# How:  The approach, plus the thinking method used.
-#       Method: hypothesis | 5-whys | first-principles | trade-off | bisect | spike
-# Log:  ASCII signifiers (same meaning as the colored ones in PRs):
-#         x done (✅)   ~ dropped, say why (❌)   > moved (➡️)
-#         ! insight (💡)   ? question (❓)   - note (📝)   o event (🔵)
-#         < waiting (⏳)   . open (⬜)   !! risk (⚠️)   * priority (⭐)
-# Test: How this was verified (command, scenario, or "manual: steps").
-# Refs: Azure Boards work items. Keep as the last paragraph.
-#         #1234          links the work item
-#         Fixes #1234    also resolves it when the commit reaches the
-#                        default branch (push, or PR completion without
-#                        squash + "Complete associated work items")
-#         Record: docs/changes/YYYY-MM-DD-<id>-<slug>.md
-#       Never start a line with #1234: git treats it as a comment and
-#       deletes it. Write "Refs: #1234" instead.
-#
-# Small commits: first line + Why + Test is enough. Delete unused labels.
-# Resolution depends on repository settings; squash-message edits are not
-# a guaranteed resolution workaround.
-# Lines starting with '#' are removed automatically.
-# ─────────────────────────────────────────────────────────────────
+# <type>(<scope>): <imperative summary, at most 72 characters>
+# A subject alone is enough for an obvious small change.
+# Otherwise add a blank line and a short paragraph explaining what changed
+# and why. Include approach, decisions, tests, or references only when useful.
+# Why / How / Log / Test / Refs are considerations, not required headers.
+# Omit filler, empty labels, thinking-method names, and routine placeholders.
+# State material verification limits; never invent results.
+# Optional work-item trailer: Refs: #123
+# Avoid bare #123 lines; default Git comment cleanup removes them.
+# Use resolution wording only when intended and the workflow is verified.
+# These guidance comments are removed by default Git commit cleanup.

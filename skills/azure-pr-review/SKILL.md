@@ -1,6 +1,6 @@
 ---
 name: azure-pr-review
-description: Review Azure DevOps PR documentation or templates for evidence, concise reasoning, diagram accuracy, and justified exceptions. Use for documentation quality checks, not as a substitute for full code review.
+description: Review Azure PR descriptions for the three-section team format, behavior-flow clarity, anti-patterns, evidence honesty and exact approved publication scope.
 ---
 
 # Review PR documentation
@@ -9,17 +9,19 @@ Inspect the supplied description, change record, relevant diff, and verification
 
 Determine whether the input is a blank template, a fictional example, or a real filled PR. Templates may contain placeholders, but must default tests to Not run; fictional examples must be labeled. Evaluate real filled PRs against every applicable rule below. Scale depth to impact and repository requirements.
 
+Read [the team writing convention and anti-patterns](../azure-pr-format/references/team-writing.md). Default headings are exactly What Happened, Insight, Proof of Works. Apply older colored headings only when explicitly required. This convention covers backend and frontend.
+
 ## Checks
 
 1. **Context:** goal/problem and impact are intelligible. Bug claims separate symptoms from evidenced causes. Features/refactors/docs are not forced into bug wording.
 2. **Reasoning:** finding → justified decision → material tradeoff. Methods and alternatives are optional. Flag invented or unsupported investigations, forced rejected options, and absolute claims unsupported by evidence.
-3. **Changes:** specific technical behavior agrees with the diff and change record. Distinguish planned, implemented, tested, and deployed.
+3. **Insight flow:** trace user action → function/request → service response/transformation → cause → fix. Each technical identifier explains a step. Flag file inventories, implementation paths/filenames, disconnected identifiers, missing frontend/backend boundaries or invented calls. Specific behavior agrees with the diff and available evidence. Distinguish planned, implemented, tested and deployed.
 4. **Verification:** each Pass/Fail claim has an observed result or attributable supplied evidence. Plans and absent runs are Not run with a reason. For applicable fixes, seek a before/after regression check; if absent, record the gap without inventing failure or demanding irrelevant tests for docs.
-5. **Presentation:** real Markdown bullets, concise section text, readable color labels, and Low/Medium/High risk with justification. The complete legend belongs in the guide. A real description must have no unresolved required placeholders and must fit 4,000 characters; measure both Unicode code points and UTF-16 units conservatively.
-6. **Record:** meaningful behavior/complex decisions have a linked change record unless explicitly exempted by user/repo policy. Verify path existence and link target where accessible. Accept a concrete n/a reason for small low-risk changes; dependency bumps need impact assessment. A backticked path is not a clickable link.
+5. **Presentation:** real Markdown bullets, concise section text, readable color labels, and Low/Medium/High risk with justification. Preserve exactly the selected three-section format; keep the complete legend in an optional guide. A real description must have no unresolved required placeholders and must fit 4,000 characters; measure both Unicode code points and UTF-16 units conservatively.
+6. **Evidence links:** verify linked logs, screenshots, records and version-pinned citations where accessible. A separate committed change record is optional unless requested or required by repo policy. Existing evidence packs can provide the needed support. A backticked path is not a clickable evidence link.
 7. **Diagram:** use a primary diagram only when useful. Trace branches, time ordering, responses, and persistence against code. Color is supplemented by labels: red bug/removed, green new/fixed, yellow changed, blue context. Expected rejection is not a bug. Verify syntax with an available renderer; identify actual Azure preview versus generic rendering or unverified rendering.
 8. **Release:** rollback names actions and consequences. Disabling a fix may restore the bug; dropping a table may destroy recovery/deduplication data. Flag misleading reversibility claims.
-9. **Consistency:** description, record, commit, and evidence agree. Open questions and follow-ups are visibly unresolved, with real links when available.
+9. **Consistency and publication:** description, record when present, commit and evidence agree. Apply every anti-pattern in the linked convention, including screenshot coverage and environment overclaims. For a named approved draft, check exact bytes, live preconditions and read-back. Preserve unrelated metadata and attachment manifests for a description-only update. Open questions and follow-ups stay visibly unresolved.
 
 For payment/idempotency examples specifically, examine external-effect crash windows, recovery of pending claims, key scope and retention, different payloads, and distinct legitimate operations. Local uniqueness alone does not prove external exactly-once effects. Apply this check to relevant changes, not every PR.
 

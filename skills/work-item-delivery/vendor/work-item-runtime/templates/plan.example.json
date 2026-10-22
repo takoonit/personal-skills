@@ -1,0 +1,333 @@
+{
+  "schema": "work-item-delivery.plan.v2",
+  "work_item": {
+    "id": "100",
+    "url": "https://example.invalid/workitems/100",
+    "revision": "7",
+    "type": "Bug"
+  },
+  "policy": {
+    "pr_grouping": "one-per-repo"
+  },
+  "sources": [
+    {
+      "id": "ticket",
+      "url": "https://example.invalid/workitems/100",
+      "revision": "7",
+      "section": "Expected behavior cases 1 and 2",
+      "status": "read",
+      "snapshot": "/replace/with/preserved-ticket.json"
+    },
+    {
+      "id": "spec",
+      "url": "https://example.invalid/specification",
+      "revision": "3",
+      "section": "Employee history filters",
+      "status": "read",
+      "snapshot": "/replace/with/preserved-specification.md",
+      "kind": "confluence"
+    },
+    {
+      "id": "task",
+      "url": "https://example.invalid/workitems/101",
+      "revision": "2",
+      "section": "Parent relation and acceptance",
+      "status": "read",
+      "snapshot": "/replace/with/preserved-child-task.json"
+    },
+    {
+      "id": "business",
+      "kind": "second_brain",
+      "url": "obsidian://open?vault=VAULT&file=Business%20Flow",
+      "revision": "REPLACE_WITH_NOTE_DATE_OR_SOURCE_REVISION",
+      "section": "Actor and employee-history flow; primary provenance locator",
+      "status": "read",
+      "snapshot": "/replace/with/preserved-business-note.md"
+    }
+  ],
+  "cases": [
+    {
+      "id": "C1",
+      "title": "Employee-specific choices",
+      "expected": "Only choices represented in the selected employee's records appear.",
+      "task_ids": [
+        "101"
+      ],
+      "source_refs": [
+        "ticket",
+        "spec",
+        "task"
+      ]
+    },
+    {
+      "id": "C2",
+      "title": "Historical year semantics",
+      "expected": "Year choices follow the owning ticket's acceptance criteria; ambiguous terminology requires an owner answer.",
+      "task_ids": [],
+      "source_refs": [
+        "ticket",
+        "spec"
+      ]
+    }
+  ],
+  "repositories": [
+    {
+      "id": "backend",
+      "path": "/replace/with/backend-repo",
+      "base_ref": "origin/develop",
+      "base_sha": "0000000000000000000000000000000000000000",
+      "branch": "fix/100-employee-history"
+    },
+    {
+      "id": "frontend",
+      "path": "/replace/with/frontend-repo",
+      "base_ref": "origin/develop",
+      "base_sha": "0000000000000000000000000000000000000000",
+      "branch": "fix/100-employee-history"
+    }
+  ],
+  "units": [
+    {
+      "id": "U1",
+      "repo": "backend",
+      "case_ids": [
+        "C1"
+      ],
+      "source_refs": [
+        "ticket",
+        "spec",
+        "task"
+      ],
+      "priority": 0,
+      "current_flow": "Illustration only: employee history request → service lookup → response identity fields.",
+      "finding": "The boundary requiring a backend change must be confirmed against the actual source.",
+      "finding_status": "hypothesis",
+      "change": "Provide the smallest compatible response contract required by C1.",
+      "acceptance": [
+        "A targeted regression demonstrates the required identity contract."
+      ],
+      "allowed_paths": [
+        "REPLACE_WITH_CONFIRMED_BACKEND_PATH"
+      ],
+      "checks": [
+        {
+          "id": "contract-regression",
+          "argv": [
+            "REPLACE_WITH_REAL_TEST_EXECUTABLE",
+            "REPLACE_WITH_REPO_TEST_ARGUMENTS"
+          ],
+          "purpose": "Verify the employee-history contract using a real repository check.",
+          "timeout_ms": 60000
+        }
+      ],
+      "depends_on": [],
+      "unit_test_plan": {
+        "check_ids": [
+          "contract-regression"
+        ],
+        "assertions": [
+          "A targeted regression demonstrates the required identity contract."
+        ],
+        "before": "Run the behavior regression on unchanged production code and retain the intended assertion failure, source identity and command output.",
+        "after": "Run the focused regression and complete affected tests on the corrected source; retain exit codes, counts/skips and logs."
+      }
+    },
+    {
+      "id": "U2",
+      "repo": "frontend",
+      "case_ids": [
+        "C1"
+      ],
+      "source_refs": [
+        "ticket",
+        "spec",
+        "task"
+      ],
+      "priority": 1,
+      "current_flow": "Illustration only: dropdown loader → API client → employee history response → options.",
+      "finding": "Confirm the current option source and identity matching before selecting a change.",
+      "finding_status": "hypothesis",
+      "change": "Build choices from the employee history contract verified by U1.",
+      "acceptance": [
+        "C1's option and matching cases pass with controlled before/after evidence."
+      ],
+      "allowed_paths": [
+        "REPLACE_WITH_CONFIRMED_FRONTEND_PATH"
+      ],
+      "checks": [
+        {
+          "id": "options-regression",
+          "argv": [
+            "REPLACE_WITH_REAL_TEST_EXECUTABLE",
+            "REPLACE_WITH_REPO_TEST_ARGUMENTS"
+          ],
+          "purpose": "Verify employee-specific options and matching.",
+          "timeout_ms": 60000
+        }
+      ],
+      "depends_on": [
+        {
+          "unit": "U1",
+          "stage": "verified",
+          "reason": "Requires the confirmed backend response fields; this is an implementation prerequisite, not proof of deployment.",
+          "source_refs": [
+            "spec",
+            "task"
+          ]
+        }
+      ],
+      "unit_test_plan": {
+        "check_ids": [
+          "options-regression"
+        ],
+        "assertions": [
+          "C1's option and matching cases pass with controlled before/after evidence."
+        ],
+        "before": "Run the behavior regression on unchanged production code and retain the intended assertion failure, source identity and command output.",
+        "after": "Run the focused regression and complete affected tests on the corrected source; retain exit codes, counts/skips and logs."
+      }
+    },
+    {
+      "id": "U3",
+      "repo": "frontend",
+      "case_ids": [
+        "C2"
+      ],
+      "source_refs": [
+        "ticket",
+        "spec"
+      ],
+      "priority": 1,
+      "current_flow": "Illustration only: saved history year → year options → filtering.",
+      "finding": "Which historical year definition controls C2 is unresolved.",
+      "finding_status": "unknown",
+      "change": "Apply the confirmed year semantics after the blocker is resolved.",
+      "acceptance": [
+        "C2's recorded-year and boundary cases match the confirmed requirement."
+      ],
+      "allowed_paths": [
+        "REPLACE_WITH_CONFIRMED_FRONTEND_PATH"
+      ],
+      "checks": [
+        {
+          "id": "years-regression",
+          "argv": [
+            "REPLACE_WITH_REAL_TEST_EXECUTABLE",
+            "REPLACE_WITH_REPO_TEST_ARGUMENTS"
+          ],
+          "purpose": "Verify the confirmed year interpretation.",
+          "timeout_ms": 60000
+        }
+      ],
+      "depends_on": [],
+      "unit_test_plan": {
+        "check_ids": [
+          "years-regression"
+        ],
+        "assertions": [
+          "C2's recorded-year and boundary cases match the confirmed requirement."
+        ],
+        "before": "Run the behavior regression on unchanged production code and retain the intended assertion failure, source identity and command output.",
+        "after": "Run the focused regression and complete affected tests on the corrected source; retain exit codes, counts/skips and logs."
+      }
+    }
+  ],
+  "blockers": [
+    {
+      "id": "year-definition",
+      "units": [
+        "U3"
+      ],
+      "reason": "Year semantics require confirmation before implementing C2.",
+      "owner": "Requirement owner",
+      "unblock_when": "A versioned answer states the applicable year field and range.",
+      "source_refs": [
+        "ticket",
+        "spec"
+      ]
+    }
+  ],
+  "knowledge": {
+    "second_brain": {
+      "status": "read",
+      "query": "Employee history flow",
+      "summary": "Replace with directly read note and primary provenance, including uncertainty.",
+      "source_refs": [
+        "business"
+      ]
+    },
+    "confluence": {
+      "status": "read",
+      "query": "Employee benefit history UI/process",
+      "summary": "Replace with versioned UI/process and API evidence.",
+      "source_refs": [
+        "spec"
+      ]
+    },
+    "business_flows": [
+      {
+        "id": "employee-history",
+        "case_ids": [
+          "C1",
+          "C2"
+        ],
+        "actor": "HR administrator",
+        "trigger": "Investigate one employee benefit history",
+        "preconditions": [
+          "Authorized role and suitable employee data"
+        ],
+        "steps": [
+          {
+            "action": "Open employee history and its filters",
+            "business_rule": "Options and selected results follow the employee-specific acceptance criteria.",
+            "source_refs": [
+              "business",
+              "spec",
+              "ticket"
+            ]
+          }
+        ],
+        "outcome": "HR sees the applicable history for that employee."
+      }
+    ]
+  },
+  "capture_plan": [
+    {
+      "id": "choices",
+      "repo": "frontend",
+      "case_ids": [
+        "C1"
+      ],
+      "tool": "playwright",
+      "environment": "local-fixture",
+      "url": "http://localhost:3005/REPLACE_WITH_APPROVED_CASE_URL",
+      "steps": [
+        "Open employee and relevant section",
+        "Open Benefit Name dropdown",
+        "Apply a plan and Search"
+      ],
+      "assertions": [
+        "Only employee-section plans appear",
+        "Search filters the table correctly"
+      ]
+    },
+    {
+      "id": "years",
+      "repo": "frontend",
+      "case_ids": [
+        "C2"
+      ],
+      "tool": "playwright",
+      "environment": "local-fixture",
+      "url": "http://localhost:3005/REPLACE_WITH_APPROVED_CASE_URL",
+      "steps": [
+        "Open section",
+        "Open Year dropdown",
+        "Select Year and Search"
+      ],
+      "assertions": [
+        "Year choices match confirmed recorded-year semantics"
+      ]
+    }
+  ]
+}

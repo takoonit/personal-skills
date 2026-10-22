@@ -5,7 +5,7 @@ description: Create full Azure DevOps change records with the user's investigati
 
 # Detailed change records
 
-Read [the template](assets/_TEMPLATE.md) and the relevant sections of [the guide](assets/PR_GUIDE.md). Use [the fictional example](assets/EXAMPLE-2026-10-15-412-payment-idempotency.md) for structure only; its test results are invented examples, not evidence or a production design guarantee. House section structure takes precedence over shorter generic PR templates. Preserve evidence limits and the user's current instructions.
+Read [the template](assets/_TEMPLATE.md) and the relevant sections of [the guide](assets/PR_GUIDE.md). Use [the fictional example](assets/EXAMPLE-2026-10-15-412-payment-idempotency.md) for structure only; its test results are invented examples, not evidence or a production design guarantee. This structure applies to detailed records only. PR descriptions default to the three-section team convention in [azure-pr-format](../azure-pr-format/references/team-writing.md), including its anti-pattern checks; use this longer record only when requested or useful. Preserve evidence limits and the user's current instructions.
 
 Create `docs/changes/YYYY-MM-DD-<workitem>-<slug>.md`; use actual metadata and omit an unavailable work-item ID rather than inventing one. When setup is requested, copy the template and guide to `docs/changes/_TEMPLATE.md` and `docs/PR_GUIDE.md`. Copy the fictional example only if examples are requested. These actions do not authorize commits or publishing.
 

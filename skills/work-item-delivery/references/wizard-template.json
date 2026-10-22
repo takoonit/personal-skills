@@ -1,0 +1,10 @@
+{
+  "upstream": "https://github.com/mattpocock/skills",
+  "version_observed": "1.3.1",
+  "source": "skills/engineering/wizard/template.sh",
+  "template_sha256_original": "b1f2291a7d01062aee8359cb987f6dd9da7a9627b0055faa1cff540a7e770dd2",
+  "library_sha256_lf": "513ef818f9b8a97209e51658b25ea9de2cec4ebaaf1f67823c89f7dca9d5ac19",
+  "line_endings": "Normalized CRLF to LF for executable Bash; library text/logic above STAGES is otherwise unchanged.",
+  "license": "licenses/mattpocock-skills-MIT.txt",
+  "stages": 5
+}

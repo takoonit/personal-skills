@@ -46,6 +46,18 @@ Each directory under `skills/` is a portable skill package. Its directory name m
 | [`lundy`](skills/lundy/SKILL.md) | Independent validator | Consequential completed work needs an independent acceptance pass using focused validation agents. |
 | [`clear-tactful-writing`](skills/clear-tactful-writing/SKILL.md) | Communication | Facts, decisions, requests, or difficult messages need concise Thai or English wording with appropriate tact. |
 
+## Work Item delivery workflow
+
+The collection also includes [`work-item-delivery`](skills/work-item-delivery/SKILL.md), [`work-item-start-safety`](skills/work-item-start-safety/SKILL.md), and [`proof-of-work`](skills/proof-of-work/SKILL.md), with their owned Azure PR/commit skills and a self-contained local runtime. The workflow covers source-led intake, realistic estimates, plan approval, architect/arena/interrogate design, approved execution, tests, human-repeatable evidence and exact PR review/publication boundaries.
+
+Read the [setup guide](skills/work-item-delivery/references/setup.md) and [prerequisites](skills/work-item-delivery/references/prerequisites.md), then run the five-stage wizard in Linux or WSL:
+
+```sh
+bash scripts/setup-work-item-delivery.sh
+```
+
+The installer preserves existing conflicting installs and keeps organization settings local. External pstack/Matt Pocock plugins, native hook trust, available models, connectors and browser access are configured in the agent host; cached files and offline tests do not certify live integration. The bundled runtime is a sanitized source snapshot with provenance and retained third-party notices. No private run evidence or credentials are included.
+
 ## Using Design Guide
 
 [Design Guide](skills/design-guide/SKILL.md) contributes design guidance throughout work with visual or UX impact. It works alongside Intentional Design for interaction decisions, Laws of UX for behavioural diagnosis, and Ship Sound Code or Impeccable for implementation. Companion skills are optional; each keeps ownership of its specialised work.

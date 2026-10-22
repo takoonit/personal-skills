@@ -1,11 +1,13 @@
 ---
 name: azure-pr-write
-description: Write or revise Azure DevOps PR descriptions, change records, and commit messages with concise technical reasoning, diagrams, and evidence-backed verification.
+description: Write or revise Azure DevOps PRs using What Happened, Insight and Proof of Works, explain behavior across frontend/backend, and avoid PR writing anti-patterns.
 ---
 
 # Write Azure DevOps PR documentation
 
 Produce documentation that explains the goal, technical decision, resulting behavior, and observed verification. This skill governs documentation; it does not install branch policies or authorize posting comments, creating commits, or publishing PRs.
+
+Read [the team writing convention and anti-patterns](../azure-pr-format/references/team-writing.md) before drafting or updating a description. It owns the default format and the approval/read-back rules.
 
 ## Establish evidence
 
@@ -15,23 +17,21 @@ Keep an evidence ledger while drafting: claim, supporting file/output/run, and w
 
 ## Choose depth
 
-- PR description: concise summary, at most 4,000 characters. Aim below 3,500 for editing room. Read [Azure platform notes](references/azure.md) when producing Azure-specific links, setup guidance, or diagrams.
-- Change record: `docs/changes/YYYY-MM-DD-<id>-<slug>.md` for meaningful behavior changes or complex decisions. Use an actual work item/date; omit an unavailable ID rather than inventing one. Link the committed file from the PR with a usable Markdown URL, preferably a verified source-branch or commit file-preview link.
-- Small, demonstrably low-risk chores/docs: use Why, Changes, Test and `Change record: n/a — <specific reason>`. Allow an explained lack of executable tests.
-- Commit message, when requested: imperative subject plus brief Why, How, Test and `Refs: #123` if known. ASCII markers are optional. Reuse concise facts, not the entire change record.
+- PR description: use [the team template](../azure-pr-format/assets/pull_request_template.md), with exactly What Happened, Insight, Proof of Works. Keep the complete text at most 4,000 characters in both code points and UTF-16 units; aim below 3,500 when clarity allows. Read [Azure platform notes](references/azure.md) when compatibility affects a decision.
+- Small changes: use the compact three-section version from azure-pr-format. Document the actual checks or a reason they were not run.
+- Supporting change record: create or update one when requested, required by the repo or needed for substantial evidence. Use a real date/work-item ID and a clickable branch/commit file-preview link. Existing evidence packs may already supply the detail; a separate committed record is not a prerequisite for every behavior change.
+- Older colored PR format: use azure-pr-format's legacy assets only when explicitly required by the user or repository.
+- Commit message, when requested: imperative subject plus concise Why, How, Test and `Refs: #123` if known. Reuse facts rather than the entire record.
 
 ## Write
 
-Start from [the PR template](assets/pull_request_template.md); fill required fields and remove unused optional fields. Preserve repository-specific requirements unless the user directs otherwise.
+What Happened gives the resulting behavior, affected UI breadcrumb/route or module, requirement and impact. Keep the reported environment distinct from the tested baseline.
 
-Use these section meanings:
-- 🟦 Why: goal/problem, previous behavior or limitation, and impact. A root cause is appropriate for a diagnosed bug, not mandatory for features or docs.
-- 🟪 Reasoning: finding/evidence → decision and justification → material tradeoff. Capture a concise decision rationale, not a purported exhaustive private thinking transcript. Named methods, investigation timelines, hypothesis tables, and rejected options are optional and must reflect real work. Never invent a rejected alternative to fill a quota.
-- 🟩 Changes: key technical interventions and how they change behavior; mention relevant functions/data flow instead of listing every file.
-- 🟨 Test: scenario or command → observed result → evidence reference. Use ✅ Pass, ❌ Fail, ⏳ Not run — reason. A test plan is not a result. For applicable fixes, show the original failing scenario and post-fix result; distinguish observed before/after from expected behavior. Include relevant regressions/edges proportionally.
-- 🟥 Rollback: when operationally relevant, identify undo steps and consequences, including restoration of a known bug, irreversible data changes, and monitoring. Otherwise omit with an explanation when needed by repo policy.
+Insight explains user action → function/request → service response/transformation → cause → fix. Say what each relevant function or API actually does and how its output reaches the user. Cover both frontend and backend when the flow crosses them. Keep implementation file inventories in the diff/evidence. Include material constraints, conflicts, release order and undo consequences in concise bullets within Insight.
 
-Use proper Markdown bullets. Keep the full legend in a guide, not every description. Section color supplements readable text. Risk values include both word and reason: 🟢 Low, 🟡 Medium, 🔴 High. Mark dropped items with a reason and moved items with a real destination. Open questions remain visibly unresolved.
+Proof of Works states the evidence scope, observed Before/After, inline screenshot comparison when available, relevant commands/results/counts and clickable logs/review packs. Attribute previous runs. A plan or absent run is `⏳ Not run — reason`; local fixtures do not establish SIT verification or deployment. Caption incomplete screenshot coverage honestly.
+
+Apply the anti-pattern table in the linked convention before delivering. Use readable risk words and reasons. Preserve the exact approved description during publication; do not silently improve it or change unrelated PR fields. Keep all material qualifications and existing approved evidence links.
 
 ## Change records and diagrams
 

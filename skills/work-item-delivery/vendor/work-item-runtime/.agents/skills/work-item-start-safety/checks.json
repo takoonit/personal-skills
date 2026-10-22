@@ -1,0 +1,26 @@
+{
+  "tests": [
+    "Bug approval rejects codex branches even if a stale plan asks for that prefix",
+    "approval requires an explicit executable unit-test plan or a justified exception",
+    "execution starts clean without discarding existing tracked or untracked work",
+    "changed cited repository conventions invalidate approval before coding",
+    "case coverage, source references and same-repo PR grouping are structural",
+    "blocked sibling does not block independent implementation but holds grouped PR",
+    "source snapshots are bound to the approved plan content",
+    "only one writer per repo, while another repo can progress",
+    "moving target baseline blocks affected repo only",
+    "repository ownership is enforced across independent CLI processes",
+    "v2 requires both research providers, cited case flows and evidence dispositions",
+    "missing before capture holds only affected UI work; real artifact receipt unlocks it",
+    "changed screenshot bytes invalidate their recorded capture",
+    "a failed or blocked capture cannot reuse an older passing result",
+    "legacy v1 remains readable but cannot bypass the new execution evidence contract",
+    "unavailable business-flow-only citations require blockers for affected units",
+    "symlinks and linked worktrees cannot create a second repository writer identity",
+    "grouped publication cycles are rejected even when unit dependencies are acyclic",
+    "plan approval is a human stop",
+    "the first ready unit is the next implementation",
+    "start safety adviser covers all 16 admission combinations",
+    "start safety approval guard rejects missing mismatched and stale fingerprints"
+  ]
+}
