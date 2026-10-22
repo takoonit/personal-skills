@@ -15,6 +15,7 @@ RUNTIME = SKILL/'vendor/work-item-runtime'
 OWN = ['work-item-delivery', 'work-item-start-safety', 'proof-of-work',
        'azure-pr-format', 'azure-pr-write', 'azure-pr-review',
        'azure-commit-message', 'azure-change-record']
+WINDOWS_OWN = ['wiki-query', 'think']
 PRIVATE = re.compile(r'/home/[a-z0-9_.-]+/|gh[pousr]_[A-Za-z0-9]{30,}')
 
 
@@ -39,6 +40,7 @@ def main():
     if args.privacy_pattern_file:
         patterns += [re.compile(line) for line in args.privacy_pattern_file.read_text().splitlines() if line.strip()]
     candidates = [file for folder in OWN for file in (ROOT/'skills'/folder).rglob('*')]
+    candidates += [file for folder in WINDOWS_OWN for file in (ROOT/'windows/skills'/folder).rglob('*')]
     candidates += [ROOT/'scripts'/name for name in ['check-work-item-package.py', 'install-work-item-delivery.py', 'setup-work-item-delivery.sh', 'test_install_work_item_delivery.py']]
     for file in candidates:
             if not file.is_file() or '__pycache__' in file.parts:

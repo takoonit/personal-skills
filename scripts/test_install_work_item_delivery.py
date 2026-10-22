@@ -1,4 +1,5 @@
 import hashlib
+import importlib.util
 import json
 import os
 from pathlib import Path
@@ -9,6 +10,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 INSTALLER = ROOT/'scripts/install-work-item-delivery.py'
+WINDOWS_SKILLS = ['wiki-query', 'think']
 
 
 class InstallTests(unittest.TestCase):
@@ -43,6 +45,48 @@ class InstallTests(unittest.TestCase):
         self.assertEqual(run.returncode, 0, run.stderr)
         self.assertIn('approve-plan', run.stdout)
         self.assertTrue((runtime/'.agents/skills/work-item-start-safety/model/WorkItemStart.tla').is_file())
+
+    def test_windows_vault_skills_are_skipped_on_posix_hosts(self):
+        result = self.install('--windows-host', 'no')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        output = json.loads(result.stdout)
+        self.assertEqual(output['windows_skills'], [])
+        self.assertEqual(len(output['installed_skills']), 8)
+        for name in WINDOWS_SKILLS:
+            self.assertFalse((self.skills/name).exists())
+
+    def test_windows_vault_skills_install_for_windows_hosts(self):
+        result = self.install('--windows-host', 'yes')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        output = json.loads(result.stdout)
+        self.assertEqual(output['windows_skills'], WINDOWS_SKILLS)
+        self.assertEqual(len(output['installed_skills']), 10)
+        for name in WINDOWS_SKILLS:
+            self.assertEqual((self.skills/name/'SKILL.md').read_bytes(),
+                             (ROOT/'windows/skills'/name/'SKILL.md').read_bytes())
+        rerun = self.install('--windows-host', 'yes')
+        self.assertEqual(rerun.returncode, 0, rerun.stderr)
+        self.assertEqual(json.loads(rerun.stdout)['new_skills'], [])
+
+    def test_existing_vault_skill_is_preserved_on_windows_hosts(self):
+        existing = self.skills/'wiki-query'
+        existing.mkdir(parents=True)
+        (existing/'SKILL.md').write_text('my claude-obsidian install')
+        result = self.install('--windows-host', 'yes')
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('Existing skill differs', result.stderr)
+        self.assertEqual((existing/'SKILL.md').read_text(), 'my claude-obsidian install')
+        self.assertFalse((self.skills/'work-item-delivery').exists())
+
+    def test_windows_host_detection(self):
+        spec = importlib.util.spec_from_file_location('installer', INSTALLER)
+        installer = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(installer)
+        self.assertTrue(installer.windows_host('yes', Path('/srv/agent/.claude/skills')))
+        self.assertFalse(installer.windows_host('no', Path('/mnt/c/Users/me/.claude/skills')))
+        if os.name != 'nt':
+            self.assertTrue(installer.windows_host('auto', Path('/mnt/c/Users/me/.claude/skills')))
+            self.assertFalse(installer.windows_host('auto', Path('/srv/agent/.claude/skills')))
 
     def test_rerun_preserves_bytes_and_mtimes(self):
         self.assertEqual(self.install().returncode, 0)
@@ -105,6 +149,7 @@ class InstallTests(unittest.TestCase):
         copied = self.root/'package'
         shutil.copytree(ROOT/'skills', copied/'skills')
         shutil.copytree(ROOT/'scripts', copied/'scripts', ignore=shutil.ignore_patterns('__pycache__'))
+        shutil.copytree(ROOT/'windows', copied/'windows')
         shutil.copy2(ROOT/'.gitignore', copied/'.gitignore')
         return copied
 
