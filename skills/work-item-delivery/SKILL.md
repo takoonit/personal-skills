@@ -25,6 +25,8 @@ Follow [diagnosis and coding discipline](vendor/work-item-runtime/docs/work-item
 
 ## Execute after approval
 
+An approved action is execution work, not a new delivery task. Do only what is necessary to perform that action. Do not create helper tools, refactor, add documentation, repackage unchanged artifacts, or introduce more tests or reviews merely because work moves to commit, push, publication or merge. Use existing supported tools, check authentication early, and keep connection attempts bounded. Reuse verification for unchanged inputs; if a concrete change is required, check only the affected behavior. After executing and reading back the requested state, stop. Improvements outside the approved action need a separate user request.
+
 Once the user approves reviewed work and says "go ahead", execute the stated next action after one bounded live check for new blockers. Reuse completed reviews and applicable checks, including reviews the user confirms are complete. Do not repeat reviews, spawn another shipping verifier, create another review worktree, reopen design, add gates or ask for the same approval again because the workflow resumes or enters publication, babysitting or shipping. This local rule overrides imported pstack defaults that would repeat those stages after approval.
 
 Confirm the intended PR/repository/branches and reviewed patch; refresh blocking comments, required checks/policies and mergeability. If nothing new blocks the authorized action, execute in the same turn. Material patch/dependency drift that invalidates accepted evidence needs only the affected delta checked, not a restart of the whole review.

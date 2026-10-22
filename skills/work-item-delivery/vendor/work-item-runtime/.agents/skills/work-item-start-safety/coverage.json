@@ -1,6 +1,6 @@
 {
   "baseline": {
-    "git_commit": "35bf7b4b86bf28f1ccec1d2e62f670fc69261b62",
+    "git_commit": "f8c67e477b81b9dc001a38cc7f64b4cacef50354",
     "reason": "Portable export of the committed workflow. File hashes include the module split; implementation admission rules remain unchanged."
   },
   "files": {
@@ -14,7 +14,7 @@
     "templates/plan.example.json": "a0c23b95672c7e564973e3301353c7df81aef951e6661c704c9b5c2bf509edaa",
     "test/delivery.test.mjs": "401402e4f2a6cd34dc6e753ae0462348be0ef96bd6059951f1d34f50ddf568a3",
     "test/cursor-workflow.test.mjs": "99f0693005478ba4e88aade560c2ae3d41b46d0402a496fb9203a278149691f6",
-    "docs/playbook.md": "624dde3a3e829c4fe135f068126f82ab75fa6ab3ae44aec7367212959bd82541",
+    "docs/playbook.md": "f148ad61ff3f27aa43f2630b79a1956c0c34fb9c9da2e51c9d7678bae7b33bb8",
     "docs/repository-conventions.md": "5cdf242f554a6b42ef255a07cc7f60b05764ac360f27dd7bec61a6c9da7ca46b",
     "docs/business-evidence.md": "7348a41a70c173ef06f488961224bd2288e5fc3cf47841abbb9243ddbfe24c1c",
     "lib/delivery-plan.mjs": "3654ffb2d9acbdd17dc10551df36321050a71a29ba62f739258e7bd7843d3348",

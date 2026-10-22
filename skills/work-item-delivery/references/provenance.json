@@ -1,5 +1,5 @@
 {
-  "source_workflow_commit": "35bf7b4b86bf28f1ccec1d2e62f670fc69261b62",
+  "source_workflow_commit": "f8c67e477b81b9dc001a38cc7f64b4cacef50354",
   "source_included_untracked_files": false,
   "source_sha256": {
     ".agents/skills/proof-of-work/SKILL.md": "7f4718ec91b20c6af034296027e1c18e7802610ae00a58a3230da2187c9c96d8",
@@ -17,7 +17,7 @@
     "docs/business-evidence.md": "b385411f088156000214c413938ffba2352f74b3813fd5a7273d096d8929aff9",
     "docs/harnesses.md": "e67eacca25d325cceb50918e547998a005e5c04ac70050767c204c18f78e6863",
     "docs/human-verification.md": "b45c64c92c0f54b4261b552811c1c479eac62f123e26bab0157b795cc360b66f",
-    "docs/playbook.md": "68106bb1839c144592242cec57d5f8debfe427949ba5654396535ef9286fd87b",
+    "docs/playbook.md": "1514f870888e9e8d0073e138ea8be8fba5fe78b612e134c80352143c22de3d22",
     "docs/proof-of-work.md": "2d7a1a02af35b1de65e9fa7ebe29732607294ef513473ac1dafd5d43d19aa731",
     "docs/repository-conventions.md": "6bc26fc472ad0f2236abdde5915af451388ffeef38bd9d80b2ba0fa87e9b8016",
     "docs/work-item-design.md": "ee54253847a9bafe1344b17e93b56bbe5e214a9d2ed9e30eed0c7cec75025773",
@@ -79,7 +79,7 @@
     ".agents/skills/proof-of-work/SKILL.md": "7f4718ec91b20c6af034296027e1c18e7802610ae00a58a3230da2187c9c96d8",
     ".agents/skills/work-item-start-safety/SKILL.md": "788178c36ae67326566b4295814974d4682cd9152a2574e25aec97261dffb768",
     ".agents/skills/work-item-start-safety/checks.json": "d93d3d8f483d8eea47c36782a045c893bf7a045b533b7dfe79e0d3d9246ed3cc",
-    ".agents/skills/work-item-start-safety/coverage.json": "76656dab3d0030f5aefae3141cf1acc4df45e03d4cad7958e8ea772364ef8e8b",
+    ".agents/skills/work-item-start-safety/coverage.json": "06980f0039ea907fac6f58150664ab48fa25dde67284f86c50f3e0b14205e233",
     ".agents/skills/work-item-start-safety/model/WorkItemStart.cfg": "62b22525ab048cc9d0b0dd7ba34fe64830e43ee48709c1b02236e6fe71179100",
     ".agents/skills/work-item-start-safety/model/WorkItemStart.tla": "649aff78c265d45750988c0bb1a193d01b94adaf916b2105f3269eb2e32dbba0",
     ".agents/skills/work-item-start-safety/references/findings.md": "e2a270594fafa3a7e2dee76bea5ec16d9e47973506c00aaddb3a340e788c86da",
@@ -91,7 +91,7 @@
     "docs/business-evidence.md": "7348a41a70c173ef06f488961224bd2288e5fc3cf47841abbb9243ddbfe24c1c",
     "docs/harnesses.md": "9cf430599c31d679d68f42cd8f37ca43e194607a30423415cd071ff495e5c4b8",
     "docs/human-verification.md": "b45c64c92c0f54b4261b552811c1c479eac62f123e26bab0157b795cc360b66f",
-    "docs/playbook.md": "624dde3a3e829c4fe135f068126f82ab75fa6ab3ae44aec7367212959bd82541",
+    "docs/playbook.md": "f148ad61ff3f27aa43f2630b79a1956c0c34fb9c9da2e51c9d7678bae7b33bb8",
     "docs/proof-of-work.md": "2d7a1a02af35b1de65e9fa7ebe29732607294ef513473ac1dafd5d43d19aa731",
     "docs/repository-conventions.md": "5cdf242f554a6b42ef255a07cc7f60b05764ac360f27dd7bec61a6c9da7ca46b",
     "docs/work-item-design.md": "4a6af29aa86851d53f51196474543564a079e3da69726dc1681a803a01a41269",
