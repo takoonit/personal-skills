@@ -4,7 +4,8 @@ import argparse
 import hashlib
 import json
 import os
-from pathlib import Path
+from pathlib import Path, PurePosixPath
+import re
 import shlex
 import shutil
 import subprocess
@@ -14,6 +15,15 @@ ROOT = Path(__file__).resolve().parents[1]
 SKILLS = ('work-item-delivery', 'work-item-start-safety', 'proof-of-work',
           'azure-pr-format', 'azure-pr-write', 'azure-pr-review',
           'azure-commit-message', 'azure-change-record')
+# Native replacements for claude-obsidian's WSL-bound vault skills; Windows hosts only.
+WINDOWS_SKILLS = ('wiki-query', 'think')
+
+
+def windows_host(choice, skills_directory):
+    if choice != 'auto':
+        return choice == 'yes'
+    # Native Windows Python, or WSL installing into a Windows profile (/mnt/<drive>/...).
+    return os.name == 'nt' or bool(re.match(r'^/mnt/[a-z]/', PurePosixPath(skills_directory).as_posix()))
 
 
 def files(directory):
@@ -40,8 +50,11 @@ def settings(path):
     return values
 
 
-def install(skills_directory, bin_directory, values):
+def install(skills_directory, bin_directory, values, windows=False):
     skills_directory, bin_directory = skills_directory.resolve(), bin_directory.resolve()
+    sources = {name: ROOT/'skills'/name for name in SKILLS}
+    if windows:
+        sources.update({name: ROOT/'windows/skills'/name for name in WINDOWS_SKILLS})
     executable = shutil.which('node')
     if not executable:
         raise ValueError('Node 22+ must be available on PATH')
@@ -58,14 +71,14 @@ def install(skills_directory, bin_directory, values):
     for destination in (skills_directory, bin_directory):
         if destination.exists() and not destination.is_dir():
             raise ValueError('Install destination must be a directory: ' + str(destination))
-    source_roots = [(ROOT/'skills'/name).resolve() for name in SKILLS]
+    source_roots = [source.resolve() for source in sources.values()]
     for destination in (skills_directory, bin_directory):
         if any(destination == source or source in destination.parents for source in source_roots):
             raise ValueError('Choose installation directories outside the source skill packages')
     with tempfile.TemporaryDirectory(prefix='work-item-install-') as temporary:
         stage = Path(temporary)
-        for name in SKILLS:
-            shutil.copytree(ROOT/'skills'/name, stage/name)
+        for name, source in sources.items():
+            shutil.copytree(source, stage/name)
         runtime = stage/'work-item-delivery/vendor/work-item-runtime'
         config_file = runtime/'config.json'
         config = json.loads(config_file.read_text())
@@ -84,7 +97,7 @@ def install(skills_directory, bin_directory, values):
         entry = skills_directory/'work-item-delivery/vendor/work-item-runtime/bin/wid.mjs'
         launcher_bytes = ('#!/usr/bin/env bash\nexec node ' + shlex.quote(str(entry)) + ' "$@"\n').encode()
         pending = []
-        for name in SKILLS:
+        for name in sources:
             destination = skills_directory/name
             if destination.is_symlink() or (destination.exists() and not destination.is_dir()):
                 raise ValueError('Existing install conflicts; preserve it: ' + str(destination))
@@ -105,7 +118,8 @@ def install(skills_directory, bin_directory, values):
             with launcher.open('xb') as handle:
                 handle.write(launcher_bytes)
             launcher.chmod(0o755)
-        print(json.dumps({'installed_skills': list(SKILLS), 'new_skills': pending,
+        print(json.dumps({'installed_skills': list(sources), 'new_skills': pending,
+                          'windows_skills': list(WINDOWS_SKILLS) if windows else [],
                           'runtime': str(entry.parent.parent), 'launcher': str(launcher),
                           'scope': 'Local installation only; plugin discovery, authentication and Work Item approval are separate.'}))
 
@@ -115,9 +129,14 @@ def main():
     parser.add_argument('--skills-dir', type=Path, required=True)
     parser.add_argument('--bin-dir', type=Path, default=Path.home()/'.local/bin')
     parser.add_argument('--settings', type=Path)
+    parser.add_argument('--windows-host', choices=('auto', 'yes', 'no'), default='auto',
+                        help='Also install the native Windows vault skills (wiki-query, think). '
+                             'auto: on native Windows or when the skills dir is under /mnt/<drive>/')
     args = parser.parse_args()
     try:
-        install(args.skills_dir.expanduser(), args.bin_dir.expanduser(), settings(args.settings))
+        skills_directory = args.skills_dir.expanduser()
+        install(skills_directory, args.bin_dir.expanduser(), settings(args.settings),
+                windows_host(args.windows_host, skills_directory))
     except (ValueError, OSError, subprocess.CalledProcessError) as error:
         parser.exit(1, str(error)+'\n')
 

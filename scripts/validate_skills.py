@@ -10,6 +10,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SKILLS = ROOT / "skills"
+# Platform-specific skills, installed only on that platform by the workflow installer.
+PLATFORM_SKILLS = ROOT / "windows" / "skills"
 NAME_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 
 
@@ -77,6 +79,8 @@ def main() -> int:
         return 1
 
     directories = sorted(path for path in SKILLS.iterdir() if path.is_dir())
+    if PLATFORM_SKILLS.is_dir():
+        directories += sorted(path for path in PLATFORM_SKILLS.iterdir() if path.is_dir())
     if not directories:
         print("ERROR: no skills found")
         return 1
