@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { captureReceipt, captureBinding } from "./evidence.mjs";
 import { assert, text, id, git, readJson, receipt, unitSourceIds } from "./delivery-common.mjs";
+import { prDraftPath } from "./pr-draft.mjs";
 
 export const deliveryExecution = {
   async recordCapture(file) {
@@ -44,6 +45,8 @@ export const deliveryExecution = {
     const contextIds = new Set([...u.source_refs, ...business.flatMap(flow => flow.steps.flatMap(step => step.source_refs))]);
     return {
       goal: u.change,
+      pr_draft: {path: prDraftPath(this.directory, u.repo), owner: "coordinator",
+        instruction: "Read the current case narrative and planned proof before gathering evidence. Return fresh cause/change notes, user-action observations and exact artifact links to the coordinator; it integrates this unit without replacing sibling cases."},
       investigation: await this.investigationEvidence(s.plan,u),
       blockers: s.blockers.filter(b=>b.units.includes(u.id)),
       scope: {

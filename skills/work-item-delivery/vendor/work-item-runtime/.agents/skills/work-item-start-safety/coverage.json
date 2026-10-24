@@ -1,10 +1,10 @@
 {
   "baseline": {
-    "git_commit": "34647146484cc8e573aa6e3c1e3988d2f9201605",
+    "git_commit": "ff127ddd51b2c1330eb1e6fc662ecddaabb5a68c",
     "reason": "Portable export of the reviewed source workflow. Public document paths and configuration differ from the author checkout; file hashes identify the exported inputs. Local author Windows launchers are excluded because this package owns its WSL installation path."
   },
   "files": {
-    "bin/wid.mjs": "5691fa61e266d0305654ee682a2509a6db22ff9354a5a32b230084a2916b633c",
+    "bin/wid.mjs": "4739bd1b5cd52da063ba464528a8f81c738affbe6f0c6d63d01c85b39dfa1b06",
     "config.json": "4c2e0e6608066ffae828f32b3e966597037c13e1e04b3feb0cb09e306126b84d",
     "docs/business-evidence.md": "7348a41a70c173ef06f488961224bd2288e5fc3cf47841abbb9243ddbfe24c1c",
     "docs/playbook.md": "f148ad61ff3f27aa43f2630b79a1956c0c34fb9c9da2e51c9d7678bae7b33bb8",
@@ -12,14 +12,14 @@
     "lib/approved-action.mjs": "5ff92eb2f2cfdddcf613fe27def53aee3aa7fab98dd17161dcd1f721074046e8",
     "lib/cursor-workflow.mjs": "6297c281cafffd40937a2ac94d7d0f6a9c305c4d213978c2062a43d969f14110",
     "lib/delivery-common.mjs": "62afce3d3f4d90cf26c10e9f271417419ce2c5ef1e0544d3dcdacd69e51064d4",
-    "lib/delivery-execution.mjs": "83d95f3996025b6a5cd8813863d0f9dcac879cec992e8d1cdd99b451260544bc",
+    "lib/delivery-execution.mjs": "3a322f7aa674414e7cc0db6c8301ecb17832cb3557f3e4604a7c5ded5b296ba3",
     "lib/delivery-plan.mjs": "fbfcef15a658982eb89122668205f618011060d195557fb360b2f539877b7da0",
     "lib/delivery-publication.mjs": "7fbe8ec4a2024f04e9d7b131c939f4b174fe00c128effefc164f454e73288ea5",
     "lib/delivery-readiness.mjs": "7ae995cbcddbef997ca2905a2d07e47092a2d008b886ca5d49f0674c0676ed80",
     "lib/delivery-verification.mjs": "366b92050995095985f9ac4e13cc068cef189f6e267a6ce3a321974971dea3d8",
-    "lib/delivery.mjs": "beb79d5320a69d50e9ca58f10cceb6d8a43f56ab899344d0841b3e1d69450df6",
+    "lib/delivery.mjs": "36ba4eee4ef7c2a12442f30c852eb9c17a3e8bcdd2ac4ab71a25a7372022e1a7",
     "lib/evidence.mjs": "d8fe8c008bd805b67b797970c0fe232b3a6774a07be927ea8d0beb02968b93e6",
-    "package.json": "24812d959647c67570cfd813245c28b8660034d3e9624a0e3b22005a99503736",
+    "package.json": "9da4a97862050d75538065721a5cd2cf394924a8fb84534ea331155984ca3e2c",
     "templates/action-preflight.example.json": "d81d7fac7574553a85b3363df511951c664893b6fcca352bc4367ab4059c3e4f",
     "templates/approved-action.example.json": "d93d7b7aa152e77d80093e60a4ae34acaf9ff9c3179e8623e69fb729889b043d",
     "templates/plan.example.json": "f5de9ac8751643febd883b0f7ff021c11ee0fec10228209f52717094c6c2a804",

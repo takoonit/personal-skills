@@ -8,6 +8,7 @@ import { nextCursorAction } from "../lib/cursor-workflow.mjs";
 const help = `work-item-delivery <command> --run <directory> [options]
 
 intake                 Preserve an exact source snapshot: --file --url --revision
+pr-draft               Create or read private pr-drafts/REPO/PR.md without overwriting: --repo
 investigate            Begin/revise durable questions from --file; revisions require expected_revision
 investigation-brief    Issue independent, challenge or arbitration inputs: --task
 investigation-report   Import a report bound to the issued input digest: --task --file
@@ -73,6 +74,9 @@ try {
   const v = values;
   let result;
   switch (command) {
+    case "pr-draft":
+      result = await run.prDraft(v.repo);
+      break;
     case "intake": {
       if (!v.file || !v.url || !v.revision)
         throw new Error("intake needs --file, --url and --revision");

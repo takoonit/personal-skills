@@ -8,6 +8,7 @@ import { deliveryReadiness } from "./delivery-readiness.mjs";
 import { deliveryExecution } from "./delivery-execution.mjs";
 import { deliveryVerification } from "./delivery-verification.mjs";
 import { deliveryPublication } from "./delivery-publication.mjs";
+import { ensurePrDraft } from "./pr-draft.mjs";
 
 import { investigation } from "./investigation.mjs";
 
@@ -38,6 +39,14 @@ export class Delivery {
     for (const r of Object.values(state.repos))
       if (!r.pr_identity && r.published) r.pr_identity = publicationIdentity(r);
     return state;
+  }
+  async prDraft(repo) {
+    return this.locked(async () => {
+      let state;
+      try { state = await this.load(); } catch (error) { if (error.code !== "ENOENT") throw error; }
+      if (state) this.repo(state, repo);
+      return ensurePrDraft(this.directory, repo);
+    });
   }
   async fingerprint(plan, designReceipt = null) {
     const context = await planFingerprint(plan);
