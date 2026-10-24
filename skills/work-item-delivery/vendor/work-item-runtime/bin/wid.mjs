@@ -8,7 +8,11 @@ import { nextCursorAction } from "../lib/cursor-workflow.mjs";
 const help = `work-item-delivery <command> --run <directory> [options]
 
 intake                 Preserve an exact source snapshot: --file --url --revision
-init                   Initialize from --file <plan.json>
+investigate            Begin/revise durable questions from --file; revisions require expected_revision
+investigation-brief    Issue independent, challenge or arbitration inputs: --task
+investigation-report   Import a report bound to the issued input digest: --task --file
+arbitrate              Reconcile every claim, gap and challenge from --file
+design-context         Print exact plan and projected design hashes: --file\ninit                   Admit v3 plan from --file <plan.json> with reconciled dossier and design
 status / next          Show ready units, blockers, repo publication holds
 cursor                 Print the next action; reuse approval and check only new blockers
 plan                   Render the case/spec/task/dependency plan as Markdown
@@ -50,6 +54,7 @@ const options = Object.fromEntries(
     "unblock",
     "blocker",
     "unblock-owner",
+    "task",
   ].map((k) => [k, { type: "string" }]),
 );
 try {
@@ -93,6 +98,21 @@ try {
       result = metadata;
       break;
     }
+    case "investigate":
+      result = await run.investigate(JSON.parse(await readFile(v.file,"utf8")));
+      break;
+    case "investigation-brief":
+      result = await run.investigationBrief(v.task);
+      break;
+    case "investigation-report":
+      result = await run.investigationReport(v.task,v.file);
+      break;
+    case "arbitrate":
+      result = await run.arbitrate(v.file);
+      break;
+    case "design-context":
+      result = await run.designContext(JSON.parse(await readFile(v.file,"utf8")));
+      break;
     case "init":
       result = await run.init(
         validatePlan(JSON.parse(await readFile(v.file, "utf8"))),

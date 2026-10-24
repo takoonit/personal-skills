@@ -4,7 +4,7 @@ import { createHash } from "node:crypto";
 import { dirname, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
-import { Delivery } from "../lib/delivery.mjs";
+import { planFingerprint, designProjection } from "../lib/delivery-common.mjs";
 
 const need = (condition, message) => { if (!condition) throw new Error(message); };
 const text = value => typeof value === "string" && Boolean(value.trim());
@@ -28,21 +28,20 @@ function roles(bytes, role) {
 
 export async function checkDesign(planPath, manifestPath, modelsPath) {
   const plan = JSON.parse(await readFile(planPath, "utf8"));
-  need(plan?.schema === "work-item-delivery.plan.v2", "Use a v2 investigation plan");
+  need(["work-item-delivery.plan.v2","work-item-delivery.plan.v3"].includes(plan?.schema), "Use a v2 or v3 investigation plan");
   list(plan.sources, "Plan sources", 1);
   const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
-  need(manifest?.schema === "work-item-delivery.design.v1", "Unsupported design manifest");
+  need(["work-item-delivery.design.v1","work-item-delivery.design.v2"].includes(manifest?.schema), "Unsupported design manifest");
   const modelsBytes = await readFile(modelsPath);
   const modelsHash = sha(modelsBytes);
   const runners = roles(modelsBytes, "architect runners");
   const pool = roles(modelsBytes, "arena cross-judge pool");
   const reviewers = roles(modelsBytes, "interrogate reviewers");
   need(runners.length >= 2, "Architect needs at least two configured candidate seats");
-  // fingerprint does not initialize/open the store or write an execution ledger.
-  const planHash = await new Delivery(dirname(resolve(planPath))).fingerprint(plan);
-  const context = (record, label) => need(record?.plan_hash === planHash && record?.models_sha256 === modelsHash,
+  const planHash = await planFingerprint(plan);
+  let originHash=planHash, projection;
+  const context = (record, label) => need(record?.plan_hash === originHash && record?.models_sha256 === modelsHash,
     `${label}: stale plan/configuration context; renew stages, not just wrapper hashes`);
-  context(manifest, "Manifest");
   const cached = new Map();
   const artifact = async (record, label) => {
     need(record && text(record.path) && /^[a-f0-9]{64}$/.test(record.sha256), `${label}: invalid artifact receipt`);
@@ -55,6 +54,16 @@ export async function checkDesign(planPath, manifestPath, modelsPath) {
     need(cached.get(path) === record.sha256, `${label}: artifact bytes changed`);
     return { path, sha256: record.sha256 };
   };
+  if (manifest.schema === "work-item-delivery.design.v2") {
+    const origin=await artifact(manifest.origin_plan,"Origin plan");
+    const originPlan=JSON.parse(await readFile(origin.path,"utf8"));
+    originHash=await planFingerprint(originPlan);
+    projection=await designProjection(plan);
+    const originalProjection=await designProjection(originPlan);
+    need(manifest.projection_version===2 && manifest.design_hash===projection.sha256 &&
+      originalProjection.sha256===projection.sha256, "Substantive design context changed; renew the design projection and stages");
+  }
+  context(manifest, "Manifest");
   const pair = async (record, label) => pairDigest(
     await artifact(record.sketch, label + " sketch"), await artifact(record.rationale, label + " rationale"));
   const seats = (records, models, prefix) => {
@@ -119,7 +128,8 @@ export async function checkDesign(planPath, manifestPath, modelsPath) {
     classified.add(key);
   }
   need(classified.size === declared.size, "Missing lead disposition for a declared finding");
-  return { status: "DESIGN_CHECKED", plan_hash: planHash, models_sha256: modelsHash, subject_sha256: subject };
+  return { status: "DESIGN_CHECKED", plan_hash: planHash, models_sha256: modelsHash, subject_sha256: subject,
+    ...(projection?{projection_version:2,design_hash:projection.sha256,origin_plan_hash:originHash,reused:originHash!==planHash}:{}) };
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {

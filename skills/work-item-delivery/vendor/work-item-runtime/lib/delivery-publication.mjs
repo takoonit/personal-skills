@@ -31,6 +31,7 @@ export const deliveryPublication = {
         const r = this.repo(s, repo), path = s.repos[repo].path;
         assert(repositoryIdentity(path) === s.repos[repo].identity, "repository identity changed");
         assert(record.plan_hash === s.plan_hash, "approved scope changed");
+        await this.admittedDossier(s.plan);
         assert(record.request.target_branch === r.base_ref.replace(/^origin\//, ""), "approved target branch changed");
         for (const attachment of record.attachments)
           assert((await receipt(attachment.path)).sha256 === attachment.sha256, "approved attachment changed");

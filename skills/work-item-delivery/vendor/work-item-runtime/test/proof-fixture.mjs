@@ -1,3 +1,4 @@
+import { admitFixture } from "./investigation-fixture.mjs";
 import assert from "node:assert/strict";
 import { mkdtemp, mkdir, readFile, writeFile, rm, copyFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -34,7 +35,11 @@ export async function proofFixture(t, {verify = true, parent = tmpdir()} = {}) {
     unit_test_plan:{check_ids:["unit","regression"],assertions:["A is visible and B is excluded"],before:"Assert expected A versus actual A,B",after:"The unchanged assertion passes after filtering inactive items"}}];
   plan.blockers=[];
   plan.capture_plan=[{id:"fixture",repo:"backend",case_ids:["C1","C2"],tool:"not-applicable",reason:"Synthetic backend test-tool fixture has no UI"}];
-  const call=(method,...args)=>new Delivery(run)[method](...args);
+  const call=async(method,...args)=>{
+    if(method==="replan") await admitFixture(new Delivery(run),args[0],root);
+    return new Delivery(run)[method](...args);
+  };
+  await admitFixture(new Delivery(run),plan,root);
   const initialized=await call("init",plan);
   await call("approvePlan",initialized.plan_hash,approval);
   const argv=testArgv("regression.test.mjs"),red=spawnSync(argv[0],argv.slice(1),{cwd:repo,encoding:"utf8"});

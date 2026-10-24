@@ -52,13 +52,54 @@ const unitSourceIds = (plan, unit) => [...new Set([
   ...unit.depends_on.flatMap(dep => dep.source_refs),
   ...businessFlows(plan, unit).flatMap(flow => flow.steps.flatMap(step => step.source_refs)),
 ])];
-async function unitInputHash(plan, unit) {
+async function planFingerprint(plan) {
+  const inputs = [];
+  for (const source of plan.sources.filter(s=>s.status==="read")) inputs.push({id:source.id,...await receipt(source.snapshot)});
+  return sha(canonical({plan,inputs}));
+}
+async function unitInputHash(plan, unit, evidence) {
   const inputs = [];
   for (const key of unitSourceIds(plan, unit).sort()) {
     const source = plan.sources.find(s => s.id === key);
     inputs.push({...source, ...(source.status === "read" ? {receipt:await receipt(source.snapshot)} : {})});
   }
-  return sha(canonical({unit, cases:plan.cases.filter(c => unit.case_ids.includes(c.id)), flows:businessFlows(plan, unit), inputs}));
+  return sha(canonical({unit, evidence, cases:plan.cases.filter(c => unit.case_ids.includes(c.id)), flows:businessFlows(plan, unit), inputs}));
+}
+const without = (value, keys) => Object.fromEntries(Object.entries(value).filter(([key]) => !keys.includes(key)));
+const executionUnit = unit => {
+  const extensions=without(unit.investigation??{},["claim_ids","gap_ids"]);
+  return {...without(unit, ["investigation", "priority", "checks"]),
+    ...(Object.keys(extensions).length?{investigation:extensions}:{}),
+    checks:unit.checks?.map(check => without(check, ["timeout_ms"])),
+  };
+};
+const semanticWorkItem = workItem => without(workItem, ["revision"]);
+async function unitExecutionHash(plan, unit, version = 3) {
+  const hash = await unitInputHash(plan, executionUnit(unit));
+  const repository = plan.repositories.find(repo => repo.id === unit.repo);
+  return sha(canonical({hash, repository:without(repository, ["branch"]),
+    work_item:version===2?plan.work_item:semanticWorkItem(plan.work_item), policy:plan.policy?without(plan.policy,["branch_prefix"]):{},
+    knowledge:without(plan.knowledge??{},["business_flows"]),
+    captures:(plan.capture_plan??[]).filter(row=>row.case_ids.some(key=>unit.case_ids.includes(key))),
+    extensions:without(plan,["schema","work_item","policy","sources","cases","units","repositories","blockers","knowledge","capture_plan","design","admission"]),
+  }));
+}
+async function designProjection(plan) {
+  const projected = structuredClone(plan);
+  if (projected.design) {
+    projected.design = without(projected.design, ["manifest", "models"]);
+    if (!Object.keys(projected.design).length) delete projected.design;
+  }
+  if (projected.policy) {
+    projected.policy = without(projected.policy, ["branch_prefix"]);
+    if (!Object.keys(projected.policy).length) delete projected.policy;
+  }
+  if (projected.repositories) projected.repositories = projected.repositories.map(repo => without(repo, ["branch"]));
+  if (projected.units) projected.units = projected.units.map(unit => ({
+    ...without(unit, ["priority", "checks"]),
+    ...(unit.checks ? {checks:unit.checks.map(check => without(check, ["timeout_ms"]))} : {}),
+  }));
+  return {version:2, sha256:await planFingerprint(projected)};
 }
 const publicationIdentity = repo => repo.pr_identity ?? (repo.published ? {
   pr_url:repo.published.pr_url,
@@ -87,4 +128,4 @@ async function receipt(path) {
   assert(bytes.length > 0, "evidence file is empty");
   return { path: absolute, sha256: sha(bytes), bytes: bytes.length };
 }
-export { sha, canonical, assert, text, array, id, git, atLeast, unique, readJson, repositoryIdentity, businessFlows, unitSourceIds, unitInputHash, publicationIdentity, publicationGate, atomic, receipt };
+export { semanticWorkItem, designProjection, unitExecutionHash, without, planFingerprint, sha, canonical, assert, text, array, id, git, atLeast, unique, readJson, repositoryIdentity, businessFlows, unitSourceIds, unitInputHash, publicationIdentity, publicationGate, atomic, receipt };

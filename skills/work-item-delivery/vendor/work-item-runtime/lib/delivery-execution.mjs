@@ -1,12 +1,12 @@
 import { randomUUID } from "node:crypto";
 import { captureReceipt, captureBinding } from "./evidence.mjs";
-import { assert, text, id, git, readJson, receipt } from "./delivery-common.mjs";
+import { assert, text, id, git, readJson, receipt, unitSourceIds } from "./delivery-common.mjs";
 
 export const deliveryExecution = {
   async recordCapture(file) {
     return this.locked(async () => {
       const s = await this.load();
-      assert(s.plan.schema === "work-item-delivery.plan.v2", "capture requires a v2 evidence plan");
+      assert(["work-item-delivery.plan.v2","work-item-delivery.plan.v3"].includes(s.plan.schema), "capture requires a v2 evidence plan");
       const input = await readJson(file);
       const record = await captureReceipt(s.plan, input);
       record.evidence = await receipt(file);
@@ -24,6 +24,7 @@ export const deliveryExecution = {
     return this.locked(async () => {
       const s = await this.load();
       await this.requireApproval(s);
+      await this.requireDesign(s);
       const u = this.unit(s, unit);
       text(owner, "writer owner");
       assert(s.units[unit].state === "pending", "unit is not pending");
@@ -38,11 +39,13 @@ export const deliveryExecution = {
       return this.brief(s, u, owner);
     });
   },
-  brief(s, u, owner) {
+  async brief(s, u, owner) {
     const business = (s.plan.knowledge?.business_flows ?? []).filter(flow => flow.case_ids.some(id => u.case_ids.includes(id)));
     const contextIds = new Set([...u.source_refs, ...business.flatMap(flow => flow.steps.flatMap(step => step.source_refs))]);
     return {
       goal: u.change,
+      investigation: await this.investigationEvidence(s.plan,u),
+      blockers: s.blockers.filter(b=>b.units.includes(u.id)),
       scope: {
         repo: u.repo,
         path: s.repos[u.repo].path,
@@ -181,6 +184,12 @@ export const deliveryExecution = {
       const s = await this.load();
       const b = s.blockers.find((b) => b.id === blocker);
       assert(b && !b.resolved, "open blocker not found");
+      assert(!b.investigation_refs?.length, "investigation blockers require reconciled evidence and explicit replan");
+      if (s.plan.schema === "work-item-delivery.plan.v3") {
+        const sources = new Set(s.plan.units.filter(unit=>b.units.includes(unit.id)).flatMap(unit=>unitSourceIds(s.plan,unit)));
+        assert(!s.plan.sources.some(source=>sources.has(source.id) && source.status!=="read"),
+          "source blockers require reconciled evidence and explicit replan");
+      }
       b.resolution = await receipt(evidence);
       b.resolved = true;
       for (const key of b.units)

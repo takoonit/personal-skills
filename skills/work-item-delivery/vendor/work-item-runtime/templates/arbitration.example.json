@@ -1,0 +1,122 @@
+{
+  "input_hash": "replace-with-arbitration-brief-input-hash",
+  "claims": [
+    {
+      "id": "U1/finding",
+      "status": "accepted",
+      "rationale": "Replace with attributed evidence-based reasoning."
+    },
+    {
+      "id": "U2/finding",
+      "status": "accepted",
+      "rationale": "Replace with attributed evidence-based reasoning."
+    },
+    {
+      "id": "U3/finding",
+      "status": "accepted",
+      "rationale": "Replace with attributed evidence-based reasoning."
+    }
+  ],
+  "gaps": [],
+  "challenges": [],
+  "bindings": [
+    {
+      "unit": "U1",
+      "claim_ids": [
+        "U1/finding"
+      ],
+      "case_ids": [
+        "C1"
+      ],
+      "source_refs": [
+        "ticket",
+        "spec",
+        "task"
+      ],
+      "finding": "The boundary requiring a backend change must be confirmed against the actual source.",
+      "finding_status": "hypothesis",
+      "acceptance": [
+        "A targeted regression demonstrates the required identity contract."
+      ],
+      "cases": [
+        {
+          "id": "C1",
+          "title": "Employee-specific choices",
+          "expected": "Only choices represented in the selected employee's records appear.",
+          "task_ids": [
+            "101"
+          ],
+          "source_refs": [
+            "ticket",
+            "spec",
+            "task"
+          ]
+        }
+      ]
+    },
+    {
+      "unit": "U2",
+      "claim_ids": [
+        "U2/finding"
+      ],
+      "case_ids": [
+        "C1"
+      ],
+      "source_refs": [
+        "ticket",
+        "spec",
+        "task"
+      ],
+      "finding": "Confirm the current option source and identity matching before selecting a change.",
+      "finding_status": "hypothesis",
+      "acceptance": [
+        "C1's option and matching cases pass with controlled before/after evidence."
+      ],
+      "cases": [
+        {
+          "id": "C1",
+          "title": "Employee-specific choices",
+          "expected": "Only choices represented in the selected employee's records appear.",
+          "task_ids": [
+            "101"
+          ],
+          "source_refs": [
+            "ticket",
+            "spec",
+            "task"
+          ]
+        }
+      ]
+    },
+    {
+      "unit": "U3",
+      "claim_ids": [
+        "U3/finding"
+      ],
+      "case_ids": [
+        "C2"
+      ],
+      "source_refs": [
+        "ticket",
+        "spec"
+      ],
+      "finding": "Which historical year definition controls C2 is unresolved.",
+      "finding_status": "unknown",
+      "acceptance": [
+        "C2's recorded-year and boundary cases match the confirmed requirement."
+      ],
+      "cases": [
+        {
+          "id": "C2",
+          "title": "Historical year semantics",
+          "expected": "Year choices follow the owning ticket's acceptance criteria; ambiguous terminology requires an owner answer.",
+          "task_ids": [],
+          "source_refs": [
+            "ticket",
+            "spec"
+          ]
+        }
+      ]
+    }
+  ]
+}

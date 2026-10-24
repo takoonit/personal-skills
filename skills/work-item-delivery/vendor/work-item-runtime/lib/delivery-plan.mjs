@@ -5,7 +5,7 @@ import { assert, text, array, id, git, unique, repositoryIdentity, unitSourceIds
 
 function validatePlan(plan) {
   assert(
-    ["work-item-delivery.plan.v1", "work-item-delivery.plan.v2"].includes(plan.schema),
+    ["work-item-delivery.plan.v1", "work-item-delivery.plan.v2", "work-item-delivery.plan.v3"].includes(plan.schema),
     "unsupported plan schema",
   );
   text(plan.work_item?.id, "owning Work Item id");
@@ -162,6 +162,12 @@ function validatePlan(plan) {
     text(b.owner, "unblock owner");
     text(b.unblock_when, "unblock condition");
     refs(b.source_refs, "blocker evidence");
+  }
+  if (plan.schema === "work-item-delivery.plan.v3") {
+    assert(/^[a-f0-9]{64}$/.test(plan.admission?.dossier?.sha256) && Number.isInteger(plan.admission.dossier.bytes), "v3 requires immutable dossier admission");
+    text(plan.design?.manifest, "design manifest"); text(plan.design?.models, "design models");
+    assert(isAbsolute(plan.design.manifest) && isAbsolute(plan.design.models), "design paths must be absolute");
+    for (const unit of plan.units) { array(unit.investigation?.claim_ids, "unit admitted claims"); assert(unit.investigation.claim_ids.length || unit.investigation.gap_ids?.length, "unit needs admitted claims or gaps"); }
   }
   validateContext(plan);
   for (const u of plan.units)

@@ -2,12 +2,14 @@ import { setTimeout as delay } from "node:timers/promises";
 import { readFile, rename } from "node:fs/promises";
 import { resolve, join } from "node:path";
 import { openStore } from "../vendor/pstack/store.mjs";
-import { sha, canonical, assert, text, id, git, readJson, repositoryIdentity, unitInputHash, publicationIdentity, atomic, receipt } from "./delivery-common.mjs";
+import { planFingerprint, sha, canonical, assert, text, id, git, readJson, repositoryIdentity, publicationIdentity, atomic, receipt } from "./delivery-common.mjs";
 import { validatePlan } from "./delivery-plan.mjs";
 import { deliveryReadiness } from "./delivery-readiness.mjs";
 import { deliveryExecution } from "./delivery-execution.mjs";
 import { deliveryVerification } from "./delivery-verification.mjs";
 import { deliveryPublication } from "./delivery-publication.mjs";
+
+import { investigation } from "./investigation.mjs";
 
 export class Delivery {
   constructor(directory) {
@@ -37,12 +39,12 @@ export class Delivery {
       if (!r.pr_identity && r.published) r.pr_identity = publicationIdentity(r);
     return state;
   }
-  async fingerprint(plan) {
-    const inputs = [];
-    for (const source of plan.sources.filter((s) => s.status === "read"))
-      inputs.push({ id: source.id, ...(await receipt(source.snapshot)) });
-    return sha(canonical({ plan, inputs }));
+  async fingerprint(plan, designReceipt = null) {
+    const context = await planFingerprint(plan);
+    if (plan.schema !== "work-item-delivery.plan.v3") return context;
+    return sha(canonical({context, design:{manifest:designReceipt?.manifest ?? await receipt(plan.design.manifest),models:designReceipt?.models ?? await receipt(plan.design.models)}}));
   }
+
   async save(state, event) {
     if (event) {
       state.events.push({ at: new Date().toISOString(), ...event });
@@ -112,6 +114,7 @@ export class Delivery {
       } catch (e) {
         if (e.code !== "ENOENT") throw e;
       }
+      const design_receipt = await this.admitPlan(plan);
       for (const r of plan.repositories)
         assert(
           git(r.path, "rev-parse", r.base_ref) === r.base_sha,
@@ -121,7 +124,8 @@ export class Delivery {
         schema: "work-item-delivery.run.v1",
         plan,
         plan_hash: await this.fingerprint(plan),
-        unit_inputs: Object.fromEntries(await Promise.all(plan.units.map(async u => [u.id, await unitInputHash(plan,u)]))),
+        unit_inputs: await this.investigationUnitInputs(plan),
+        design_receipt,
         approval: null,
         units: Object.fromEntries(
           plan.units.map((u) => [u.id, { state: "pending" }]),
@@ -144,6 +148,8 @@ export class Delivery {
     return this.locked(async () => {
       const s = await this.load();
       await this.requireBranchPolicy(s.plan);
+      await this.admittedDossier(s.plan);
+      await this.requireDesign(s);
       for (const unit of s.plan.units) {
         const tests = unit.unit_test_plan;
         assert(tests && ((typeof tests.reason === "string" && tests.reason.trim()) ||
@@ -220,13 +226,12 @@ export class Delivery {
         if (sealed.has(r.id)) assert(canonical(previous) === canonical(r), "published repository scope/baseline is immutable; plan its follow-up explicitly");
         else assert(git(r.path, "rev-parse", r.base_ref) === r.base_sha, "replan baseline is stale");
       }
-      const inputs = Object.fromEntries(await Promise.all(plan.units.map(async u => [u.id, await unitInputHash(plan,u)])));
-      const previousInputs = s.unit_inputs ?? Object.fromEntries(await Promise.all(s.plan.units.map(async u => [u.id, await unitInputHash(s.plan,u)])));
-      const changed = new Set(plan.units.filter(u => inputs[u.id] !== previousInputs[u.id]).map(u => u.id));
-      // Older runs lack per-unit byte fingerprints. Conservatively reconcile all
-      // units if their old snapshot bytes changed before this migration.
-      if (!s.unit_inputs && (await this.fingerprint(s.plan)) !== s.plan_hash)
-        for (const u of plan.units) changed.add(u.id);
+      const unchanged = canonical(plan) === canonical(s.plan) && await this.fingerprint(plan) === s.plan_hash;
+      if (unchanged && !branchReceipt) return { approval_required: s.approval?.hash === s.plan_hash ? null : s.plan_hash, unchanged:true };
+      const designReceipt = await this.admitPlan(plan);
+      const inputs = await this.investigationUnitInputs(plan);
+      const comparison = await this.compareUnitInputs(s, plan, inputs);
+      const changed = new Set(comparison.changed);
       let expanded = true;
       while (expanded) {
         expanded = false;
@@ -240,7 +245,7 @@ export class Delivery {
           }
       }
       for (const u of plan.units.filter(u => sealed.has(u.repo))) {
-        assert(!changed.has(u.id) && s.units[u.id], "published case/source scope is immutable; plan its follow-up explicitly");
+        assert(!changed.has(u.id) && s.units[u.id] && canonical(u) === canonical(s.plan.units.find(old=>old.id===u.id)), "published case/source scope is immutable; plan its follow-up explicitly");
         assert(canonical(plan.blockers.filter(b => b.units.includes(u.id))) === canonical(s.plan.blockers.filter(b => b.units.includes(u.id))), "cannot replan blockers for published cases");
       }
       for (const u of plan.units)
@@ -259,7 +264,10 @@ export class Delivery {
         };
       }
       s.plan = plan;
+      s.design_receipt = designReceipt;
       s.unit_inputs = inputs;
+      s.unit_input_migrations = [...(s.unit_input_migrations ?? []), ...comparison.migrations.map(row=>({...row,plan_hash:s.plan_hash}))];
+      s.unit_input_migration_gaps = comparison.migration_gaps;
       s.plan_hash = await this.fingerprint(plan);
       s.approval = null;
       const previousBlockers = s.blockers;
@@ -269,14 +277,15 @@ export class Delivery {
       for (const unit of Object.values(s.units))
         if (["verified", "reviewed"].includes(unit.state))
           unit.state = "implemented";
-      await this.save(s, { type: "replanned", ...(branchReceipt ? {branch_rename:renamed.map(r=>({repo:r.id,branch:r.branch})),evidence:branchReceipt} : {}) });
-      return { approval_required: s.plan_hash };
+      const preserved = comparison.preserved.filter(key=>!changed.has(key));
+      await this.save(s, { type: "replanned", changed:[...changed], preserved, ...(branchReceipt ? {branch_rename:renamed.map(r=>({repo:r.id,branch:r.branch})),evidence:branchReceipt} : {}) });
+      return { approval_required: s.plan_hash, ...comparison, changed:[...changed], preserved };
     });
   }
 }
 
 Object.defineProperties(Delivery.prototype, Object.fromEntries(
-  Object.entries({ ...deliveryReadiness, ...deliveryExecution, ...deliveryVerification, ...deliveryPublication }).map(
+  Object.entries({ ...investigation, ...deliveryReadiness, ...deliveryExecution, ...deliveryVerification, ...deliveryPublication }).map(
     ([name, value]) => [name, { value, writable: true, configurable: true }],
   ),
 ));

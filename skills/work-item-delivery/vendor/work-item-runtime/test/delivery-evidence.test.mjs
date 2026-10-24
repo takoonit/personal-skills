@@ -58,9 +58,11 @@ test("business flow changes invalidate implementation assumptions", async t => {
 });
 
 test("legacy v1 remains readable but cannot bypass the new execution evidence contract", async t => {
-  const f = await fixture(t);
-  f.plan.schema = "work-item-delivery.plan.v1"; delete f.plan.knowledge; delete f.plan.capture_plan;
-  await f.call("replan", f.plan);
+  const f = await fixture(t,{legacy:true});
+  const file=join(f.run,"delivery.json"), persisted=JSON.parse(await readFile(file,"utf8"));
+  persisted.plan.schema="work-item-delivery.plan.v1";delete persisted.plan.knowledge;delete persisted.plan.capture_plan;
+  persisted.plan_hash=await new Delivery(f.run).fingerprint(persisted.plan);
+  await writeFile(file,JSON.stringify(persisted));
   const state = await f.call("status"); await f.call("approvePlan", state.plan_hash, f.approval);
   assert.equal((await f.call("status")).approved, false);
   await assert.rejects(f.call("start", "A", "worker"), /upgrade the legacy plan/);
@@ -110,13 +112,15 @@ test("delayed older success cannot override a newer observed failure", async t =
 });
 
 test("legacy active writer can finish authorized work before migrating the remaining run", async t => {
-  const f=await fixture(t);await f.approve();await f.call('start','A','worker');
+  const f=await fixture(t,{legacy:true});await f.approve();await f.call('start','A','worker');
   const file=join(f.run,'delivery.json');const legacy=JSON.parse(await readFile(file,'utf8'));
   legacy.plan.schema='work-item-delivery.plan.v1';delete legacy.plan.knowledge;delete legacy.plan.capture_plan;
   const run=new Delivery(f.run);legacy.plan_hash=await run.fingerprint(legacy.plan);legacy.approval.hash=legacy.plan_hash;
   await writeFile(file,JSON.stringify(legacy));
   await writeFile(join(f.repos[0].path,'app.txt'),'authorized legacy implementation');git(f.repos[0].path,'add','.');git(f.repos[0].path,'commit','-m','complete authorized legacy fixture');
   await f.call('finish','A','worker',f.source);
+  const {admitFixture}=await import('./investigation-fixture.mjs');
+  await admitFixture(new Delivery(f.run),f.plan,f.root);
   await f.call('replan',f.plan);
   assert.equal((await f.call('status')).approved,false);
 });

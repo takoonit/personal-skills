@@ -1,5 +1,5 @@
 {
-  "schema": "work-item-delivery.plan.v2",
+  "schema": "work-item-delivery.plan.v3",
   "work_item": {
     "id": "100",
     "url": "https://example.invalid/workitems/100",
@@ -130,6 +130,11 @@
         ],
         "before": "Run the behavior regression on unchanged production code and retain the intended assertion failure, source identity and command output.",
         "after": "Run the focused regression and complete affected tests on the corrected source; retain exit codes, counts/skips and logs."
+      },
+      "investigation": {
+        "claim_ids": [
+          "U1/finding"
+        ]
       }
     },
     {
@@ -185,6 +190,11 @@
         ],
         "before": "Run the behavior regression on unchanged production code and retain the intended assertion failure, source identity and command output.",
         "after": "Run the focused regression and complete affected tests on the corrected source; retain exit codes, counts/skips and logs."
+      },
+      "investigation": {
+        "claim_ids": [
+          "U2/finding"
+        ]
       }
     },
     {
@@ -229,6 +239,11 @@
         ],
         "before": "Run the behavior regression on unchanged production code and retain the intended assertion failure, source identity and command output.",
         "after": "Run the focused regression and complete affected tests on the corrected source; retain exit codes, counts/skips and logs."
+      },
+      "investigation": {
+        "claim_ids": [
+          "U3/finding"
+        ]
       }
     }
   ],
@@ -329,5 +344,15 @@
         "Year choices match confirmed recorded-year semantics"
       ]
     }
-  ]
+  ],
+  "admission": {
+    "dossier": {
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "bytes": 1
+    }
+  },
+  "design": {
+    "manifest": "/replace/with/design.json",
+    "models": "/replace/with/models.md"
+  }
 }

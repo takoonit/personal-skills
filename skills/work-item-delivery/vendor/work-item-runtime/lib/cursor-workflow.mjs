@@ -10,11 +10,16 @@ function units(status, repo) {
 }
 
 export function nextCursorAction(status) {
+  if (!status?.plan_hash && status?.investigation) {
+    const view=status.investigation;
+    return {action: {investigating:"investigate",challenging:"challenge",arbitrating:"arbitrate","plan-ready":"author-plan","integrity-hold":"blocked"}[view.phase],actor:"cursor",investigation:view,
+      detail:"Resume the recorded investigation. Dispatch native tasks with their exact briefs; a reconciled dossier still needs a v3 plan and human approval."};
+  }
   if (!status?.plan_hash)
     return {
       action: "intake",
       actor: "cursor",
-      detail: "No initialized plan. Read the Work Item, sources, and flows, then intake and init.",
+      detail: "No initialized plan. Read the Work Item and sources, then begin a durable investigation with investigate.",
     };
   const approvedActions = status.approved_actions ?? [];
   const execution = approvedActions.find((row) => row.phase !== "completed");
@@ -49,6 +54,10 @@ export function nextCursorAction(status) {
     if (!repos(status).length)
       return { action: "report", actor: "cursor", detail: "Authorized actions have verified read-backs. Report the outcome; do not reopen completed gates." };
   }
+  if (status.continuing_writer || status.continuing_legacy_writer) return {action:"continue-writer",actor:"cursor",
+    units:status.units.filter(unit=>unit.state==="active").map(unit=>({id:unit.id,repo:unit.repo,owner:unit.owner})),
+    detail:"Finish or safely park the already admitted owner before reconciling remaining scope."};
+  if (status.integrity_hold) return {action:"blocked",actor:"cursor",detail:status.integrity_hold};
   if (!status.approved)
     return {
       action: "await-human",
@@ -131,6 +140,7 @@ export function nextCursorAction(status) {
         detail: "Stage the exact PR payload. Do not create or update the PR yet.",
       };
   }
+
 
   const failed = repos(status).find(
     (row) => row.published !== "read-back-verified" && row.verification === "failed",

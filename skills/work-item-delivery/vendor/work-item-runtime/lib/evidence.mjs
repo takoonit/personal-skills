@@ -6,7 +6,7 @@ const words = (value) => typeof value === "string" && value.trim();
 const list = (value) => Array.isArray(value) && value.length > 0;
 
 export function validateContext(plan) {
-  if (plan.schema !== "work-item-delivery.plan.v2") return;
+  if (!["work-item-delivery.plan.v2","work-item-delivery.plan.v3"].includes(plan.schema)) return;
   const sources = new Map(plan.sources.map(s => [s.id, s]));
   const cases = new Set(plan.cases.map(c => c.id));
   const refs = (rows, label) => {
@@ -103,7 +103,7 @@ export async function captureBinding(plan, capture) {
 }
 
 export async function captureCoverage(state, repo, head, phase = null, caseIds = null) {
-  if (state.plan.schema !== "work-item-delivery.plan.v2") return { ready:false, missing:["legacy plan: add business context and evidence contract"] };
+  if (!["work-item-delivery.plan.v2","work-item-delivery.plan.v3"].includes(state.plan.schema)) return { ready:false, missing:["legacy plan: add business context and evidence contract"] };
   const missing = [];
   for (const capture of state.plan.capture_plan.filter(c => c.repo === repo && c.tool === "playwright" && (!caseIds || c.case_ids.some(id => caseIds.includes(id))))) {
     const contextHash = await captureBinding(state.plan, capture);

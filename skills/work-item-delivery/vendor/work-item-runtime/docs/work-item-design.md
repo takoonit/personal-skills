@@ -1,13 +1,13 @@
 # Design before building
 
-This is the shared delegate recipe for Work Items. Follow it after drafting the plan and before product branches, code, tests or configuration edits. It is an agent-workflow gate backed by a read-only evidence checker. It does not retrofit direct CLI admission or prevent direct edits that bypass this workflow.
+This is the shared delegate recipe for Work Items. Follow it after drafting the plan and before product branches, code, tests or configuration edits. The v3 runtime invokes the existing checker at plan admission, approval and new-writer admission. The host performs the design work; the checker validates declared relationships and bytes without dispatching agents.
 
 ## Required sequence
 
 1. Draft the developer plan and realistic ranges. Reuse `how` grounding and run `why` when ownership/layering rationale is a design constraint. Include the architecture, candidate comparison, review and expected correction cost in active AI work; show human effort and external waits separately.
 2. Run `pstack:architect`. Its Sketch phase runs `pstack:arena` once using the configured **architect runners**. Produce at least two structurally distinct whole designs, read/screen every candidate, run one cross-judge selected from the **arena cross-judge pool**, select a base and graft coherent improvements. Preserve the selected sketch and rationale, alternatives, scores, dissent and source candidates.
 3. Run `pstack:interrogate` on that exact synthesized sketch/rationale using every configured reviewer seat. Retain raw reports and stable finding IDs. The lead classifies each declared finding into Act On, Consider, Noted or Dismissed, with its originating reviewer and rationale. Do not automatically apply reviewer suggestions. Any Act On holds building. After accepted design changes, update the saved design and renew review of the changed subject; preserve the earlier reports and decision trail.
-4. Validate the evidence package below. Incorporate the chosen design, tests, blockers and revised estimates into the final developer plan. A changed full plan/source fingerprint requires renewed architect/arena and interrogation against that final input, not just a new wrapper hash. Anticipate design/review cost in the draft to avoid unnecessary revisions.
+4. Validate the evidence package below. Incorporate the chosen design, tests, blockers and revised estimates into the final developer plan. Substantive design changes require renewed architect/arena and interrogation. Proven operational changes can reuse an intact v2 package as described below; never relabel historical stage hashes. Anticipate design/review cost in the draft to avoid unnecessary revisions.
 5. Show the complete final developer plan in chat and obtain genuine explicit approval through the existing delivery workflow. Rerun the design checker before branches/edits and when `cursor` advises `start-unit`, alongside normal source, workspace, owner and runtime readiness checks. A failed check holds the agent's building step. Passing it never supplies consent or clears other holds.
 
 This sequence overrides architect's default transition directly into implementation. There is no second arena between architect and interrogate. If a narrow task needs little new architecture, keep its sketches and reports small; do not silently skip the requested design stage.
@@ -46,7 +46,7 @@ node $WORK_ITEM_DELIVERY_ROOT/scripts/check-design.mjs \
   --models $PSTACK_MODELS_FILE
 ```
 
-It prints `DESIGN_CHECKED` and the current plan/configuration/selected-design hashes, or exits nonzero with `INCOMPLETE`. It reads files only. It neither writes `delivery.json` nor initializes a store, invokes models, creates branches or records approval. Reuse existing `Delivery.fingerprint` for the complete v2 plan and read-source bytes. Do not add the completed manifest to that plan's sources: it refers to the plan hash and would create a circular dependency.
+It prints `DESIGN_CHECKED` and the current plan/configuration/selected-design hashes, or exits nonzero with `INCOMPLETE`. It reads files only. It neither writes `delivery.json` nor initializes a store, invokes models, creates branches or records approval. Use `work-item-delivery design-context --run RUN --file PLAN` for exact `plan_hash`, `projection_version: 2` and projected `design_hash`. The final v3 approval hash additionally binds manifest and model bytes. Do not add the completed manifest to that plan's sources: it refers to the plan hash and would create a circular dependency.
 
 ## Manifest contract
 
@@ -66,13 +66,29 @@ Use schema `work-item-delivery.design.v1`. Artifact receipts are `{ "path": "rel
 
 Stage context declarations identify what was actually provided to that stage. A producer must not relabel old results as a new plan/configuration. Retain original reports when renewing stages. Reconcile declared findings against every raw report; the checker does not parse arbitrary prose or prove that no finding was omitted.
 
+## Reuse after operational changes
+
+A `work-item-delivery.design.v2` manifest keeps all v1 fields and original stage `plan_hash` values, adding:
+
+```json
+{
+  "origin_plan": {"path": "origin-plan.json", "sha256": "EXACT-ORIGINAL-PLAN-FILE-SHA256"},
+  "projection_version": 2,
+  "design_hash": "ORIGINAL-DESIGN-CONTEXT-DIGEST"
+}
+```
+
+Archive the exact original plan before making this wrapper. The checker verifies its bytes, recomputes its exact source context, checks every historical panel against that original context and current model bytes, then compares the original and current design projections. It retains all candidate, subject, artifact, finding and configured-seat checks. No command automatically renews historical panels.
+
+The neutral list is repository `branch`, policy `branch_prefix`, unit `priority`, check `timeout_ms`, and design manifest/model file locators. Model bytes, repository primary path/baseline, admission/dossier, sources, acceptance, blockers and unknown fields remain substantive. A rationale-only new dossier may preserve implementation while still requiring renewed design evidence. V1 stays exact. Missing original plan or changed substantive input requires renewed evidence. Exact approval always binds the current plan and design/model bytes separately.
+
 ## Resume, evidence and limits
 
-On unchanged inputs, reuse the existing package and rerun the check; do not repeat a valid arena merely because the chat resumed. On changed full plan, cited bytes or configuration, renew the affected package against the final input and show material changes for renewed plan approval. After selected sketch/rationale changes, every interrogation subject must be renewed. Missing access, capacity or required review stays a visible hold.
+On unchanged inputs, reuse the existing package and rerun the check; do not repeat a valid arena merely because the chat resumed. On substantive design, cited byte or configuration changes, renew the affected package against the final input and show material changes for renewed plan approval. Operational reuse follows the v2 contract below. After selected sketch/rationale changes, every interrogation subject must be renewed. Missing access, capacity or required review stays a visible hold.
 
 Preserve an already admitted active owner. Finish or explicitly park its dirty/partial work through existing recovery rules before enforcing the new stage at the next safe unit boundary. The checker neither releases owners nor locks checkouts across runs. Exact-content ticket/PR publication approval remains separate; design agreement or `ready-for-agent` never authorizes it.
 
-This checks byte integrity and declared relationships, not semantic design quality, true model execution, independence, authentic configuration selection, approval provenance, remote freshness, deployed behavior or SIT acceptance. The supplied files must remain stable while checking; the result is a snapshot. Readiness still comes from actual current receipts, source reads and owner checks. All currently available models are GPT family; disclose reduced diversity.
+This checks byte integrity and declared relationships, not semantic design quality, true model execution, independence, authentic configuration selection, approval provenance, remote freshness, deployed behavior or SIT acceptance. The supplied files must remain stable while checking; the result is a snapshot. Readiness still comes from actual current receipts, source reads and owner checks. The configured design panel uses GPT-family seats; disclose that reduced diversity. A separately requested Claude review is additional evidence, not a substitute for a configured seat.
 
 ## Rerunnable verification
 

@@ -155,3 +155,78 @@ test("design checker refuses ambiguous configuration empty artifacts and missing
     assert.match(result.stderr,/INCOMPLETE/);
   }
 });
+
+test("projected design reuses a verified origin for enumerated operational changes",async t=>{
+  const f=await fixture(t),run=new Delivery(f.root);
+  const origin=join(f.root,"origin-plan.json");
+  await writeFile(origin,JSON.stringify(f.plan));
+  const context=await run.designContext(f.plan);
+  f.manifest.schema="work-item-delivery.design.v2";
+  f.manifest.origin_plan={path:origin,sha256:sha(await readFile(origin))};
+  f.manifest.projection_version=context.projection_version;
+  f.manifest.design_hash=context.design_hash;
+  const oldStages=JSON.stringify(f.manifest.architect);
+  f.plan.policy={branch_prefix:"codex/"};
+  await writeFile(f.planFile,JSON.stringify(f.plan));
+  const checked=await f.check();
+  assert.equal(checked.origin_plan_hash,f.context.plan_hash);
+  assert.equal(checked.reused,true);
+  assert.equal(JSON.stringify(f.manifest.architect),oldStages);
+  f.plan.acceptance=["New substantive acceptance"];
+  await writeFile(f.planFile,JSON.stringify(f.plan));
+  await assert.rejects(f.check(),/design.*context|projection/i);
+});
+
+test("projected design cannot reuse changed sources configuration or original stage hashes",async t=>{
+  const f=await fixture(t),run=new Delivery(f.root);
+  const origin=join(f.root,"origin-plan.json");
+  await writeFile(origin,JSON.stringify(f.plan));
+  Object.assign(f.manifest,{schema:"work-item-delivery.design.v2",origin_plan:{path:origin,sha256:sha(await readFile(origin))}},await run.designContext(f.plan));
+  await f.check();
+  const original=await readFile(f.source);
+  await writeFile(f.source,"Changed bytes");
+  await assert.rejects(f.check(),/stale|projection/);
+  await writeFile(f.source,original);
+  f.manifest.architect.candidates[0].plan_hash="0".repeat(64);
+  await assert.rejects(f.check(),/architect-1: stale/);
+});
+
+test("design projection enumerates neutral fields and retains unknown baseline and acceptance fields",async t=>{
+  const f=await fixture(t),run=new Delivery(f.root);
+  f.plan.repositories=[{id:"repo",path:"/original",branch:"old",base_sha:"baseline"}];
+  f.plan.policy={branch_prefix:"old/"};
+  f.plan.design={manifest:"old.json",models:"old.md"};
+  f.plan.units=[{id:"A",priority:1,checks:[{id:"check",argv:["node","test"],timeout_ms:100}],acceptance:["Works"]}];
+  const original=await run.designContext(f.plan);
+  f.plan.repositories[0].branch="new";
+  f.plan.policy.branch_prefix="new/";
+  f.plan.design={manifest:"new.json",models:"new.md"};
+  f.plan.units[0].priority=9; f.plan.units[0].checks[0].timeout_ms=200;
+  const neutral=await run.designContext(f.plan);
+  assert.equal(neutral.design_hash,original.design_hash);
+  assert.notEqual(neutral.plan_hash,original.plan_hash);
+  for(const mutate of [
+    plan=>plan.repositories[0].path="/different",
+    plan=>plan.repositories[0].base_sha="new-baseline",
+    plan=>plan.units[0].acceptance.push("New acceptance"),
+    plan=>plan.units[0].unrecognized="substantive",
+    plan=>plan.design.unrecognized="substantive",
+    plan=>plan.policy.unrecognized="substantive",
+  ]) {
+    const plan=structuredClone(f.plan);mutate(plan);
+    assert.notEqual((await run.designContext(plan)).design_hash,neutral.design_hash);
+  }
+});
+
+test("projected reuse still validates original bytes models and every artifact",async t=>{
+  const f=await fixture(t),run=new Delivery(f.root),origin=join(f.root,"origin-plan.json");
+  await writeFile(origin,JSON.stringify(f.plan));
+  Object.assign(f.manifest,{schema:"work-item-delivery.design.v2",origin_plan:{path:origin,sha256:sha(await readFile(origin))}},await run.designContext(f.plan));
+  await f.check();
+  for(const path of [origin,join(f.root,"selected.md"),join(f.root,"judge.md"),f.models]){
+    const original=await readFile(path);
+    await writeFile(path,original+"\nchanged");
+    await assert.rejects(f.check(),/artifact bytes changed|stale/);
+    await writeFile(path,original);
+  }
+});

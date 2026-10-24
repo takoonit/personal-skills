@@ -5,6 +5,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { execFileSync } from "node:child_process";
 import { Delivery } from "../lib/delivery.mjs";
+import { unitInputHash, repositoryIdentity } from "../lib/delivery-common.mjs";
+import { admitFixture } from "./investigation-fixture.mjs";
 
 function git(path, ...args) {
   return execFileSync("git", ["-C", path, ...args], {
@@ -15,7 +17,7 @@ function git(path, ...args) {
 
 async function fixture(
   t,
-  { blocked = false, twoRepos = false, failing = false } = {},
+  { blocked = false, twoRepos = false, failing = false, legacy = false, uninitialized = false } = {},
 ) {
   const root = await mkdtemp(join(tmpdir(), "wid-test-"));
   t.after(() => rm(root, { recursive: true, force: true }));
@@ -131,8 +133,30 @@ async function fixture(
     capture_plan:cases.map(c=>({id:`fixture-${c.id}`,repo:units.find(u=>u.case_ids.includes(c.id)).repo,case_ids:[c.id],tool:"not-applicable",reason:"Synthetic orchestration fixture has no product UI; browser evidence is tested separately."})),
   };
   const run = join(root, "run");
-  const call = (method, ...args) => new Delivery(run)[method](...args);
-  const initialized = await call("init", plan);
+  const call = async (method, ...args) => {
+    const delivery = new Delivery(run);
+    if (method === "replan" && !legacy) await admitFixture(delivery,args[0],root);
+    return delivery[method](...args);
+  };
+  let initialized;
+  if (!uninitialized) {
+    if (legacy) {
+      await mkdir(run);
+      const delivery = new Delivery(run), plan_hash = await delivery.fingerprint(plan);
+      const state = {
+        schema:"work-item-delivery.run.v1",plan,plan_hash,approval:null,
+        unit_inputs:Object.fromEntries(await Promise.all(plan.units.map(async u=>[u.id,await unitInputHash(plan,u)]))),
+        units:Object.fromEntries(plan.units.map(u=>[u.id,{state:"pending"}])),
+        repos:Object.fromEntries(plan.repositories.map(r=>[r.id,{path:r.path,baseline:r.base_sha,identity:repositoryIdentity(r.path)}])),
+        blockers:plan.blockers.map(b=>({...b,resolved:false})),captures:[],events:[{type:"initialized",at:"2026-01-01T00:00:00.000Z"}],
+      };
+      await writeFile(join(run,"delivery.json"),JSON.stringify(state));
+      initialized = {plan_hash};
+    } else {
+      await admitFixture(new Delivery(run),plan,root);
+      initialized = await call("init",plan);
+    }
+  }
   const approve = () => call("approvePlan", initialized.plan_hash, approval);
   const implement = async (unit) => {
     await call("start", unit, "worker");

@@ -1,17 +1,18 @@
 import { realpath } from "node:fs/promises";
 import { execFileSync } from "node:child_process";
 import { captureCoverage } from "./evidence.mjs";
-import { assert, id, git, atLeast, repositoryIdentity, publicationIdentity, publicationGate } from "./delivery-common.mjs";
+import { assert, id, git, atLeast, repositoryIdentity, publicationIdentity, publicationGate, unitSourceIds } from "./delivery-common.mjs";
 
 export const deliveryReadiness = {
   async requireApproval(s, {legacyCompletion = false} = {}) {
     if (!legacyCompletion) await this.requireBranchPolicy(s.plan);
-    assert(legacyCompletion || s.plan.schema === "work-item-delivery.plan.v2", "upgrade the legacy plan with cited business context and an evidence contract before execution");
+    assert(legacyCompletion || ["work-item-delivery.plan.v2","work-item-delivery.plan.v3"].includes(s.plan.schema), "upgrade the legacy plan with cited business context and an evidence contract before execution");
     assert(
       s.approval?.hash === s.plan_hash &&
-        s.plan_hash === (await this.fingerprint(s.plan)),
+        s.plan_hash === (await this.fingerprint(s.plan, legacyCompletion ? s.design_receipt : null)),
       "review and approve this exact plan first",
     );
+    await this.admittedDossier(s.plan);
   },
   repo(s, id) {
     const r = s.plan.repositories.find((r) => r.id === id);
@@ -133,6 +134,10 @@ export const deliveryReadiness = {
         reason: "blocked",
         blockers: blockers.map((b) => b.id),
       };
+    if (s.plan.schema === "work-item-delivery.plan.v3") {
+      const unavailable = s.plan.sources.filter(source => unitSourceIds(s.plan,u).includes(source.id) && source.status !== "read");
+      if (unavailable.length) return {ready:false,reason:"source-evidence-blocked",sources:unavailable.map(source=>source.id)};
+    }
     const waiting = [];
     for (const dep of u.depends_on)
       if (!(await this.dependencyReady(s, dep)))
@@ -152,13 +157,13 @@ export const deliveryReadiness = {
     const r = this.repo(s, u.repo);
     if (git(r.path, "rev-parse", r.base_ref) !== s.repos[u.repo].baseline)
       return { ready: false, reason: "baseline-moved" };
-    if (s.plan.schema === "work-item-delivery.plan.v2" && s.units[u.id].state === "pending") {
+    if (["work-item-delivery.plan.v2","work-item-delivery.plan.v3"].includes(s.plan.schema) && s.units[u.id].state === "pending") {
       const captures = await captureCoverage(s, u.repo, null, "before", u.case_ids);
       if (!captures.ready) return { ready:false, reason:"before-evidence-required", missing:captures.missing };
     }
     return { ready: true };
   },
-  async summarize(s) {
+  async summarize(s, {approvedContinuation = false} = {}) {
     const rows = [];
     for (const u of s.plan.units)
       rows.push({
@@ -169,10 +174,21 @@ export const deliveryReadiness = {
         ...(s.units[u.id].owner ? { owner: s.units[u.id].owner } : {}),
         ...(await this.readiness(s, u)),
       });
-    const approved =
-      s.plan.schema === "work-item-delivery.plan.v2" &&
-      s.approval?.hash === s.plan_hash &&
-      s.plan_hash === (await this.fingerprint(s.plan));
+    let integrity_hold = null;
+    try { await this.admittedDossier(s.plan); } catch (error) { integrity_hold = error.message; }
+    let approved = false, continuing_writer = false;
+    if (!integrity_hold) {
+      try {
+        approved = ["work-item-delivery.plan.v2","work-item-delivery.plan.v3"].includes(s.plan.schema) &&
+          s.approval?.hash === s.plan_hash && s.plan_hash === await this.fingerprint(s.plan);
+      } catch {}
+      if (rows.some(row=>row.state==="active")) {
+        try {
+          await this.requireApproval(s,{legacyCompletion:true});
+          continuing_writer = true;
+        } catch {}
+      }
+    }
     const ready = rows
       .filter((r) => r.state === "pending" && r.ready)
       .sort(
@@ -250,10 +266,20 @@ export const deliveryReadiness = {
       layers.push(layer.map((u) => u.id));
       for (const u of layer) remaining.delete(u.id);
     }
+    const reconciliation=s.events.findLast(event=>event.type==="replanned");
     return {
+      reconciliation: Array.isArray(reconciliation?.changed)&&Array.isArray(reconciliation?.preserved)
+        ? {changed:reconciliation.changed,preserved:reconciliation.preserved} : null,
+      unit_input_migrations: s.unit_input_migrations ?? [],
+      unit_input_migration_gaps: s.unit_input_migration_gaps ?? [],
       work_item: s.plan.work_item,
       plan_hash: s.plan_hash,
       approved,
+      integrity_hold,
+      continuing_writer,
+      continuing_legacy_writer: s.plan.schema === "work-item-delivery.plan.v1" &&
+        s.approval?.hash === s.plan_hash && s.plan_hash === await this.fingerprint(s.plan) &&
+        rows.some(row=>row.state==="active"),
       dependency_layers: layers,
       ready_to_implement: approved ? ready : [],
       candidates_before_approval: approved ? [] : ready,
@@ -267,9 +293,15 @@ export const deliveryReadiness = {
   },
   async status() {
     return this.locked(async () => {
-      const s = await this.load();
+      let s;
+      try { s = await this.load(); }
+      catch (error) { if (error.code !== "ENOENT") throw error; return {investigation:await this.investigationView()}; }
       await this.save(s, null);
-      return this.summarize(s);
+      const summary = await this.summarize(s);
+      let investigation;
+      try { investigation = await this.investigationView(); }
+      catch (error) { investigation = {phase:"integrity-hold",error:error.message}; }
+      return {...summary, investigation};
     });
   }
 };

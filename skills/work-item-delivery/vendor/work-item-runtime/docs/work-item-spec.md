@@ -23,7 +23,7 @@ Read the selected skills and their platform mappings. Follow their delegation re
 
 For a Work Item, explain how the reported case currently travels through the system, why the proposed boundary addresses the evidence, and what the user or maintainer will observe afterward. Keep unknown history as unknown. Reuse this material in the developer plan and specification rather than making competing versions.
 
-After drafting the plan, follow [Design before building](work-item-design.md). Architect owns one arena; interrogate reviews the exact synthesis before implementation. Validate the external package with `scripts/check-design.mjs`, include design/review effort in realistic estimates, then show the final plan and obtain genuine approval. Recheck before branches/edits and any `start-unit` action. This is a mandatory agent-workflow step, not a retrofit of direct CLI admission. Update specs and exact publication previews after accepted design changes without fabricating approval or publishing them.
+After drafting the plan, follow [Design before building](work-item-design.md). Architect owns one arena; interrogate reviews the exact synthesis before implementation. Validate the external package with `scripts/check-design.mjs`, include design/review effort in realistic estimates, then show the final plan and obtain genuine approval. Recheck before branches/edits and any `start-unit` action. V3 admission, approval and new writers enforce the bound checker receipt; unchanged approved actions retain precedence. Update specs and exact publication previews after accepted design changes without fabricating approval or publishing them.
 
 ## Unattended work
 
@@ -39,7 +39,7 @@ This guidance does not install a scheduler or start a recurring/background job. 
 
 ## Author the semantic brief
 
-Read the owning Work Item and its acceptance, linked business specification and relevant code. Preserve versions, exact source snapshots, reproduction, contrary evidence and access gaps in a v2 `plan.json`. Include realistic `estimates.remaining_active_ai_hours`, `basis`, `confidence` and separate `waits`. Keep per-unit estimates and human effort in that plan; the renderer does not invent them.
+Read the owning Work Item and its acceptance, linked business specification and relevant code. Preserve versions, exact source snapshots, reproduction, contrary evidence and access gaps in the [durable investigation dossier](investigation.md), then the admitted v3 `plan.json`. Include realistic `estimates.remaining_active_ai_hours`, `basis`, `confidence` and separate `waits`. Keep per-unit estimates and human effort in that plan; the renderer does not invent them.
 
 Write `spec-brief.json` from that investigation. This is authored reasoning, not automated extraction. Its shape is:
 
