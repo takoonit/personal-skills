@@ -63,6 +63,7 @@ test("legacy opaque inputs migrate unchanged progress with an explicit historica
   assert.equal(after.unit_inputs.A.version,3);
   assert.match(result.migrations.find(row=>row.unit==="A").limitation,/historical.*investigation/i);
   assert.deepEqual((await run("status")).unit_input_migrations,after.unit_input_migrations);
+  assert.deepEqual((await run("resume")).unit_input_migrations,after.unit_input_migrations);
   assert.equal(after.approval,null);
 });
 
@@ -74,6 +75,7 @@ test("legacy source drift is a migration gap rather than inferred unchanged hist
   assert.equal((await run("load")).units.A.state,"pending");
   assert.ok(result.migration_gaps.some(row=>row.unit==="A"));
   assert.deepEqual((await run("status")).unit_input_migration_gaps,result.migration_gaps);
+  assert.deepEqual((await run("resume")).unit_input_migration_gaps,result.migration_gaps);
 });
 
 test("legacy exact hash verification prevents a damaged opaque input from preserving work",async t=>{

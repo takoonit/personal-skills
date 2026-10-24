@@ -6,11 +6,10 @@ import { assert, text, id, git, atLeast, readJson, receipt } from "./delivery-co
 
 export const deliveryVerification = {
   async verify(repo) {
-    // Take an immutable verification brief under the lock, then release it while
-    // tests run. Other repositories can continue using the same durable store.
     const job = await this.locked(async () => {
       const s = await this.load();
       await this.requireApproval(s);
+      await this.requireNoCorrections(s,s.plan.units.filter(u=>u.repo===repo).map(u=>u.id),"certify repository");
       this.repo(s, repo);
       assert(
         !s.repos[repo].verification_running,
@@ -85,12 +84,14 @@ export const deliveryVerification = {
         !git(job.path, "status", "--porcelain") &&
         s.plan_hash === job.plan_hash &&
         await continuation.dependenciesReady(s, job.group, {certifyingRepo:repo});
-      const passed = sourceUnchanged && results.every((r) => r.exit_code === 0);
+      const correction_holds = await continuation.correctionHolds(s.plan,job.group.map(u=>u.id));
+      const passed = !correction_holds.length && sourceUnchanged && results.every((r) => r.exit_code === 0);
       delete s.repos[repo].verification_running;
       s.repos[repo].verification = {
         head: job.head,
         passed,
         source_unchanged: sourceUnchanged,
+        correction_holds,
         results,
       };
       for (const u of job.group)
@@ -135,6 +136,7 @@ export const deliveryVerification = {
     return this.locked(async () => {
       const s = await this.load();
       await this.requireApproval(s);
+      await this.requireNoCorrections(s,s.plan.units.filter(u=>u.repo===repo).map(u=>u.id),"certify repository");
       const w = this.workspace(s, repo, { clean: true }),
         report = await readJson(file);
       const group = s.plan.units.filter(u => u.repo === repo && atLeast(s.units[u.id].state, "implemented"));

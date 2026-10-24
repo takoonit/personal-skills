@@ -3,7 +3,6 @@ import { parseArgs } from "node:util";
 import { readFile, mkdir, copyFile, writeFile } from "node:fs/promises";
 import { resolve, join, basename } from "node:path";
 import { Delivery, sha, validatePlan } from "../lib/delivery.mjs";
-import { nextCursorAction } from "../lib/cursor-workflow.mjs";
 
 const help = `work-item-delivery <command> --run <directory> [options]
 
@@ -15,6 +14,9 @@ investigation-report   Import a report bound to the issued input digest: --task 
 arbitrate              Reconcile every claim, gap and challenge from --file
 design-context         Print exact plan and projected design hashes: --file\ninit                   Admit v3 plan from --file <plan.json> with reconciled dossier and design
 status / next          Show ready units, blockers, repo publication holds
+resume                 Read compact source-bound handoff; --hash rejects stale context
+alignment-note         Record pending correction: --file; optional --cases; explicit --metadata-only
+alignment-resolve      Assess or reconcile correction scope from --file; never supplies approval
 cursor                 Print the next action; reuse approval and check only new blockers
 plan                   Render the case/spec/task/dependency plan as Markdown
 approve-plan           Record human approval: --hash --evidence
@@ -56,8 +58,10 @@ const options = Object.fromEntries(
     "blocker",
     "unblock-owner",
     "task",
+    "cases",
   ].map((k) => [k, { type: "string" }]),
 );
+options["metadata-only"] = {type:"boolean"};
 try {
   const { values, positionals } = parseArgs({
     options,
@@ -129,8 +133,17 @@ try {
     case "next":
       result = await run.status();
       break;
+    case "resume":
+      result = await run.resume(v.hash);
+      break;
+    case "alignment-note":
+      result = await run.alignmentNote(v.file,v.hash,{case_ids:v.cases?.split(","),metadata_only:v["metadata-only"] ?? false});
+      break;
+    case "alignment-resolve":
+      result = await run.reconcileCorrection(v.file);
+      break;
     case "cursor":
-      result = nextCursorAction(await run.status());
+      result = await run.cursor();
       break;
     case "plan": {
       const status = await run.status();

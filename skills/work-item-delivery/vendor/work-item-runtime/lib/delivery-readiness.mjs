@@ -125,6 +125,8 @@ export const deliveryReadiness = {
     return true;
   },
   async readiness(s, u) {
+    const corrections = await this.correctionHolds(s.plan,[u.id]);
+    if (corrections.length) return {ready:false,reason:"correction-reconciliation",corrections};
     const blockers = s.blockers.filter(
       (b) => !b.resolved && b.units.includes(u.id),
     );
@@ -207,7 +209,9 @@ export const deliveryReadiness = {
       }
       const capture_evidence = await captureCoverage(s, r.id, head);
       const dependencies_current = await this.dependenciesReady(s, group);
+      const correction_holds = await this.correctionHolds(s.plan,group.map(u=>u.id));
       publication.push({
+        correction_holds,
         repo: r.id,
         branch: r.branch,
         case_ids: [...new Set(group.flatMap((u) => u.case_ids))],
@@ -221,7 +225,9 @@ export const deliveryReadiness = {
           ? s.repos[r.id].verification.head === head
             ? s.repos[r.id].verification.passed
               ? "passed"
-              : "failed"
+              : s.repos[r.id].verification.correction_holds?.length && s.repos[r.id].verification.results?.every(result=>result.exit_code===0)
+                ? "held"
+                : "failed"
             : "stale"
           : "not-run",
         review: s.repos[r.id].review
@@ -236,6 +242,7 @@ export const deliveryReadiness = {
           : "not-published",
         gate: publicationGate(s.repos[r.id], head),
         ready:
+          (approvedContinuation || !correction_holds.length) &&
           approved &&
           dependencies_current &&
           capture_evidence.ready &&
@@ -268,6 +275,7 @@ export const deliveryReadiness = {
     }
     const reconciliation=s.events.findLast(event=>event.type==="replanned");
     return {
+      corrections: await this.correctionView(s.plan),
       reconciliation: Array.isArray(reconciliation?.changed)&&Array.isArray(reconciliation?.preserved)
         ? {changed:reconciliation.changed,preserved:reconciliation.preserved} : null,
       unit_input_migrations: s.unit_input_migrations ?? [],
@@ -295,7 +303,7 @@ export const deliveryReadiness = {
     return this.locked(async () => {
       let s;
       try { s = await this.load(); }
-      catch (error) { if (error.code !== "ENOENT") throw error; return {investigation:await this.investigationView()}; }
+      catch (error) { if (error.code !== "ENOENT") throw error; return {investigation:await this.investigationView(),corrections:await this.correctionView(null)}; }
       await this.save(s, null);
       const summary = await this.summarize(s);
       let investigation;

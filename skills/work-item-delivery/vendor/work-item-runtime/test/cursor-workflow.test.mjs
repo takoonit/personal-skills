@@ -18,6 +18,15 @@ test("a missing plan stays in intake", () => {
   assert.equal(nextCursorAction({}).action, "intake");
 });
 
+test("only pending assessment or corrupt corrections preempt preplan investigation phases", () => {
+  for (const [phase, action] of Object.entries({investigating:"investigate",challenging:"challenge",arbitrating:"arbitrate","plan-ready":"author-plan"})) {
+    const status={investigation:{phase},corrections:{records:[{state:"open",cases:[{case_id:"A",state:"open"}]}]}};
+    assert.equal(nextCursorAction(status).action,action);
+    assert.equal(nextCursorAction({...status,corrections:{records:[{state:"pending-assessment"}]}}).action,"reconcile-correction");
+    assert.equal(nextCursorAction({...status,corrections:{integrity_hold:"damaged registry",records:[]}}).action,"reconcile-correction");
+  }
+});
+
 test("an explicitly approved action checks only new blockers before execution", () => {
   const status = {
     plan_hash: "abc",

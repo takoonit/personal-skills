@@ -10,6 +10,8 @@ import { deliveryVerification } from "./delivery-verification.mjs";
 import { deliveryPublication } from "./delivery-publication.mjs";
 import { ensurePrDraft } from "./pr-draft.mjs";
 
+import { workflowContext } from "./workflow-context.mjs";
+import { alignment } from "./alignment.mjs";
 import { investigation } from "./investigation.mjs";
 
 export class Delivery {
@@ -294,7 +296,7 @@ export class Delivery {
 }
 
 Object.defineProperties(Delivery.prototype, Object.fromEntries(
-  Object.entries({ ...investigation, ...deliveryReadiness, ...deliveryExecution, ...deliveryVerification, ...deliveryPublication }).map(
+  Object.entries({ ...workflowContext, ...alignment, ...investigation, ...deliveryReadiness, ...deliveryExecution, ...deliveryVerification, ...deliveryPublication }).map(
     ([name, value]) => [name, { value, writable: true, configurable: true }],
   ),
 ));

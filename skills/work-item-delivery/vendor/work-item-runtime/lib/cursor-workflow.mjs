@@ -9,7 +9,21 @@ function units(status, repo) {
   return (status.units ?? []).filter((unit) => unit.repo === repo);
 }
 
+function correctionAction(status) {
+  return {action:"reconcile-correction",actor:"cursor",corrections:status.corrections,
+    detail:"Coordinator assesses pending scope and reconciles open correction cases against the persisted plan. This grants no approval."};
+}
+function hasCorrections(status) {
+  return status.corrections?.integrity_hold || status.corrections?.records?.some(row=>["pending-assessment","open"].includes(row.state));
+}
+export function legalCursorCandidates(status) {
+  if(!status.approved||status.integrity_hold)return [];
+  const completing=new Set((status.approved_actions??[]).map(row=>row.repo));
+  return (status.ready_to_implement??[]).filter(row=>!completing.has(row.repo))
+    .map(row=>({action:"start-unit",actor:"cursor",unit:row.id,repo:row.repo}));
+}
 export function nextCursorAction(status) {
+  if (!status?.plan_hash && (status?.corrections?.integrity_hold || status?.corrections?.records?.some(row=>row.state==="pending-assessment"))) return correctionAction(status);
   if (!status?.plan_hash && status?.investigation) {
     const view=status.investigation;
     return {action: {investigating:"investigate",challenging:"challenge",arbitrating:"arbitrate","plan-ready":"author-plan","integrity-hold":"blocked"}[view.phase],actor:"cursor",investigation:view,
@@ -57,7 +71,9 @@ export function nextCursorAction(status) {
   if (status.continuing_writer || status.continuing_legacy_writer) return {action:"continue-writer",actor:"cursor",
     units:status.units.filter(unit=>unit.state==="active").map(unit=>({id:unit.id,repo:unit.repo,owner:unit.owner})),
     detail:"Finish or safely park the already admitted owner before reconciling remaining scope."};
+  if (status.corrections?.integrity_hold) return correctionAction(status);
   if (status.integrity_hold) return {action:"blocked",actor:"cursor",detail:status.integrity_hold};
+  if (!status.approved && hasCorrections(status)) return correctionAction(status);
   if (!status.approved)
     return {
       action: "await-human",
@@ -88,6 +104,7 @@ export function nextCursorAction(status) {
 
   const verify = repos(status).find(
     (row) =>
+      !row.correction_holds?.length &&
       row.published !== "read-back-verified" &&
       row.verification !== "passed" &&
       row.verification !== "failed" &&
@@ -103,6 +120,7 @@ export function nextCursorAction(status) {
 
   const review = repos(status).find(
     (row) =>
+      !row.correction_holds?.length &&
       row.published !== "read-back-verified" &&
       row.verification === "passed" &&
       row.review !== "passed",
@@ -116,7 +134,7 @@ export function nextCursorAction(status) {
     };
 
   for (const row of repos(status)) {
-    if (row.published === "read-back-verified" || !row.ready) continue;
+    if (row.published === "read-back-verified" || !row.ready || row.correction_holds?.length) continue;
     if (row.gate === "staged")
       return {
         action: "await-human",
@@ -141,6 +159,7 @@ export function nextCursorAction(status) {
       };
   }
 
+  if (hasCorrections(status)) return correctionAction(status);
 
   const failed = repos(status).find(
     (row) => row.published !== "read-back-verified" && row.verification === "failed",

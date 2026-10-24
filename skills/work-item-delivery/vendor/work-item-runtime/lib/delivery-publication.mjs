@@ -116,6 +116,7 @@ export const deliveryPublication = {
     return this.locked(async () => {
       const s = await this.load();
       await this.requireApproval(s);
+      await this.requireNoCorrections(s,s.plan.units.filter(u=>u.repo===repo).map(u=>u.id),"publication certification");
       for (const result of s.repos[repo]?.verification?.results ?? [])
         assert(
           (await receipt(result.evidence.path)).sha256 ===
@@ -207,6 +208,7 @@ export const deliveryPublication = {
     return this.locked(async () => {
       const s = await this.load();
       await this.requireApproval(s);
+      await this.requireNoCorrections(s,s.plan.units.filter(u=>u.repo===repo).map(u=>u.id),"publication certification");
       assert(
         (await this.summarize(s)).publication.find((row) => row.repo === repo)
           ?.ready,
@@ -238,7 +240,7 @@ export const deliveryPublication = {
       const s = await this.load();
       await this.requireApproval(s);
       assert(
-        (await this.summarize(s)).publication.find((row) => row.repo === repo)
+        (await this.summarize(s,{approvedContinuation:true})).publication.find((row) => row.repo === repo)
           ?.ready,
         "grouped PR readiness changed; resolve blockers/checks/reviews before publishing",
       );

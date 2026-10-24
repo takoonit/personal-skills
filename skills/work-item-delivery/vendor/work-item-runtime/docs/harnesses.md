@@ -13,6 +13,18 @@ The local runtime is shared by the configured agent hosts. Run it under Linux or
 | Optional delegation                     | Native collaboration tools when authorized                                     | Native Agent tool when authorized     | Native Task tool when authorized      |
 | PR creation/update/read-back            | Available Azure DevOps tools                                                   | Configured Azure DevOps connector     | Configured Azure DevOps connector     |
 
+## Context re-entry and scoped handoffs
+
+At startup, compaction, handoff, a correction or phase/ownership change, run `work-item-delivery resume --run RUN` and read its phase card and scoped source pointers. `resume --hash HASH` rejects a stale handoff. The runtime supplies a primary action and independent eligible candidates; direct admission checks still apply. Compare component hashes when diagnosing changed context. Follow [alignment](phases/align.md) for corrections and [full delivery rules](delivery-rules.md) for detailed policy. Hashes bind recorded bytes, not consent, skill use, understanding, isolation or remote truth.
+
+Use authorized native tools for fresh bounded role contexts, without a full-history fork by default. Brief role, cases, exact source identities, current PR.md, open correction IDs/scope, owned paths/owner, named available skills, checks, output and stop/return criteria. Preserve an admitted writer and its dirty/partial work. Declare single-agent limitations when independent contexts cannot be established. Approved-action routes use existing approvals/reviews and native execution tools without a new design/writing/reviewer panel.
+
+## Durable native investigation
+
+Start with investigate and request each investigation-brief independently. Dispatch only through authorized native host tools. Give initial investigators no sibling reports or preferred solution. Import each report with its issued input hash, then give the challenger the frozen completed bundle and the arbiter the exact arbitration brief. Use [the investigation contract](investigation.md) for schemas and revision rules.
+
+Record independent-host only when the host establishes separate initial contexts. Otherwise record single-agent with its limitation. The runtime does not authenticate assignees or verify isolation. It stores evidence and enforces admission; it does not schedule agent work. On restart, cursor advises investigation tasks only when no admitted delivery controls execution.
+
 ## Azure DevOps MCP discovery
 
 Use the configured Azure DevOps MCP server first for tracker and repository reads. Discover exposed tools and their actual schemas before calling them. When the host does not expose that server's tools, inspect its configured launcher and connect through the installed MCP SDK, retaining one client/server session across reads. On this machine the existing launcher is `/path/to/your/configured-ado-mcp-launcher`; it starts the official Azure DevOps MCP server. This is MCP access, not a REST fallback. Use a read-only tool/action allowlist during planning and preserve source responses outside product repositories.
