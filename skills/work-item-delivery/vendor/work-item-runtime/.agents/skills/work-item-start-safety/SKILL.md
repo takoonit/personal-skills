@@ -69,17 +69,19 @@ For a deliberate failure demonstration, add `--self-test`. This changes temporar
 
 ## Coverage and interpretation
 
-Read [findings and limits](references/findings.md) before interpreting a pass. [coverage.json](coverage.json) identifies the source snapshot; [checks.json](checks.json) lists all required actual-code tests. The export records its source workflow commit and exact packaged file hashes; those hashes identify the adapted snapshot, including originally untracked files. A source commit alone does not identify that snapshot.
+Read [findings and limits](references/findings.md) before interpreting a pass. [coverage.json](coverage.json) identifies the exported source snapshot; [checks.json](checks.json) lists the required actual-code tests. The package provenance records the reviewed workflow commit and separate source/export hashes. These hashes identify the adapted portable inputs; a passing model does not review later edits.
 
 | Check | Actual source boundary |
 | --- | --- |
-| Approval/schema/source binding | `lib/delivery.mjs`: `fingerprint`, `requireBranchPolicy`, `requireApproval`, `start`; `lib/evidence.mjs` |
-| Readiness/evidence/dependencies | `lib/delivery.mjs`: `readiness`, `start`; `lib/evidence.mjs` capture coverage |
-| Valid clean workspace | `lib/delivery.mjs`: `workspace`, `start` |
-| One writer per repository within one delivery run | `lib/delivery.mjs`: `locked`, `start`, `readiness`; `vendor/pstack/store.mjs` |
+| Approval/schema/source binding | `lib/delivery.mjs`: `fingerprint`, `requireBranchPolicy`; `lib/delivery-readiness.mjs`: `requireApproval`; `lib/delivery-execution.mjs`: `start`; `lib/investigation.mjs` and `lib/evidence.mjs` |
+| Readiness/evidence/dependencies | `lib/delivery-readiness.mjs`: `readiness`, dependencies; `lib/delivery-execution.mjs`: `start`; `lib/alignment.mjs`: correction holds; `lib/evidence.mjs`: capture coverage |
+| Valid clean workspace | `lib/delivery-readiness.mjs`: `workspace`; `lib/delivery-execution.mjs`: `start` |
+| One writer per repository within one delivery run | `lib/delivery.mjs`: `locked`; `lib/delivery-execution.mjs`: `start`; `lib/delivery-readiness.mjs`: `readiness`; `vendor/pstack/store.mjs` |
 | Next-action advice | `lib/cursor-workflow.mjs`: `nextCursorAction`, all 16 intake/approval/writer/readiness combinations |
 
 [WorkItemStart.tla](model/WorkItemStart.tla) checks two units in one repository within one delivery run, two plan revisions, all eight initial schema/readiness/workspace combinations, and interleavings of approval, readiness, workspace checks and persistence under the cooperating runtime lock. TLA+ suits the ordering question; actual-code tests establish the concrete guards and source-binding behavior.
+
+Correction holds refine the runtime readiness fact already modeled. The bounded model does not encode correction lifecycle, selective implementation preservation, legacy migration or product-action classification. Their actual-code regressions provide separate evidence.
 
 The model assumes external facts remain stable during each locked callback. The lock coordinates commands on one run/store; separate delivery runs, external Git, source edits and ADO changes can bypass it. Cross-run writer exclusion is not implemented by these guards and requires the ownership check above. This is admission safety at the checked boundary, not continuous validity after edits. It does not prove external TOCTOU safety, human approval provenance, requirement correctness, live ADO/server freshness, estimate accuracy, liveness, crash recovery or deployment/SIT outcomes.
 

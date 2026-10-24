@@ -27,9 +27,9 @@ def run(command, root, log):
 
 def tests(root, names, log):
     pattern = "^(?:" + "|".join(re.escape(name) for name in names) + ")$"
+    suites = [str(path.relative_to(root)) for path in sorted((root / "test").glob("*.test.mjs"))]
     return run(["node", "--test", "--test-reporter=tap", "--test-concurrency=1",
-                "--test-name-pattern", pattern,
-                *map(str, sorted((root / "test").glob("*.test.mjs"))), SELF_TEST_FILE], root, log)
+                "--test-name-pattern", pattern, *suites, SELF_TEST_FILE], root, log)
 
 
 def require_tests(result, names):
@@ -74,7 +74,7 @@ def main():
     print("Evidence directory: " + str(output), flush=True)
     (output / "baseline.json").write_text(json.dumps(coverage, indent=2) + "\n")
     names = json.loads((SKILL / "checks.json").read_text())["tests"]
-    cache = Path.home() / ".cache/work-item-verification"
+    cache = Path.home() / ".cache/benefit-verification"
     cache.mkdir(parents=True, exist_ok=True)
     jar = cache / "tla2tools-1.7.4.jar"
     if not jar.exists():
@@ -91,17 +91,17 @@ def main():
 
     if args.self_test:
         mutations = [
-            ("approval", "lib/delivery-execution.mjs", "async start(unit, owner)", "  brief(",
+            ("approval", "lib/delivery-execution.mjs", "async start(unit, owner)", "async finish(",
              "await this.requireApproval(s);", "",
-             "source snapshots are bound to the approved plan content", "Missing expected rejection"),
-            ("readiness", "lib/delivery-execution.mjs", "async start(unit, owner)", "  brief(",
+             "blocked sibling does not block independent implementation but holds grouped PR", "Missing expected rejection"),
+            ("readiness", "lib/delivery-execution.mjs", "async start(unit, owner)", "async finish(",
              "assert(ready.ready, JSON.stringify(ready));", "",
              "missing before capture holds only affected UI work; real artifact receipt unlocks it", "Missing expected rejection"),
-            ("workspace", "lib/delivery-execution.mjs", "async start(unit, owner)", "  brief(",
+            ("workspace", "lib/delivery-execution.mjs", "async start(unit, owner)", "async finish(",
              "const w = this.workspace(s, u.repo, { clean: true });",
              "const w = this.workspace(s, u.repo, { clean: false });",
              "execution starts clean without discarding existing tracked or untracked work", "Missing expected rejection"),
-            ("writer", "lib/delivery-readiness.mjs", "async readiness(s, u)", "async summarize(s)",
+            ("writer", "lib/delivery-readiness.mjs", "async readiness(s, u)", "async summarize(",
              's.units[v.id].state === "active"', 's.units[v.id].state === "never-active"',
              "only one writer per repo, while another repo can progress", "Missing expected rejection"),
             ("adviser", "lib/cursor-workflow.mjs", "export function nextCursorAction", None,
@@ -111,7 +111,7 @@ def main():
         for name, file, first, last, old, new, test_name, expected in mutations:
             with tempfile.TemporaryDirectory(prefix="wid-start-mutant-") as temporary:
                 scratch = Path(temporary)
-                for directory in ["lib", "bin", "vendor", "templates", "test"]:
+                for directory in ["lib", "bin", "vendor", "templates", "test", "scripts"]:
                     shutil.copytree(ROOT / directory, scratch / directory)
                 for file_name in ["package.json", "config.json"]:
                     shutil.copy2(ROOT / file_name, scratch / file_name)

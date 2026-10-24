@@ -1,0 +1,5 @@
+/runs/
+/node_modules/
+*.tmp
+/.audit/
+__pycache__/
