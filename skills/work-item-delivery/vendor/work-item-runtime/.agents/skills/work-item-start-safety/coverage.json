@@ -1,12 +1,12 @@
 {
   "baseline": {
-    "git_commit": "ff127ddd51b2c1330eb1e6fc662ecddaabb5a68c",
+    "git_commit": "88fa58c18594d5b0e4121a9b29ff17e921e177d4",
     "reason": "Portable export of the reviewed source workflow. Public document paths and configuration differ from the author checkout; file hashes identify the exported inputs. Local author Windows launchers are excluded because this package owns its WSL installation path."
   },
   "files": {
     "bin/wid.mjs": "4739bd1b5cd52da063ba464528a8f81c738affbe6f0c6d63d01c85b39dfa1b06",
     "config.json": "4c2e0e6608066ffae828f32b3e966597037c13e1e04b3feb0cb09e306126b84d",
-    "docs/business-evidence.md": "7348a41a70c173ef06f488961224bd2288e5fc3cf47841abbb9243ddbfe24c1c",
+    "docs/business-evidence.md": "6fa77f38c3f20a6fd3067df63fd5a46048f86284f9419c52a5931e8deadd53fb",
     "docs/playbook.md": "f148ad61ff3f27aa43f2630b79a1956c0c34fb9c9da2e51c9d7678bae7b33bb8",
     "docs/repository-conventions.md": "5cdf242f554a6b42ef255a07cc7f60b05764ac360f27dd7bec61a6c9da7ca46b",
     "lib/approved-action.mjs": "5ff92eb2f2cfdddcf613fe27def53aee3aa7fab98dd17161dcd1f721074046e8",
@@ -18,8 +18,8 @@
     "lib/delivery-readiness.mjs": "7ae995cbcddbef997ca2905a2d07e47092a2d008b886ca5d49f0674c0676ed80",
     "lib/delivery-verification.mjs": "366b92050995095985f9ac4e13cc068cef189f6e267a6ce3a321974971dea3d8",
     "lib/delivery.mjs": "36ba4eee4ef7c2a12442f30c852eb9c17a3e8bcdd2ac4ab71a25a7372022e1a7",
-    "lib/evidence.mjs": "d8fe8c008bd805b67b797970c0fe232b3a6774a07be927ea8d0beb02968b93e6",
-    "package.json": "9da4a97862050d75538065721a5cd2cf394924a8fb84534ea331155984ca3e2c",
+    "lib/evidence.mjs": "ff462827d635fb96761204a5c69239135ee643f401c11b4e8710e1cc39b9567d",
+    "package.json": "d24e3e2667afd836614cdd4ca94ee54d8eb6080f70720aa3fb1e4d78b5404ae0",
     "templates/action-preflight.example.json": "d81d7fac7574553a85b3363df511951c664893b6fcca352bc4367ab4059c3e4f",
     "templates/approved-action.example.json": "d93d7b7aa152e77d80093e60a4ae34acaf9ff9c3179e8623e69fb729889b043d",
     "templates/plan.example.json": "f5de9ac8751643febd883b0f7ff021c11ee0fec10228209f52717094c6c2a804",

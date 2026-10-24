@@ -102,24 +102,39 @@ export async function captureBinding(plan, capture) {
   return createHash("sha256").update(JSON.stringify({capture,cases,flows,sources})).digest("hex");
 }
 
+export async function latestCapture(state, capture, head, stage) {
+  const contextHash = await captureBinding(state.plan, capture);
+  const failure = c => c.phase === "blocker" || ["failed", "blocked"].includes(c.outcome) ? 1 : 0;
+  const latest = (state.captures ?? []).filter(c => c.capture_id === capture.id && [stage, "blocker"].includes(c.phase) && c.context_hash === contextHash && (stage === "before" || c.plan_hash === state.plan_hash)).sort((a,b) => Date.parse(a.captured_at) - Date.parse(b.captured_at) || failure(a) - failure(b)).at(-1);
+  if (!latest || latest.phase !== stage || !(stage === "before" ? ["observed", "passed"].includes(latest.outcome) : latest.outcome === "passed" && latest.git_head === head)) return null;
+  try {
+    const recorded = await captureReceipt(state.plan, JSON.parse(await readFile(latest.evidence.path,"utf8")));
+    if (!Object.entries(recorded).every(([key,value]) => JSON.stringify(latest[key]) === JSON.stringify(value))) return null;
+    for (const file of [latest.evidence, ...latest.artifacts]) {
+      const actual = await fileReceipt(file.path);
+      if (actual.sha256 !== file.sha256 || (file.bytes !== undefined && actual.bytes !== file.bytes)) return null;
+    }
+  } catch { return null; }
+  return latest;
+}
+
+export async function procedureBinding(plan, repo, caseId, flowId) {
+  const requirement = plan.cases.find(c => c.id === caseId);
+  const flow = plan.knowledge?.business_flows?.find(f => f.id === flowId && f.case_ids.includes(caseId));
+  need(requirement && flow, "Product procedure must resolve to an approved flow for this case");
+  const ids = new Set([...requirement.source_refs, ...flow.steps.flatMap(step => step.source_refs)]);
+  const sources = [];
+  for (const source of plan.sources.filter(s => ids.has(s.id))) sources.push({...source, ...(source.status === "read" ? {receipt:await fileReceipt(source.snapshot)} : {})});
+  const captures = (plan.capture_plan ?? []).filter(c => c.repo === repo && c.case_ids.includes(caseId));
+  return createHash("sha256").update(JSON.stringify({repo,requirement,flow,sources,captures})).digest("hex");
+}
+
 export async function captureCoverage(state, repo, head, phase = null, caseIds = null) {
   if (!["work-item-delivery.plan.v2","work-item-delivery.plan.v3"].includes(state.plan.schema)) return { ready:false, missing:["legacy plan: add business context and evidence contract"] };
   const missing = [];
   for (const capture of state.plan.capture_plan.filter(c => c.repo === repo && c.tool === "playwright" && (!caseIds || c.case_ids.some(id => caseIds.includes(id))))) {
-    const contextHash = await captureBinding(state.plan, capture);
     for (const stage of phase ? [phase] : ["before", "after"]) {
-      const failure = c => c.phase === "blocker" || ["failed", "blocked"].includes(c.outcome) ? 1 : 0;
-      const latest = (state.captures ?? []).filter(c => c.capture_id === capture.id && [stage, "blocker"].includes(c.phase) && c.context_hash === contextHash && (stage === "before" || c.plan_hash === state.plan_hash)).sort((a,b) => Date.parse(a.captured_at) - Date.parse(b.captured_at) || failure(a) - failure(b)).at(-1);
-      const candidates = latest && latest.phase === stage && (stage === "before" ? ["observed", "passed"].includes(latest.outcome) : latest.outcome === "passed" && latest.git_head === head) ? [latest] : [];
-      let valid = false;
-      for (const row of candidates) {
-        try {
-          const files = [row.evidence, ...row.artifacts];
-          valid = (await Promise.all(files.map(async file => (await fileReceipt(file.path)).sha256 === file.sha256))).every(Boolean);
-        } catch { valid = false; }
-        if (valid) break;
-      }
-      if (!valid) missing.push(`${capture.id}:${stage}`);
+      if (!await latestCapture(state, capture, head, stage)) missing.push(`${capture.id}:${stage}`);
     }
   }
   return {ready:missing.length === 0,missing};

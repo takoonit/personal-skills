@@ -154,3 +154,90 @@ test("execute mode runs approved real checks and check mode only compares the bu
   assert.equal(cli(f,out,"--execute").status,1);assert.deepEqual(await readFile(join(f.run,"delivery.json")),ledger);
   assert.equal(cli(f,out,"--check").status,0);assert.deepEqual(await readFile(join(f.run,"delivery.json")),ledger);
 });
+
+ test("automated and legacy observations never supply product-action phases",async t=>{
+  const f=await proofFixture(t);
+  for(const classified of [false,true]) {
+    for(const row of f.scope.observations) {if(classified) Object.assign(row,{kind:"automated",executor:{kind:"human",id:"fixture tester"}});else {delete row.kind;delete row.executor;}}
+    await f.saveScope();const {index}=await collect(f);
+    assert.equal(index.status,"CHECKS_PASSED");
+    assert.equal(index.acceptance.status,"INCOMPLETE");
+    assert.ok(index.acceptance.cases.every(row=>row.observations.length===0&&row.gaps.length===2));
+    assert.equal(index.observations.length,2);
+  }
+ });
+
+ test("real product CLI actions close only their matching case and retain automated red/green support",async t=>{
+  const f=await proofFixture(t,{productActions:true});
+  const {index,outputs}=await collect(f),caseProof=index.acceptance.cases.find(row=>row.id==="C2");
+  assert.equal(caseProof.status,"RECORDED_REQUIRES_REVIEW");
+  assert.deepEqual(caseProof.observations.map(row=>[row.phase,row.actual]),[["before","A,B"],["after","Only A"]]);
+  assert.ok(caseProof.observations.every(row=>row.executor.kind==="agent"&&row.surface==="cli"&&!row.capture_id&&!row.capture_receipt));
+  assert.equal(index.acceptance.cases.find(row=>row.id==="C1").status,"INCOMPLETE");
+  assert.equal(index.observations.filter(row=>row.classification==="automated").length,2);
+  assert.match(outputs["proof-of-works.md"].toString(),/Executed by agent fixture-agent/);
+ });
+ test("missing product execution remains supporting; foreign procedure, source, phase and stale head never close gaps",async t=>{
+  const f=await proofFixture(t,{productActions:true});
+  const original=structuredClone(f.scope.observations);
+  const product=()=>f.scope.observations.find(row=>row.kind==="product-action"&&row.phase==="after");
+  delete product().execution;await f.saveScope();
+  assert.equal((await collect(f)).index.acceptance.cases.find(row=>row.id==="C2").status,"INCOMPLETE");
+  for(const mutate of [row=>row.procedure.sha256="0".repeat(64),row=>row.procedure.flow_id="foreign",row=>row.phase="before",row=>row.head=f.baseline]) {
+    f.scope.observations=structuredClone(original);mutate(product());await f.saveScope();
+    await assert.rejects(collect(f),/procedure|transcript|stale source head/i);
+  }
+ });
+ test("a blocked CLI result does not close the after journey",async t=>{
+  const f=await proofFixture(t,{productActions:true});
+  const row=f.scope.observations.find(row=>row.kind==="product-action"&&row.phase==="after");
+  const execution=JSON.parse(await readFile(row.execution.path,"utf8"));row.outcome=execution.outcome="blocked";
+  await writeFile(row.execution.path,JSON.stringify(execution));row.execution.sha256=digest(await readFile(row.execution.path));await f.saveScope();
+  const {index}=await collect(f);assert.equal(index.status,"CHECKS_PASSED");
+  assert.deepEqual(index.acceptance.cases.find(row=>row.id==="C2").gaps,["No recorded after observation for this case"]);
+ });
+
+ test("UI observations resolve actual recordCapture receipts and latest blockers",async t=>{
+  const f=await proofFixture(t,{ui:true});
+  assert.equal((await collect(f)).index.acceptance.cases.find(row=>row.id==="C2").status,"RECORDED_REQUIRES_REVIEW");
+  const original=structuredClone(f.scope.observations),state=await readState(f);
+  const after=()=>f.scope.observations.find(row=>row.kind==="product-action"&&row.phase==="after");
+  for(const mutate of [row=>delete row.capture_receipt,row=>row.capture_id="foreign",row=>row.capture_receipt=f.scope.observations.find(item=>item.kind==="product-action"&&item.phase==="before").capture_receipt,row=>row.artifact=f.scope.observations[0].artifact]) {
+    f.scope.observations=structuredClone(original);mutate(after());await f.saveScope();
+    await assert.rejects(collect(f),/capture|artifact/i);
+  }
+  f.scope.observations=structuredClone(original);await f.saveScope();
+  const blocker=JSON.parse(await readFile(join(f.root,"capture-after.json"),"utf8"));
+  Object.assign(blocker,{phase:"blocker",outcome:"blocked",reason:"Fixture login blocked",captured_at:"2026-10-24T03:00:00Z"});
+  const path=join(f.root,"capture-blocker.json");await writeFile(path,JSON.stringify(blocker));await f.call("recordCapture",path);
+  await assert.rejects(collect(f),/latest valid capture receipt/);
+  await saveState(f,state);
+  for(const mutate of [row=>row.context_hash="0".repeat(64),row=>row.observed="fabricated without changing original capture input"]) {
+    const changed=structuredClone(state);mutate(changed.captures.find(row=>row.phase==="after"));await saveState(f,changed);
+    await assert.rejects(collect(f),/latest valid capture receipt/);
+  }
+  await saveState(f,state);
+  const originalArtifact=await readFile(after().artifact.path);await writeFile(after().artifact.path,Buffer.from([137,80,78,71,13,10,26,10,1]));
+  await assert.rejects(collect(f),/artifact bytes/);await writeFile(after().artifact.path,originalArtifact);
+  state.captures.find(row=>row.phase==="after").git_head=f.baseline;await saveState(f,state);
+  await assert.rejects(collect(f),/latest valid capture receipt/);
+ });
+ test("verification logs and runner invocations cannot be relabeled as product actions",async t=>{
+  const f=await proofFixture(t,{productActions:true});
+  const row=f.scope.observations.find(row=>row.kind==="product-action"&&row.phase==="after"),original=structuredClone(row);
+  row.artifact=f.scope.observations.find(row=>row.kind==="automated"&&row.phase==="after").artifact;await f.saveScope();
+  await assert.rejects(collect(f),/Automated verification log/);Object.assign(row,original);
+  const execution=JSON.parse(await readFile(row.execution.path,"utf8"));execution.actions[0].argv=[process.execPath,"--test","regression.test.mjs"];
+  await writeFile(row.execution.path,JSON.stringify(execution));row.execution.sha256=digest(await readFile(row.execution.path));await f.saveScope();
+  await assert.rejects(collect(f),/Automated test runner/);
+ });
+
+ test("procedure identity changes with approved flow, case and cited source bytes",async t=>{
+  const {procedureBinding}=await import("../lib/evidence.mjs");
+  const f=await proofFixture(t),binding=()=>procedureBinding(f.plan,"backend","C2","selection"),original=await binding();
+  f.plan.knowledge.business_flows[0].steps[0].action+=" differently";assert.notEqual(await binding(),original);
+  f.plan.knowledge.business_flows[0].steps[0].action=f.plan.knowledge.business_flows[0].steps[0].action.replace(" differently","");
+  f.plan.cases.find(row=>row.id==="C2").expected+=" differently";assert.notEqual(await binding(),original);
+  f.plan.cases.find(row=>row.id==="C2").expected=f.plan.cases.find(row=>row.id==="C2").expected.replace(" differently","");
+  await writeFile(f.source,"Changed cited requirements");assert.notEqual(await binding(),original);
+ });

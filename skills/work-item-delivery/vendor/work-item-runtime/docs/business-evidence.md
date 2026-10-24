@@ -1,6 +1,6 @@
 # Business context, citations and browser evidence
 
-This is the evidence contract for new v2 plans. Research precedes dependency design; browser capture starts during investigation and continues after implementation. These are work stages owned by the active agent, with durable runtime receipts.
+This is the evidence contract retained in v3 plans and persisted v2 runs. Research precedes dependency design; browser capture starts during investigation and continues after implementation. These are work stages owned by the active agent, with durable runtime receipts.
 
 ## Research the business flow
 
@@ -10,7 +10,7 @@ Follow Work Item and note links into Confluence through the authenticated connec
 
 For each case, model **actor → trigger → preconditions → user action → business rule/state change → outcome**. Cite each step using the preserved source IDs and their section/version locators. Then connect that business flow to the technical request/service/data/response flow. This catches an implementation that satisfies an endpoint while violating the user's task.
 
-In v2 JSON, `knowledge.second_brain` and `knowledge.confluence` record `status` (`read` or `gap`), `query`, `summary`, `source_refs`, plus `gap` when applicable. Sources identify their provider with `kind: "second_brain"` or `"confluence"`. `knowledge.business_flows[]` contains `id`, `case_ids`, `actor`, `trigger`, `preconditions`, `steps[{action,business_rule,source_refs}]`, and `outcome`. Every case needs a cited flow. Gaps are visible planning inputs: block conclusions that need missing evidence, rather than manufacturing a citation or blocking unrelated cases.
+In v2 and v3 JSON, `knowledge.second_brain` and `knowledge.confluence` record `status` (`read` or `gap`), `query`, `summary`, `source_refs`, plus `gap` when applicable. Sources identify their provider with `kind: "second_brain"` or `"confluence"`. `knowledge.business_flows[]` contains `id`, `case_ids`, `actor`, `trigger`, `preconditions`, `steps[{action,business_rule,source_refs}]`, and `outcome`. Every case needs a cited flow. Gaps are visible planning inputs: block conclusions that need missing evidence, rather than manufacturing a citation or blocking unrelated cases.
 
 ## Keep business questions within the ticket
 

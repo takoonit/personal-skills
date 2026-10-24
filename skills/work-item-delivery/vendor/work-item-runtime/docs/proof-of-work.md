@@ -17,6 +17,8 @@ node scripts/proof-of-work.mjs --run "$RUN" --repo "$REPO" --file "$SCOPE" --out
 
 ## Select tests from source
 
+Read [the working PR draft](working-pr-draft.md) before choosing captures or logs. Its planned Proof section specifies the user actions, expected result and what each artifact must show. Reconcile those targets with approved checks/capture records, then update the matching draft rows after each actual result. The collector never overwrites PR.md or supplies publication approval.
+
 First follow [Plan evidence a human can repeat](human-verification.md). Use wizard's scoping/journey method to plan role/data/setup, exact user actions, per-step expectations, before/after observations and linked artifacts for every case. Reuse the existing plan/capture contracts; record who actually executed the steps. The PR-writing stage turns those records into a human-reproducible walkthrough alongside supporting automated checks.
 
 Trace the changed behavior, its callers and shared rules before selecting tests. Inspect the real assertions and relevant error/edge cases; choose the narrowest meaningful unit and regression commands already in the approved plan. Changing commands or the plan requires the existing review/approval process. Do not manufacture an approval, initialize a live run or execute a copied ticket's commands through this collector.
@@ -46,6 +48,7 @@ Replace the example identities, paths, hashes and prose with actual approved val
   },
   "observations": [
     {
+      "kind": "automated", "executor": {"kind": "agent", "id": "<actual executor>"},
       "case_id": "<case ID>", "phase": "before", "environment": "local-fixture",
       "head": "<actual source commit SHA>",
       "expected": "<expected observable behavior>", "actual": "<observed result>",
@@ -60,11 +63,38 @@ Replace the example identities, paths, hashes and prose with actual approved val
 
 `blast_radius` and `observations` are optional; observation `test` and receipt `bytes` are optional. When blast radius is supplied, all five fields shown are required and its check references must exist in `checks`. Empty arrays are permitted but no referenced passing check leaves the fact unproven. Read the exact named test/assertion against the fact: `SUPPORTED_BY_CHECKS` establishes passing named checks, not semantic proof of the prose. Preserve remaining risks and cleared reasoning as authored judgments.
 
-For before/after proof, supply a separate observation for each phase and preserve actual failure/success artifacts. Both phases use the declared environment; before must be an ancestor of current head and after must be current head. Record the test's exact identity/revision, preferably with the optional hashed `test` snapshot, so a changed test is visible. A setup exception does not reproduce the expected bug. Hash validation checks artifact bytes, not observation authenticity. Missing phases remain an acceptance gap for the operator to report; the collector currently shows counts/text without adding a missing-phase entry to `gaps`.
+For product before/after proof, supply a separate `kind: product-action` observation for each phase and preserve actual failure/success artifacts. Automated and unclassified observations remain supporting evidence and cannot complete a case journey. Both phases use the declared environment; before must be an ancestor of current head and after must be current head. Record the test's exact identity/revision, preferably with the optional hashed `test` snapshot, so a changed test is visible. A setup exception does not reproduce the expected bug. Hash validation checks artifact bytes, not observation authenticity. Missing phases are explicit per-case acceptance gaps; they remain separate from execution `gaps`.
+
+## Product-action records
+
+The example above records supporting automation. A complete product-action observation additionally supplies `surface: ui|api|cli`, `outcome: observed|passed|failed|blocked`, executor, approved procedure binding and an execution transcript receipt:
+
+```json
+{
+  "kind": "product-action",
+  "executor": {"kind": "agent", "id": "actual-executor"},
+  "surface": "cli",
+  "outcome": "passed",
+  "procedure": {"flow_id": "approved-flow", "sha256": "PROCEDURE-DIGEST"},
+  "execution": {"path": "/absolute/private/execution.json", "sha256": "TRANSCRIPT-SHA256"}
+}
+```
+
+Keep all original observation fields: case, phase, environment, tested head, expected/actual and artifact receipt. Compute the procedure digest with exported `procedureBinding(plan, repoId, caseId, flowId)` from `lib/evidence.mjs`. It binds the approved case/flow, cited source metadata/bytes and relevant capture definitions. A flow label alone cannot supply this identity.
+
+The hashed transcript has schema `work-item-delivery.product-execution.v1`. It repeats `case_id`, `phase`, `environment`, `head`, `surface`, `outcome`, `executor` and `procedure` exactly. Its nonempty `actions` array records concrete `action`, `expected` and `actual` strings; at least one action matches the observation's expected/actual. CLI actions also contain actual `argv` as a nonempty string array, integer `exit_code`, `stdout` and `stderr`. API actions contain `method`, HTTP(S) `url`, `request`, integer `status` and `response`. Record the real invocation/request while doing the work, not an invented transcript afterward.
+
+UI observations also supply `capture_id` and exact `capture_receipt: {path, sha256}` from the latest valid actual `recordCapture` receipt. That receipt must bind the same case, phase, head, environment, observed result/outcome and artifact. A foreign receipt, fabricated ledger wrapper or older pass after a later failure cannot qualify. API and product CLI journeys need no UI screenshot.
+
+Before requires an observed/passed outcome; after requires passed. Failed/blocked records remain visible without closing the phase gap. Missing provenance is retained as unclassified supporting evidence; malformed explicit provenance is refused. Legacy observations never receive invented attribution. Test snapshots, current verification logs and recognized test-runner commands cannot be promoted into product execution by changing a label.
+
+These checks bind authored records and bytes. They do not authenticate executor identity or independently certify the semantic result. UI receipt fixtures use synthetic screenshots in automated tests; only actual browser execution supports a real UI walkthrough. The same boundary applies to API/CLI transcripts and their stated environment.
 
 ## Read the result
 
-The bundle contains private `evidence-index.json` and `proof-of-works.md`. Inspect commands, exits, runner counts, authored cases, source head, observations, safety fact and gaps. Pending units, blockers, failed/incomplete reports, absent unit/regression proof and unmapped cases remain gaps. Invalid/missing/changed logs or source bindings cause refusal.
+The bundle contains private `evidence-index.json` and `proof-of-works.md`. Its first account is the product user's approved case: Work Item expectation and citations, role and starting state, actions/expected outcomes, capture procedure, then actual authored before/after observations linked to their artifacts. Automated commands, exits and runner counts support those case accounts. Pending units, blockers, failed/incomplete reports, absent unit/regression proof and unmapped cases remain execution gaps. Invalid/missing/changed logs or source bindings cause refusal.
+
+The index also has `acceptance.status` and per-case `acceptance.cases[].gaps`. Missing before or after observations for one case cannot be supplied by another case's screenshot or a passing mapped check. CLI output exposes `acceptance` and `acceptance_gaps` separately from test execution `status` and `gaps`. Existing CLI exits still describe recorded test execution; exit zero with `acceptance: INCOMPLETE` is possible. `RECORDED_REQUIRES_REVIEW` establishes the presence of authored records, not product acceptance, successful human execution or screenshot coverage. Review the artifacts and actual case before composing a PR.
 
 TAP accepts the completed Node TAP 13 report; Jest requires leading complete JSON from direct `jest --json`. Generic npm/shell chatter is not guessed into a report. Counts come from runner output: TAP nested totals are not top-level records or assertion counts; Jest counts reconcile with assertion statuses. Zero tests, skips/todos and contradictory/incomplete reports cannot establish a full pass. Exit zero alone never proves tests ran.
 
@@ -76,4 +106,4 @@ Keep outputs outside every product checkout, including filesystem aliases. New d
 
 Review authored labels, paths and observations for privacy before sharing. The Markdown excludes raw logs/screenshots/test failure bodies; local links are not uploaded attachments. Use the existing capture workflow for UI evidence and `azure-pr-format` for the full PR. Follow existing exact-content approval gates before any ticket/PR publication; this tool supplies no publication approval.
 
-The generated Markdown is a collector summary, not a finished human-verification procedure. Preserve it for `--check`; assemble the PR in a separate draft using the human-verification guide, actual observations, accessible evidence links and full-description length checks.
+The generated Markdown is a private evidence draft built from approved procedures and authored observations. Preserve it for `--check`; assemble the PR separately after reviewing the case meaning, observations, missing evidence, reviewer-accessible links and full-description length. Local artifact paths are not published PR attachments. See the human-verification guide for the writing step.

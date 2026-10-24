@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { renderProof } from "./proof-markdown.mjs";
 import { readFile, writeFile, mkdir, realpath, lstat, stat, access } from "node:fs/promises";
 import { constants } from "node:fs";
 import { createHash } from "node:crypto";
@@ -7,6 +8,7 @@ import { pathToFileURL } from "node:url";
 import { execFileSync } from "node:child_process";
 import { parseArgs } from "node:util";
 import { Delivery, validatePlan } from "../lib/delivery.mjs";
+import { procedureBinding, latestCapture } from "../lib/evidence.mjs";
 import { parseTestReport } from "./test-report.mjs";
 
 const need=(condition,message)=>{if(!condition) throw new Error(message);};
@@ -17,7 +19,6 @@ const implemented=new Set(["implemented","verified","reviewed","published"]);
 const git=(path,...args)=>execFileSync("git",["-C",path,...args],{encoding:"utf8",stdio:["ignore","pipe","pipe"]}).trim();
 const array=(value,label)=>{need(Array.isArray(value),label+" must be an array");return value;};
 const unique=(rows,label)=>need(new Set(rows).size===rows.length,"Duplicate "+label);
-const md=value=>String(value).replace(/[\r\n]+/g," ").replace(/[<>|`]/g,char=>({"<":"&lt;",">":"&gt;","|":"\\|","`":"\\`"}[char]));
 
 async function inputs(run,repo,file) {
   const ledgerPath=join(resolve(run),"delivery.json"),ledgerBytes=await readFile(ledgerPath);
@@ -55,6 +56,7 @@ async function inputs(run,repo,file) {
     need(row.phase!=="after"||row.head===workspace.head,"After observation is for a stale source head");
     await receipt(row.artifact,"Observation");
     if(row.test) await receipt(row.test,"Observation test snapshot");
+    await classifyObservation(row,state,repo,workspace.head);
   }
   return {run,repo,file,ledgerPath,ledgerBytes,scopeBytes,state,delivery,workspace,units,planned,scope,caseIds};
 }
@@ -64,6 +66,45 @@ async function receipt(record,label) {
   const path=await realpath(record.path),bytes=await readFile(path);
   need(bytes.length&&sha(bytes)===record.sha256&&(record.bytes===undefined||record.bytes===bytes.length),label+": missing/changed artifact bytes");
   return {path,sha256:record.sha256,bytes:bytes.length,content:bytes.toString("utf8")};
+}
+
+async function classifyObservation(row,state,repo,head) {
+  if(row.kind===undefined) return {classification:"unclassified",eligible:false,classification_gap:"Legacy observation has no product-action provenance"};
+  need(["automated","product-action"].includes(row.kind),"Unknown observation kind");
+  if(row.executor!==undefined) need(["agent","human"].includes(row.executor?.kind)&&text(row.executor?.id),"Invalid observation executor");
+  if(row.kind==="automated") return row.executor?{classification:"automated",eligible:false}:{classification:"unclassified",eligible:false,classification_gap:"Automated observation has no executor attribution"};
+  if(!row.executor||!row.procedure||!row.execution) return {classification:"unclassified",eligible:false,classification_gap:"Product-action attribution, procedure or execution receipt missing"};
+  need(["ui","api","cli"].includes(row.surface),"Product-action surface must be ui, api or cli");
+  need(row.procedure.sha256===await procedureBinding(state.plan,repo,row.case_id,row.procedure.flow_id),"Product procedure differs from approved case/flow/source contents");
+  need(!row.test,"Test snapshots are supporting evidence, not product-action execution");
+  const automatedLogs=state.repos[repo].verification?.results?.map(item=>item.evidence.sha256)??[];
+  need(!automatedLogs.includes(row.artifact.sha256)&&!automatedLogs.includes(row.execution.sha256),"Automated verification log cannot supply product-action execution");
+  const execution=JSON.parse((await receipt(row.execution,"Product execution transcript")).content);
+  need(execution.schema==="work-item-delivery.product-execution.v1","Invalid product execution transcript schema");
+  for(const field of ["case_id","phase","environment","head","surface","outcome"]) need(execution[field]===row[field],"Product execution transcript differs from observation "+field);
+  for(const field of ["executor","procedure"]) need(JSON.stringify(execution[field])===JSON.stringify(row[field]),"Product execution transcript differs from observation "+field);
+  need(["observed","passed","failed","blocked"].includes(row.outcome),"Product execution outcome required");
+  const actions=array(execution.actions,"Executed product actions");
+  need(actions.length>0&&actions.every(action=>text(action.action)&&text(action.expected)&&text(action.actual)),"Record concrete product actions and observed results");
+  for(const action of actions) {
+    if(row.surface==="cli") {
+      need(Array.isArray(action.argv)&&action.argv.length>0&&action.argv.every(text)&&Number.isInteger(action.exit_code)&&typeof action.stdout==="string"&&typeof action.stderr==="string","CLI execution needs actual argv, exit and output");
+      need(!action.argv.some(arg=>/^(--test(?:=.*)?|--test-reporter(?:=.*)?|jest|vitest|mocha|tap)$/.test(arg)||/(?:^|\/)(?:jest|vitest|mocha)(?:\.[cm]?js)?$/.test(arg)),"Automated test runner is supporting evidence");
+    }
+    if(row.surface==="api") need(text(action.method)&&/^https?:\/\//.test(action.url)&&Object.hasOwn(action,"request")&&Number.isInteger(action.status)&&Object.hasOwn(action,"response"),"API execution needs actual request/status/response");
+  }
+  need(actions.some(action=>action.expected===row.expected&&action.actual===row.actual),"Observation expected/actual must resolve to an executed action");
+  if(row.surface==="ui") {
+    const capture=state.plan.capture_plan?.find(c=>c.id===row.capture_id&&c.repo===repo&&c.tool==="playwright"&&c.case_ids.includes(row.case_id));
+    need(capture,"Product UI observation has no matching approved capture");
+    const latest=await latestCapture(state,capture,head,row.phase);
+    need(latest&&row.capture_receipt?.sha256===latest.evidence.sha256&&row.capture_receipt?.path===latest.evidence.path,"Product UI observation must resolve to the latest valid capture receipt");
+    need(latest.git_head===row.head&&latest.environment===row.environment&&latest.observed===row.actual&&latest.outcome===row.outcome,"Product UI observation differs from capture source/result");
+    need(latest.artifacts.some(a=>a.sha256===row.artifact.sha256&&a.path===row.artifact.path),"Product UI artifact differs from capture receipt");
+    await receipt(row.capture_receipt,"Product UI capture receipt");
+  }
+  const eligible=row.phase==="before"?["observed","passed"].includes(row.outcome):row.outcome==="passed";
+  return {classification:"product-action",eligible,actions,...(!eligible?{classification_gap:"Outcome "+row.outcome+" does not complete the "+row.phase+" phase"}:{})};
 }
 
 export async function collectProof(run,repo,file) {
@@ -111,13 +152,25 @@ export async function collectProof(run,repo,file) {
     const {content,...artifact}=await receipt(row.artifact,"Observation");
     let test;
     if(row.test) {const {content,...value}=await receipt(row.test,"Observation test snapshot");test=value;}
-    observations.push({...row,artifact,...(test?{test}:{})});
+    observations.push({...row,artifact,...(test?{test}:{}),...await classifyObservation(row,state,repo,workspace.head)});
   }
+  const acceptanceCases=caseIds.map(id=>{
+    const requirement=state.plan.cases.find(row=>row.id===id);
+    const flows=(state.plan.knowledge?.business_flows??[]).filter(row=>row.case_ids.includes(id));
+    const captures=(state.plan.capture_plan??[]).filter(row=>row.repo===repo&&row.case_ids.includes(id));
+    const recorded=observations.filter(row=>row.case_id===id&&row.eligible),missing=[];
+    if(!flows.length) missing.push("No approved role/action/expected-result procedure recorded");
+    for(const phase of ["before","after"]) if(!recorded.some(row=>row.phase===phase)) missing.push("No recorded "+phase+" observation for this case");
+    return {id,title:requirement.title,expected:requirement.expected,
+      sources:requirement.source_refs.map(id=>{const source=state.plan.sources.find(row=>row.id===id);return {id,url:source.url,section:source.section,revision:source.revision};}),
+      flows,captures,observations:recorded,status:missing.length?"INCOMPLETE":"RECORDED_REQUIRES_REVIEW",gaps:missing};
+  });
+  const acceptance={status:acceptanceCases.some(row=>row.gaps.length)?"INCOMPLETE":"RECORDED_REQUIRES_REVIEW",cases:acceptanceCases};
   const final=await inputs(run,repo,file);
   need(final.ledgerBytes.equals(context.ledgerBytes)&&final.scopeBytes.equals(context.scopeBytes)&&final.workspace.head===workspace.head,"Evidence context changed during collection");
   const index={schema:"work-item-delivery.proof-index.v1",status:gaps.length?"CHECKS_INCOMPLETE":"CHECKS_PASSED",work_item:state.plan.work_item,
     repository:repo,workspace:workspace.path,head:workspace.head,plan_hash:state.plan_hash,environment:scope.environment,
-    input_sha256:{ledger:sha(context.ledgerBytes),scope:sha(context.scopeBytes)},checks,cases,blast_radius,observations,gaps,
+    input_sha256:{ledger:sha(context.ledgerBytes),scope:sha(context.scopeBytes)},checks,cases,blast_radius,observations,gaps,acceptance,
     limits:["Case mappings, safety facts and observations are authored; test quality/acceptance is not certified",
       "Counts are observed runner results, not inferred assertions; skips/todos remain gaps",
       "Local private artifacts are not uploaded PR attachments; review before sharing",
@@ -125,22 +178,6 @@ export async function collectProof(run,repo,file) {
   const markdown=renderProof(index);
   index.draft_utf16_units=markdown.length;
   return {index,outputs:{"evidence-index.json":Buffer.from(JSON.stringify(index,null,2)+"\n"),"proof-of-works.md":Buffer.from(markdown)}};
-}
-
-function renderProof(index) {
-  const lines=["## Proof of Works","",`Declared scope: ${md(index.environment)}. Tested source: \`${index.head}\`.`,
-    `Test execution: ${index.status}. Local evidence; SIT/deployment not verified.`,"",
-    "| Check | Type | Cases (authored) | Result | Runner counts |","| --- | --- | --- | --- | --- |"];
-  for(const row of index.checks) lines.push(`| ${row.unit}/${row.check} | ${row.kind} | ${row.case_ids.join(", ")} | ${row.report.status} | ${row.report.counts?Object.entries(row.report.counts).map(([key,value])=>key+"="+value).join(", "):"unavailable"} |`);
-  lines.push("","| Case | Test mapping (authored) | Execution |","| --- | --- | --- |");
-  for(const row of index.cases) lines.push(`| ${row.id} | ${row.checks.map(check=>check.unit+"/"+check.check).join(", ")||"none"} | ${row.status} |`);
-  lines.push("",`Blast-radius fact (authored): ${md(index.blast_radius.fact??"not supplied")}.`,
-    `Evidence: ${index.blast_radius.status} (${index.blast_radius.checks.map(row=>row.unit+"/"+row.check).join(", ")||"none"}).`,
-    `Observations (authored, artifact hashes checked): ${index.observations.filter(row=>row.phase==="before").length} before; ${index.observations.filter(row=>row.phase==="after").length} after.`,"",
-    "Gaps: "+(index.gaps.length?index.gaps.map(md).join("; "):"none in this recorded test-execution scope")+".","",
-    "Evidence index: [evidence-index.json](evidence-index.json), a private local file, not an uploaded attachment.",
-    "Behavioral quality, acceptance and authored observations require review. Missing before/after observations are not inferred from passing tests.","");
-  return lines.join("\n");
 }
 
 async function resolvedDestination(path) {
@@ -193,7 +230,9 @@ if(process.argv[1]&&import.meta.url===pathToFileURL(resolve(process.argv[1])).hr
     if(v.execute) await new Delivery(v.run).verify(v.repo);
     const result=await collectProof(v.run,v.repo,v.file);
     await writeProof(result.outputs,v.out,v.check);
-    console.log(JSON.stringify({status:result.index.status,head:result.index.head,checks:result.index.checks.length,gaps:result.index.gaps,out:resolve(v.out)}));
+    console.log(JSON.stringify({status:result.index.status,acceptance:result.index.acceptance.status,
+      acceptance_gaps:result.index.acceptance.cases.filter(row=>row.gaps.length).map(row=>({case_id:row.id,gaps:row.gaps})),
+      head:result.index.head,checks:result.index.checks.length,gaps:result.index.gaps,out:resolve(v.out)}));
     if(result.index.status!=="CHECKS_PASSED") process.exitCode=1;
   } catch(error) {console.error("INCOMPLETE: "+error.message);process.exitCode=1;}
 }
