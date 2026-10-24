@@ -33,7 +33,7 @@ def digest(path):
 def render(plan_path, brief_path, ticket_path):
     hashes = {key: digest(path) for key, path in [('plan', plan_path), ('brief', brief_path), ('ticket', ticket_path)]}
     plan, brief, ticket = [json.loads(path.read_text()) for path in [plan_path, brief_path, ticket_path]]
-    need(plan.get('schema') == 'work-item-delivery.plan.v2', 'Use the existing v2 investigation plan')
+    need(plan.get('schema') in ('work-item-delivery.plan.v2', 'work-item-delivery.plan.v3'), 'Use a v2 or v3 investigation plan')
     need(str(ticket['id']) == plan['work_item']['id'], 'Work Item ID differs from plan')
     need(str(ticket['rev']) == str(plan['work_item']['revision']), 'Work Item revision differs; refresh and review')
     estimates = plan.get('estimates', {})

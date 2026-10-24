@@ -156,13 +156,40 @@ try {
         `Approved: ${status.approved}`,
         `Work Item type: ${s.plan.work_item.type ?? "MISSING: branch policy approval held"}; branches: ${s.plan.repositories.map(r=>r.branch).join(", ")}`,
         "",
-        "## Cases and source traceability",
+        "## Your next decision",
         "",
-        "| Case | Related tasks | Expected behavior | Evidence/specification |",
-        "|---|---|---|---|",
+        status.integrity_hold
+          ? `Evidence needs repair before a new approval can proceed: ${status.integrity_hold}. The agent must show what changed and the recovery needed.`
+          : status.continuing_writer || status.continuing_legacy_writer
+            ? "Your already admitted work can continue under its recorded approval. No new approval is needed to finish or safely park that writer. The agent must reconcile changed inputs before starting new work."
+          : status.approved
+            ? "This implementation plan is approved. No new plan approval is needed for unchanged scope; the agent continues the eligible work and reports any concrete blocker."
+            : "Review the cases, proposed changes, uncertainties, tests and blockers below. You can approve this exact plan, request revisions, or withhold approval. New implementation waits for approval.",
+        "",
+        "Plan approval permits only the displayed implementation scope and checks. PR publication, ticket edits, merging and deployment require their own authorization.",
+        "If you request a material change, the agent shows the revised plan for approval before starting that changed scope. You make decisions in chat; the agent records them and handles runtime commands.",
+        "",
       ];
       const clean = (x) =>
         String(x).replaceAll("|", "\\|").replaceAll("\n", " ");
+      lines.push("## Correction reconciliation", "");
+      if (status.corrections?.integrity_hold)
+        lines.push("Correction registry needs repair: " + status.corrections.integrity_hold);
+      else {
+        const open=(status.corrections?.records??[]).filter(row=>["pending-assessment","open"].includes(row.state));
+        if (!open.length) lines.push("No pending or open corrections recorded.");
+        for (const row of open) lines.push(`- ${row.id} (${row.state}). Open cases: ${row.cases.filter(c=>c.state==="open").map(c=>c.case_id).join(", ")||"scope assessment pending"}. Note: ${row.note.path}.`);
+      }
+      lines.push("", "## Preserved work and historical evidence", "");
+      if (status.reconciliation) lines.push(
+        "Preserved units: " + (status.reconciliation.preserved.join(", ")||"none") + ".",
+        "Reset units: " + (status.reconciliation.changed.join(", ")||"none") + ".");
+      else lines.push("No compared plan revision recorded.");
+      for (const row of status.unit_input_migrations??[]) lines.push(`- ${row.unit}: ${row.limitation}`);
+      for (const row of status.unit_input_migration_gaps??[]) lines.push(`- Historical evidence gap for ${row.unit}: ${row.reason}`);
+      lines.push("", "## Cases and source traceability", "",
+        "| Case | Related tasks | Expected behavior | Evidence/specification |",
+        "|---|---|---|---|");
       for (const c of s.plan.cases)
         lines.push(
           `| ${clean(c.id + ": " + c.title)} | ${clean(c.task_ids.join(", "))} | ${clean(c.expected)} | ${c.source_refs
@@ -185,6 +212,30 @@ try {
         }
         lines.push("", "## Browser evidence plan");
         for (const capture of s.plan.capture_plan) lines.push("", `- ${capture.id} (${capture.case_ids.join(", ")}, ${capture.repo}): ${capture.tool}; ${capture.reason ?? `${capture.environment} ${capture.url}; before/after; ${capture.assertions.join("; ")}`}`);
+      }
+      if (s.plan.schema === "work-item-delivery.plan.v3") {
+        lines.push("", "## Admitted investigation and design", "",
+          "Dossier SHA-256: " + s.plan.admission.dossier.sha256,
+          "Design manifest SHA-256: " + s.design_receipt.manifest.sha256,
+          "Current design input hash: " + s.design_receipt.plan_hash,
+          "Original design input hash: " + (s.design_receipt.origin_plan_hash??s.design_receipt.plan_hash),
+          "Design review: " + (s.design_receipt.reused?"reused verified original panels":"validated for this design input") + ".",
+          ...(s.design_receipt.design_hash?["Projected design hash: " + s.design_receipt.design_hash]:[]));
+        for (const unit of s.plan.units) {
+          let evidence;
+          try { evidence = await run.investigationEvidence(s.plan,unit); }
+          catch (error) {
+            lines.push("", "### " + unit.id + " evidence unavailable", "", "Evidence needs repair: " + error.message + ".");
+            continue;
+          }
+          lines.push("", "### " + unit.id + " evidence",
+            "Independence: " + evidence.independence.mode + ". " + evidence.independence.declaration);
+          for (const claim of evidence.claims)
+            lines.push("- " + claim.id + " [" + claim.basis + "]: " + claim.statement +
+              ". Sources: " + claim.source_refs.join(", ") + ". Limitations: " + (claim.limitations.join("; ") || "none declared"));
+          for (const gap of evidence.gaps)
+            lines.push("- Gap " + gap.id + ": " + gap.statement + ". Owner: " + gap.owner + ". Unblock when: " + gap.unblock_when);
+        }
       }
       lines.push("", "## Unit tests and evidence completion gates");
       for (const unit of s.plan.units) {

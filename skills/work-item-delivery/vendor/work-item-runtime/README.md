@@ -6,6 +6,8 @@ For a new Work Item, the agent automatically shows the developer plan in chat an
 
 This is built on [Lauren Tan / Poteto's pstack](https://github.com/cursor/plugins/tree/88d47514b82e7c44f00f2b2a72ff6dd12158038c/pstack). It reuses pstack's executable orchestration store, with its unit table, completion inbox, verification ledger, gates and status renderer. The adapted controller adds Work Item/specification/task traceability and enforces the grouped-repository delivery policy. See [upstream provenance](vendor/pstack/upstream.json) and [MIT license](vendor/pstack/LICENSE).
 
+Read [the human journey](docs/human-journey.md) for what you do, what you see, what each approval permits, and how those interactions are tested.
+
 ## The operating model
 
 Start with a clean current repository baseline unless that repository explicitly says otherwise. Read its instructions before cleanup, preserve existing work/configuration, and show the readiness result or cited exception in the developer plan. Read [repository readiness and conventions](docs/repository-conventions.md): the backend repository's live convention docs are integrated through the existing source/approval/check/review flow, while the frontend repository and other repositories keep their own rules. The runtime rejects a dirty bound directory. Do the work in the primary checkout. Add a linked worktree only when that checkout is dirty with work this delivery must not take, is on another branch, or already has the branch checked out.
@@ -26,15 +28,36 @@ Requires Node 22+ and Git. There are no npm dependencies. WSL is the tested runt
 work-item-delivery help
 work-item-delivery intake --run /path/to/evidence/run --file /path/to/work-item.json \
   --url https://dev.azure.com/ORG/PROJECT/_workitems/edit/ID --revision 12
+# Complete the durable investigation and design workflow first.
+work-item-delivery investigate --run /path/to/evidence/run --file /path/to/investigation.json
+work-item-delivery cursor --run /path/to/evidence/run
+# Import independent reports, challenge, arbitrate and prepare the bound v3 plan.
 work-item-delivery init --run /path/to/evidence/run --file /path/to/plan.json
 work-item-delivery plan --run /path/to/evidence/run
 work-item-delivery approve-plan --run /path/to/evidence/run --hash HASH --evidence /path/to/human-approval.txt
 work-item-delivery next --run /path/to/evidence/run
 ```
 
-New plans use `work-item-delivery.plan.v2`: research records, cited business flows and per-case capture dispositions are required. Existing v1 state remains readable. An already-approved active legacy writer may finish its owned work and record its report, then replan to v2 before new work or publication. Use [plan.example.json](templates/plan.example.json) as a schema illustration. All example IDs, refs and results are fictional. Replace every example with directly read sources and verified repository refs. `init` refuses stale refs, missing cases, unknown sources and dependency cycles, including cycles introduced by grouped PR publication. Symlink and linked-worktree aliases of the same Git repository cannot be registered as separate repositories.
+New plans use `work-item-delivery.plan.v3` and require a reconciled investigation dossier plus checked design artifacts. Research records, cited business flows and per-case capture dispositions remain required. Fresh v1/v2 initialization is refused. Persisted legacy runs and already admitted writers remain continuable. Material legacy scope changes need v3 admission; sealed scope changes need a follow-up run. Use [plan.example.json](templates/plan.example.json) as a schema illustration. All example IDs, refs and results are fictional. Replace every example with directly read sources and verified repository refs. `init` refuses stale refs, missing cases, unknown sources and dependency cycles, including cycles introduced by grouped PR publication. Symlink and linked-worktree aliases of the same Git repository cannot be registered as separate repositories.
 
 Planning is read-only against product repos. Refresh tracker revisions and target refs through the native tools before approval and execution. `origin/develop` is a local ref: the runtime cannot detect a remote update that has not been fetched. A detected baseline change holds its repository and dependent consumers; independent work can continue. Inspect the delta, revise the plan and rerun checks after integration; Git changes are explicit agent actions. Replanning invalidates the prior approval and resets units whose acceptance, cited source metadata/bytes or business flows changed, plus their dependents. Confirmed unchanged implementation can be retained, but unfinished repositories require fresh verification/review. A published repository's plan scope and receipts remain immutable while another repository is replanned; changes affecting published scope require an explicit follow-up plan.
+
+## Investigation before a plan
+
+Start [the working PR draft](docs/working-pr-draft.md) during investigation with `work-item-delivery pr-draft --run RUN --repo REPO`. Build its three sections as findings and evidence arrive; the planned proof tells the agent which screenshots/logs to collect. Reopening the command preserves existing prose.
+
+Follow [the investigation lifecycle](docs/investigation.md) for exact commands and record formats. The runtime issues neutral task briefs, imports independent reports, freezes the challenge bundle and requires complete arbitration. Unresolved claims and gaps remain explicit affected-unit blockers. A reconciled dossier is evidence for planning, not implementation approval.
+
+Pending investigation state never adopts itself. Only a successful init or explicit safe replan updates the dossier reference in delivery.json. Reports and source bytes are immutable artifacts. Per-unit evidence closure preserves unaffected implementation when another task or source changes. The host remains responsible for native dispatch, actual source reads, isolation and substantive judgment.
+
+## Context re-entry
+
+The [delivery skill](.agents/skills/work-item-delivery/SKILL.md) is a thin router. At startup, compaction, handoff, a new correction or phase/ownership change, run `work-item-delivery resume --run RUN`. Read its phase card and bounded source/plan/evidence/PR draft pointers, invoke the relevant available existing skills, perform the cursor action and resume again. The runtime supplies the primary action and eligible independent candidates. Use `resume --run RUN --hash HASH` to reject a stale handoff. A snapshot changes after legitimate actions; resume again instead of treating its hash as permanent authorization. The [full policy](docs/delivery-rules.md) is disclosed by phase rather than loaded into every worker.
+
+For an adjustment, follow [alignment](docs/phases/align.md): save the exact correction, impact and what remains valid with `alignment-note --run RUN --file NOTE`; replacement needs `--hash EXPECTED_PRIOR_NOTE_HASH`. Intake creates durable pending assessment, or scoped open cases with --cases. Deliberately informational notes use --metadata-only. The coordinator scopes or reconciles records with alignment-resolve; this does not adopt scope or supply consent. Pending/open records remain visible after later notes, and hold only new work whose independence is unproven. Reconcile actual artifacts through existing replan/exact-approval rules and preserve unaffected work, owners and accepted reviews. Authorized native fresh role workers receive only bounded sources and return criteria; the runtime does not prove skill invocation, understanding, isolation, human consent or current remote facts.
+
+`alignment-resolve --run RUN --file REQUEST.json` uses `{id, expected_revision, note_sha256, plan_hash, disposition, explanation, case_ids?}`. Take IDs/revisions/digests from `resume`. Use `scope` to assess a pending note; `within-plan`, `adopted-plan` or scoped `no-impact` resolves only selected open cases. Adoption must already exist in the persisted plan; resolution never edits or approves it. `metadata-only` and unscoped `no-impact` assess pending notes. See the [alignment card](docs/phases/align.md) for exact ordering and limits.
+
 
 ## Execute and resume
 
@@ -51,7 +74,7 @@ work-item-delivery review --run RUN --repo backend --file /absolute/reviews.json
 
 When a unit becomes blocked, record the reason, owner and observable unblock condition. `block` refuses to release a dirty branch or committed partial implementation to other writers. Keep that ownership visible, make an explicit isolation/recovery plan, and continue other safe units/repos. An unstarted blocked case never prevents an independent case in the same repo from beginning. `unblock` requires a resolution receipt. A dead verifier can be cleared with `recover-verification` only after its process has stopped, followed by a new verification run.
 
-On resume, use the same run directory and `status`; read the plan, source revisions, active owners and remaining blockers. Check any active worker against actual session/process/source state. There is no automatic ownership takeover. Do not infer that an interrupted worker completed its task.
+On resume, use the same run directory and `resume --run RUN`; read its phase card and scoped plan, source revision, owner and blocker pointers. Check any active worker against actual session/process/source state. There is no automatic ownership takeover. Do not infer that an interrupted worker completed its task.
 
 ## Exact PR approval and read-back
 

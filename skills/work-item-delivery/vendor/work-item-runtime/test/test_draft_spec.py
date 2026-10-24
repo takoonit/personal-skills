@@ -54,6 +54,15 @@ class SpecDraftTests(unittest.TestCase):
         self.assertEqual(preview['attachments'], [])
         self.assertEqual(preview['links'], [])
 
+    def test_v3_dossier_plan_renders_without_inventing_implementation_approval(self):
+        self.plan['schema'] = 'work-item-delivery.plan.v3'
+        self.plan['admission'] = {'dossier': {'sha256': '0' * 64, 'bytes': 1}}
+        outputs = self.render()
+        preview = json.loads(outputs['publication-preview.json'])
+        self.assertFalse(preview['implementation_authorized'])
+        self.assertEqual(preview['implementation_holds'], self.plan['blockers'])
+        self.assertIn(b'First behavior', outputs['spec.md'])
+
     def test_idempotence_and_every_output_mutation_is_detected(self):
         outputs = self.render()
         directory = self.root / 'output'

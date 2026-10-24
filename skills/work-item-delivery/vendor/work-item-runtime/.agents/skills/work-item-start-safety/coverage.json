@@ -1,10 +1,10 @@
 {
   "baseline": {
-    "git_commit": "812e50b4e0daa595bfaca45992f453ee999be0ec",
+    "git_commit": "c630265680f6e8b5fc6dde1802e87817422bce9c",
     "reason": "Portable export of the reviewed source workflow. Public document paths and configuration differ from the author checkout; file hashes identify the exported inputs. Local author Windows launchers are excluded because this package owns its WSL installation path."
   },
   "files": {
-    "bin/wid.mjs": "83ef26bc5f322f14fb429cc69f54ff4d2b442cf8621484299f105d66313f092a",
+    "bin/wid.mjs": "cdcbd6086756e0c715ce08f7fa8f7454c0376aa48d674044fc2555ac6aacd918",
     "config.json": "4c2e0e6608066ffae828f32b3e966597037c13e1e04b3feb0cb09e306126b84d",
     "docs/business-evidence.md": "6fa77f38c3f20a6fd3067df63fd5a46048f86284f9419c52a5931e8deadd53fb",
     "docs/playbook.md": "f734c87b2455e198653f181c281b5c9bcfd477296e3c3f9aa3f6f81d558a85ad",
