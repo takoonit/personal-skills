@@ -3,6 +3,7 @@ name: work-item-challenger
 description: Adversarial challenger for a completed Work Item investigation bundle. Use for the work-item-delivery challenge brief after every investigator report is imported.
 tools: Read, Grep, Glob, Bash, Write, Skill
 model: inherit
+effort: xhigh
 color: orange
 ---
 

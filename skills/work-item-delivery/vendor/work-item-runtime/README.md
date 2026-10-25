@@ -18,7 +18,7 @@ The default is one approved branch and one grouped PR per affected repository, i
 
 The runtime coordinates agents; it is not a background daemon. It does not choose models, spawn cloud agents, change Git, call tracker write APIs, merge, deploy or schedule later work. The active agent uses its authenticated tools for those separately authorized steps. `verify` actually executes the exact command argv approved in the plan and retains exit codes and logs.
 
-Once reviewed work is approved and the user says go ahead, [check for new blockers and execute](docs/playbook.md#approval-to-action). Reuse completed reviews, including review confirmed by the user; do not add another panel, shipping verifier or approval gate. Clear ticket acceptance governs the scoped defect. Differences in other lifecycle flows do not automatically require reconfirmation or expand the fix into data repair or QA-owned SIT.
+Once reviewed work is approved and the user says go ahead, [check for new blockers and execute](#execute-already-approved-work). Reuse completed reviews, including review confirmed by the user; do not add another panel, shipping verifier or approval gate. Clear ticket acceptance governs the scoped defect. Differences in other lifecycle flows do not automatically require reconfirmation or expand the fix into data repair or QA-owned SIT.
 
 ## Install and run
 
@@ -52,7 +52,7 @@ Pending investigation state never adopts itself. Only a successful init or expli
 
 ## Context re-entry
 
-The [delivery skill](.agents/skills/work-item-delivery/SKILL.md) is a thin router. At startup, compaction, handoff, a new correction or phase/ownership change, run `work-item-delivery resume --run RUN`. Read its phase card and bounded source/plan/evidence/PR draft pointers, invoke the relevant available existing skills, perform the cursor action and resume again. The runtime supplies the primary action and eligible independent candidates. Use `resume --run RUN --hash HASH` to reject a stale handoff. A snapshot changes after legitimate actions; resume again instead of treating its hash as permanent authorization. The [full policy](docs/delivery-rules.md) is disclosed by phase rather than loaded into every worker.
+The [delivery skill](.agents/skills/work-item-delivery/SKILL.md) is a thin router to one chained `work-item-<phase>` skill per phase. At startup, compaction, handoff, a new correction or phase/ownership change, run `work-item-delivery resume --run RUN` and invoke the skill for its `routing.phase`; that skill performs the phase and resumes again. The runtime supplies the primary action and eligible independent candidates. Use `resume --run RUN --hash HASH` to reject a stale handoff. A snapshot changes after legitimate actions; resume again instead of treating its hash as permanent authorization. Each phase loads only its skill and [phase card](docs/phases/investigate.md); [rules](docs/rules.md) lists what the runtime enforces in code.
 
 For an adjustment, follow [alignment](docs/phases/align.md): save the exact correction, impact and what remains valid with `alignment-note --run RUN --file NOTE`; replacement needs `--hash EXPECTED_PRIOR_NOTE_HASH`. Intake creates durable pending assessment, or scoped open cases with --cases. Deliberately informational notes use --metadata-only. The coordinator scopes or reconciles records with alignment-resolve; this does not adopt scope or supply consent. Pending/open records remain visible after later notes, and hold only new work whose independence is unproven. Reconcile actual artifacts through existing replan/exact-approval rules and preserve unaffected work, owners and accepted reviews. Authorized native fresh role workers receive only bounded sources and return criteria; the runtime does not prove skill invocation, understanding, isolation, human consent or current remote facts.
 
@@ -123,7 +123,7 @@ Keep one run on one host. The upstream lock uses host PIDs; sharing a run betwee
 
 ## Agent playbook and verification
 
-[System playbook](docs/playbook.md) gives intake, analysis, design, execution and publishing steps. [Harness adapters](docs/harnesses.md) map them to the available Codex/Claude/Cursor tools, without assuming Cursor-specific APIs or automatic cloud/merge behavior.
+The `work-item-<phase>` skills give intake, analysis, design, execution and publishing steps. [Harness adapters](docs/harnesses.md) map them to the available Codex/Claude/Cursor tools, without assuming Cursor-specific APIs or automatic cloud/merge behavior.
 
 ```sh
 npm test

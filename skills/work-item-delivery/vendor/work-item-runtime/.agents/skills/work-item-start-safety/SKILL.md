@@ -11,7 +11,7 @@ The property: implementation admission requires a matching approved plan, ready 
 
 ## Before the developer plan
 
-Follow the shared [playbook](../../../docs/playbook.md), [repository readiness rules](../../../docs/repository-conventions.md), and [business evidence contract](../../../docs/business-evidence.md). Reuse their schema and receipts. Keep runs, captures and generated evidence outside product repositories.
+Follow the `work-item-investigate` and `work-item-design` skills, [repository readiness rules](../../../docs/repository-conventions.md), and [business evidence contract](../../../docs/business-evidence.md). Reuse their schema and receipts. Keep runs, captures and generated evidence outside product repositories.
 
 Check and report these facts for the actual Work Item:
 

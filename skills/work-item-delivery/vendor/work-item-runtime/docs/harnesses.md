@@ -15,7 +15,7 @@ The local runtime is shared by the configured agent hosts. Run it under Linux or
 
 ## Context re-entry and scoped handoffs
 
-At startup, compaction, handoff, a correction or phase/ownership change, run `work-item-delivery resume --run RUN` and read its phase card and scoped source pointers. `resume --hash HASH` rejects a stale handoff. The runtime supplies a primary action and independent eligible candidates; direct admission checks still apply. Compare component hashes when diagnosing changed context. Follow [alignment](phases/align.md) for corrections and [full delivery rules](delivery-rules.md) for detailed policy. Hashes bind recorded bytes, not consent, skill use, understanding, isolation or remote truth.
+At startup, compaction, handoff, a correction or phase/ownership change, run `work-item-delivery resume --run RUN` and read its phase card and scoped source pointers. `resume --hash HASH` rejects a stale handoff. The runtime supplies a primary action and independent eligible candidates; direct admission checks still apply. Compare component hashes when diagnosing changed context. Follow the `work-item-align` skill for corrections and [rules](rules.md) for what the runtime enforces. Hashes bind recorded bytes, not consent, skill use, understanding, isolation or remote truth.
 
 Use authorized native tools for fresh bounded role contexts, without a full-history fork by default. Brief role, cases, exact source identities, current PR.md, open correction IDs/scope, owned paths/owner, named available skills, checks, output and stop/return criteria. Preserve an admitted writer and its dirty/partial work. Declare single-agent limitations when independent contexts cannot be established. Approved-action routes use existing approvals/reviews and native execution tools without a new design/writing/reviewer panel.
 
@@ -33,7 +33,7 @@ An unrelated connector's cancelled call does not establish the configured MCP se
 
 Use Azure DevOps operations rather than GitHub or Cursor-only forge commands. If direct source access remains missing, record the affected conclusions and required source/access while progressing independent work. MCP availability does not authorize tracker changes or PR publication; retain the existing exact-content approval gates.
 
-After `init`, Cursor's next step is whatever `work-item-delivery cursor --run RUN` prints, subject to [Approval to action](playbook.md#approval-to-action). That command only reads the ledger. It does not approve a plan, create a branch, or call Azure DevOps. `await-human` stops the turn only while the required user decision is missing; record an approval already given instead of requesting it again.
+After `init`, Cursor's next step is whatever `work-item-delivery cursor --run RUN` prints, subject to the `work-item-approved-action` skill. That command only reads the ledger. It does not approve a plan, create a branch, or call Azure DevOps. `await-human` stops the turn only while the required user decision is missing; record an approval already given instead of requesting it again.
 
 A single agent can perform the complete workflow sequentially. Subagents are not a runtime requirement and are never spawned by the CLI. Keep the session's existing model configuration unless the user specifies otherwise. The active user/repo instructions and this workflow's approval-to-action rule override upstream pstack's cloud placement, automatic landing and gate-default assumptions, including another shipping verifier after the user has accepted completed review.
 
