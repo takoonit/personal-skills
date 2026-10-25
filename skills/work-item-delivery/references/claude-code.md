@@ -85,6 +85,12 @@ These commands record no decision and are safe to pre-approve. `status`, `next` 
 | Review | When no accepted review covers the unchanged head, dispatch one `work-item-reviewer` per axis in parallel, then feed their report paths to `review`. |
 | Publish and approved action | Show the staged payload and hash in chat, then ask with `AskUserQuestion`. Azure DevOps writes go through the MCP server from Connect sources, and read-back follows `docs/harnesses.md`. |
 
+## Run several Work Items at once
+
+Run one Claude session per Work Item, each with its own run directory registered for its product directory, and watch them together with `claude agents`. Inside one Work Item, independent repositories progress in parallel, with one background writer per repository.
+
+Two Work Items in the same repository need separate checkouts. Before `bind`, `scripts/run-conflicts.mjs` refuses a checkout another registered run is writing. Give the second Work Item a linked worktree on its approved branch, outside the repository: `git worktree add ../REPO-WI-ID -b fix/ID-slug TARGET_SHA`. Don't use `claude --worktree` for this. It creates the worktree inside the repository under `.claude/worktrees/`, which makes the primary checkout dirty, names the branch `worktree-NAME` instead of the approved prefix, and starts from the default branch instead of the plan's pinned target.
+
 ## Subagents
 
 The coordinator session is the single orchestrator. Phase skills are procedures it runs, never agents of their own. The installer copies four throwaway worker definitions into `~/.claude/agents/` when given `--agents-dir`. All use `model: inherit`, matching `inherit-parent` in the pstack sheet. The reviewer and challenger run at `effort: xhigh` because checking needs more judgment than drafting; edit the installed copies to change that.
