@@ -26,6 +26,8 @@ On startup, compaction, handoff, a new correction, or phase/ownership change:
 3. Read and invoke the applicable **available existing skills** named by that route. Inspect actual skill catalogs and instructions. If a required skill, source or native isolation tool is unavailable, disclose the limitation and affected hold; use a supported equivalent only when existing policy permits it. Never claim an invocation or independent review that did not happen.
 4. Perform the primary action or dispatch an eligible independent candidate through existing admission, retain its exact evidence/output, then resume again. For a user adjustment, first follow `docs/phases/align.md`. Intake records pending assessment until the coordinator scopes or reconciles it. Reselect skills against that state; classification does not require another human approval.
 
+Each phase also has its own chained skill, `work-item-<routing.phase>`, which runs steps 2 to 4 for that phase and invokes the next one; see [the phase chain](references/chain.md). Invoke it when installed, and read the card directly otherwise. A user can also start any phase skill on its own.
+
 An already approved action goes directly through `docs/phases/approved-action.md`: one bounded live blocker check, execution and direct read-back. Reuse applicable approvals/reviews; no new drafting, design or reviewer panel solely because the phase changed. Material changes follow the existing replan/approval rules for the affected scope.
 
 ## Native handoffs

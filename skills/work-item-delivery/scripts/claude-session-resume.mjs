@@ -66,9 +66,11 @@ function hook() {
   try {
     packet = execFileSync(process.execPath, [CLI, 'resume', '--run', registered], {encoding: 'utf8', timeout: 15000, stdio: ['ignore', 'pipe', 'ignore']});
   } catch { return; }
+  let phase;
+  try { phase = JSON.parse(packet).routing?.phase; } catch {}
   packet = fit(packet, registered);
   const context = `Work Item delivery run ${registered} is registered for ${owner}. ` +
-    `Session source: ${input.source || 'unknown'}. Its durable resume packet at session start follows; ` +
+    `Session source: ${input.source || 'unknown'}. ${phase ? `Routed phase skill: work-item-${phase}. ` : ''}Its durable resume packet at session start follows; ` +
     `the phase card, corrections and owners in it are current as of this read.\n\n${packet}`;
   process.stdout.write(JSON.stringify({hookSpecificOutput: {hookEventName: 'SessionStart', additionalContext: context}}));
 }

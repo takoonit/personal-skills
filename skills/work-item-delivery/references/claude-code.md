@@ -4,7 +4,7 @@ This page maps the workflow onto Claude Code's native features. It adds no gate 
 
 ## Start and invoke
 
-Start with `/work-item-delivery <Work Item URL>`. Claude Code uses `/name`, where the other docs show Codex's `$name`. `/proof-of-work` works the same way.
+Start with `/work-item-delivery <Work Item URL>`. Claude Code uses `/name`, where the other docs show Codex's `$name`. `/proof-of-work` and the [phase skills](chain.md) work the same way, so `/work-item-review` reruns review alone.
 
 After the first `intake` or `resume` for a run, register it for the product directory so a later session finds it:
 

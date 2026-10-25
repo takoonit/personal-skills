@@ -49,6 +49,7 @@ class SessionResumeHookTests(unittest.TestCase):
         self.assertLess(len(context), 10000)
         self.assertIn(str(self.run_dir), context)
         self.assertIn('Session source: compact', context)
+        self.assertIn('Routed phase skill: work-item-investigate.', context)
         packet = json.loads(context.split('\n\n', 1)[1])
         self.assertEqual(packet['schema'], 'work-item-delivery.context.v1')
         self.assertEqual(packet['action']['action'], 'intake')

@@ -12,7 +12,10 @@ import tempfile
 ROOT = Path(__file__).resolve().parents[1]
 SKILL = ROOT/'skills/work-item-delivery'
 RUNTIME = SKILL/'vendor/work-item-runtime'
-OWN = ['work-item-delivery', 'work-item-start-safety', 'proof-of-work',
+OWN = ['work-item-delivery', 'work-item-investigate', 'work-item-design', 'work-item-align',
+       'work-item-implement', 'work-item-verify', 'work-item-review',
+       'work-item-publish', 'work-item-approved-action', 'work-item-report',
+       'work-item-start-safety', 'proof-of-work',
        'azure-pr-format', 'azure-pr-write', 'azure-pr-review',
        'azure-commit-message', 'azure-change-record']
 WINDOWS_OWN = ['wiki-query', 'think']
@@ -42,7 +45,7 @@ def main():
     candidates = [file for folder in OWN for file in (ROOT/'skills'/folder).rglob('*')]
     candidates += [file for folder in WINDOWS_OWN for file in (ROOT/'windows/skills'/folder).rglob('*')]
     candidates += list((ROOT/'claude/agents').rglob('*'))
-    candidates += [ROOT/'scripts'/name for name in ['check-work-item-package.py', 'install-work-item-delivery.py', 'setup-work-item-delivery.sh', 'test_install_work_item_delivery.py', 'test_claude_session_resume.py']]
+    candidates += [ROOT/'scripts'/name for name in ['check-work-item-package.py', 'install-work-item-delivery.py', 'setup-work-item-delivery.sh', 'test_install_work_item_delivery.py', 'test_claude_session_resume.py', 'test_work_item_chain.py']]
     for file in candidates:
             if not file.is_file() or '__pycache__' in file.parts:
                 continue

@@ -48,7 +48,7 @@ Each directory under `skills/` is a portable skill package. Its directory name m
 
 ## Work Item delivery workflow
 
-The collection also includes [`work-item-delivery`](skills/work-item-delivery/SKILL.md), [`work-item-start-safety`](skills/work-item-start-safety/SKILL.md), and [`proof-of-work`](skills/proof-of-work/SKILL.md), with their owned Azure PR/commit skills and a self-contained local runtime. The workflow covers source-led intake, realistic estimates, plan approval, architect/arena/interrogate design, approved execution, tests, human-repeatable evidence and exact PR review/publication boundaries.
+The collection also includes [`work-item-delivery`](skills/work-item-delivery/SKILL.md), [`work-item-start-safety`](skills/work-item-start-safety/SKILL.md), and [`proof-of-work`](skills/proof-of-work/SKILL.md), with their owned Azure PR/commit skills and a self-contained local runtime. The workflow also runs as nine [chained phase skills](skills/work-item-delivery/references/chain.md), `work-item-investigate` through `work-item-report`, so you can start or rerun one phase on its own; `work-item-delivery` remains the entry point. The workflow covers source-led intake, realistic estimates, plan approval, architect/arena/interrogate design, approved execution, tests, human-repeatable evidence and exact PR review/publication boundaries.
 
 Start with [Start a Work Item](skills/work-item-delivery/references/start-a-work-item.md) for the starting prompt, plan and estimate review, implementation approval, human-reproducible evidence, and PR publication steps.
 
