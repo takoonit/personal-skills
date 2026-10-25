@@ -6,12 +6,26 @@ import {execFileSync} from 'node:child_process';
 import {existsSync, mkdirSync, readFileSync, renameSync, writeFileSync} from 'node:fs';
 import {homedir} from 'node:os';
 import {dirname, join, resolve} from 'node:path';
-import {fileURLToPath} from 'node:url';
+import {fileURLToPath, pathToFileURL} from 'node:url';
 
 const CLI = fileURLToPath(new URL('../vendor/work-item-runtime/bin/wid.mjs', import.meta.url));
 const REGISTRY = process.env.WORK_ITEM_RUN_REGISTRY || join(homedir(), '.claude/work-item-delivery/active-runs.json');
 // Hook context is capped at 10,000 characters; keep headroom for the framing text.
 const LIMIT = 9000;
+// Kept when the packet is too long, hashes first so a handoff can still use `resume --hash`.
+const PRIORITY = ['context_hash', 'resume', 'run', 'work_item', 'plan_hash', 'action', 'routing', 'approval',
+  'corrections', 'blockers', 'active_owners', 'focus', 'pr_drafts'];
+
+export function fit(raw, run, limit = LIMIT) {
+  let packet;
+  try { packet = JSON.parse(raw); } catch { return raw.slice(0, limit); }
+  const full = JSON.stringify(packet);
+  if (full.length <= limit) return full;
+  const kept = Object.fromEntries(PRIORITY.filter(key => key in packet).map(key => [key, packet[key]]));
+  kept.omitted = Object.keys(packet).filter(key => !(key in kept));
+  kept.full_packet = `work-item-delivery resume --run ${run}`;
+  return JSON.stringify(kept).slice(0, limit);
+}
 
 function readRegistry() {
   try { return JSON.parse(readFileSync(REGISTRY, 'utf8')); } catch { return {}; }
@@ -52,14 +66,14 @@ function hook() {
   try {
     packet = execFileSync(process.execPath, [CLI, 'resume', '--run', registered], {encoding: 'utf8', timeout: 15000, stdio: ['ignore', 'pipe', 'ignore']});
   } catch { return; }
-  if (packet.length > LIMIT) packet = packet.slice(0, LIMIT) + `\n[truncated; full packet: work-item-delivery resume --run ${registered}]`;
+  packet = fit(packet, registered);
   const context = `Work Item delivery run ${registered} is registered for ${owner}. ` +
     `Session source: ${input.source || 'unknown'}. Its durable resume packet at session start follows; ` +
     `the phase card, corrections and owners in it are current as of this read.\n\n${packet}`;
   process.stdout.write(JSON.stringify({hookSpecificOutput: {hookEventName: 'SessionStart', additionalContext: context}}));
 }
 
-try {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) try {
   if (process.argv.includes('--set')) {
     const run = option('--set'), project = option('--project');
     update(runs => { runs[project] = run; });

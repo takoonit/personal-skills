@@ -16,7 +16,7 @@ node SKILL_DIR/scripts/claude-session-resume.mjs --set RUN --project PROJECT_DIR
 
 ## Re-entry hook
 
-The workflow requires `resume` after startup, resumption and compaction. A SessionStart hook does this for you. It runs `resume` for the registered run and adds the packet to Claude's context before the first prompt. It prints nothing and exits 0 when no run is registered, the run directory is missing, or `resume` fails. Add it to `~/.claude/settings.json`:
+The workflow requires `resume` after startup, resumption and compaction. A SessionStart hook does this for you. It runs `resume` for the registered run and adds the packet to Claude's context before the first prompt. It prints nothing and exits 0 when no run is registered, the run directory is missing, or `resume` fails. Add it to `~/.claude/settings.json` only after the installed `work-item-delivery` contains `scripts/claude-session-resume.mjs`; until then Node fails at every session start:
 
 ```json
 {
@@ -33,9 +33,9 @@ The workflow requires `resume` after startup, resumption and compaction. A Sessi
 }
 ```
 
-The injected packet is the start of the re-entry step, not the whole step. Still read the phase card, corrections and pointers it names, and use `resume --hash` for a handoff. The hook truncates a packet over 9,000 characters and names the full command.
+The injected packet is the start of the re-entry step, not the whole step. Still read the phase card, corrections and pointers it names, and use `resume --hash` for a handoff. The hook sends compact JSON. When that is still over 9,000 characters it keeps the hashes, action, routing, approval, corrections, blockers and owners, lists the omitted keys and names the full command.
 
-These read-only commands are safe to pre-approve. Keep `approve-plan`, `approve-publication`, `approve-action` and every other recording command on a prompt, so each recorded decision passes your eyes:
+These commands record no decision and are safe to pre-approve. `status`, `next` and `plan` regenerate the `status.md` projection; the others write nothing. Keep `approve-plan`, `approve-publication`, `approve-action` and every other recording command on a prompt, so each recorded decision passes your eyes:
 
 ```json
 {"permissions": {"allow": [

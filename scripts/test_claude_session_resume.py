@@ -64,6 +64,20 @@ class SessionResumeHookTests(unittest.TestCase):
         result = self.hook(self.project, WORK_ITEM_RUN=str(self.run_dir))
         self.assertIn(str(self.run_dir), json.loads(result.stdout)['hookSpecificOutput']['additionalContext'])
 
+    def test_oversize_packet_keeps_hashes_and_names_dropped_keys(self):
+        script = (f"import {{fit}} from {json.dumps(HOOK.as_uri())};"
+                  "const packet={action:{action:'start-unit'},sources:'x'.repeat(5000),receipts:'y'.repeat(5000),"
+                  "context_hash:'abc',resume:{hash:'abc'}};"
+                  "process.stdout.write(fit(JSON.stringify(packet,null,2),'/run',9000));")
+        result = subprocess.run(['node', '--input-type=module', '-e', script], capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertLessEqual(len(result.stdout), 9000)
+        kept = json.loads(result.stdout)
+        self.assertEqual((kept['context_hash'], kept['resume']['hash']), ('abc', 'abc'))
+        self.assertEqual(kept['action']['action'], 'start-unit')
+        self.assertEqual(kept['omitted'], ['sources', 'receipts'])
+        self.assertIn('resume --run /run', kept['full_packet'])
+
     def test_registry_command_without_project_fails_loudly(self):
         result = self.node('--set', str(self.run_dir))
         self.assertEqual(result.returncode, 1)
