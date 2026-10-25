@@ -60,6 +60,8 @@ bash scripts/setup-work-item-delivery.sh
 
 On Windows hosts the installer also adds native `wiki-query` and `think` skills from [`windows/skills/`](windows/skills/) in place of claude-obsidian's WSL-bound versions; other platforms never receive them. See [Windows and WSL](skills/work-item-delivery/references/windows.md).
 
+For Claude Code hosts the installer also adds three subagent definitions from [`claude/agents/`](claude/agents/) when given `--agents-dir`, and the package ships a SessionStart hook that re-injects the active run after compaction. See [Claude Code](skills/work-item-delivery/references/claude-code.md).
+
 The installer preserves existing conflicting installs and keeps organization settings local. External pstack/Matt Pocock plugins, native hook trust, available models, connectors and browser access are configured in the agent host; cached files and offline tests do not certify live integration. The bundled runtime is a sanitized source snapshot with provenance and retained third-party notices. No private run evidence or credentials are included.
 
 ## Using Design Guide

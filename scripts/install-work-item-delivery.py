@@ -17,6 +17,8 @@ SKILLS = ('work-item-delivery', 'work-item-start-safety', 'proof-of-work',
           'azure-commit-message', 'azure-change-record')
 # Native replacements for claude-obsidian's WSL-bound vault skills; Windows hosts only.
 WINDOWS_SKILLS = ('wiki-query', 'think')
+# Claude Code subagent definitions for the workflow's independent roles; installed only with --agents-dir.
+CLAUDE_AGENTS = ROOT/'claude/agents'
 
 
 def windows_host(choice, skills_directory):
@@ -50,8 +52,10 @@ def settings(path):
     return values
 
 
-def install(skills_directory, bin_directory, values, windows=False):
+def install(skills_directory, bin_directory, values, windows=False, agents_directory=None):
     skills_directory, bin_directory = skills_directory.resolve(), bin_directory.resolve()
+    agents = {path.name: path.read_bytes() for path in sorted(CLAUDE_AGENTS.glob('*.md'))} if agents_directory else {}
+    agents_directory = agents_directory.resolve() if agents_directory else None
     sources = {name: ROOT/'skills'/name for name in SKILLS}
     if windows:
         sources.update({name: ROOT/'windows/skills'/name for name in WINDOWS_SKILLS})
@@ -68,8 +72,8 @@ def install(skills_directory, bin_directory, values, windows=False):
         raise ValueError('This Node build lacks node:sqlite; use a current Node 22 or 24 release')
     if not shutil.which('git'):
         raise ValueError('Git must be available on PATH')
-    for destination in (skills_directory, bin_directory):
-        if destination.exists() and not destination.is_dir():
+    for destination in (skills_directory, bin_directory, agents_directory):
+        if destination and destination.exists() and not destination.is_dir():
             raise ValueError('Install destination must be a directory: ' + str(destination))
     source_roots = [source.resolve() for source in sources.values()]
     for destination in (skills_directory, bin_directory):
@@ -110,6 +114,13 @@ def install(skills_directory, bin_directory, values, windows=False):
             raise ValueError('Existing launcher conflicts; preserve it: ' + str(launcher))
         if launcher.exists() and not os.access(launcher, os.X_OK):
             raise ValueError('Existing launcher is not executable: ' + str(launcher))
+        new_agents = []
+        for name, content in agents.items():
+            destination = agents_directory/name
+            if destination.is_symlink() or (destination.exists() and (not destination.is_file() or destination.read_bytes() != content)):
+                raise ValueError('Existing agent definition conflicts; preserve it: ' + str(destination))
+            if not destination.exists():
+                new_agents.append(name)
         skills_directory.mkdir(parents=True, exist_ok=True)
         bin_directory.mkdir(parents=True, exist_ok=True)
         for name in pending:
@@ -118,8 +129,13 @@ def install(skills_directory, bin_directory, values, windows=False):
             with launcher.open('xb') as handle:
                 handle.write(launcher_bytes)
             launcher.chmod(0o755)
+        if new_agents:
+            agents_directory.mkdir(parents=True, exist_ok=True)
+        for name in new_agents:
+            (agents_directory/name).write_bytes(agents[name])
         print(json.dumps({'installed_skills': list(sources), 'new_skills': pending,
                           'windows_skills': list(WINDOWS_SKILLS) if windows else [],
+                          'claude_agents': list(agents), 'new_agents': new_agents,
                           'runtime': str(entry.parent.parent), 'launcher': str(launcher),
                           'scope': 'Local installation only; plugin discovery, authentication and Work Item approval are separate.'}))
 
@@ -132,11 +148,14 @@ def main():
     parser.add_argument('--windows-host', choices=('auto', 'yes', 'no'), default='auto',
                         help='Also install the native Windows vault skills (wiki-query, think). '
                              'auto: on native Windows or when the skills dir is under /mnt/<drive>/')
+    parser.add_argument('--agents-dir', type=Path,
+                        help='Claude Code only: also install the workflow subagent definitions here, e.g. ~/.claude/agents')
     args = parser.parse_args()
     try:
         skills_directory = args.skills_dir.expanduser()
         install(skills_directory, args.bin_dir.expanduser(), settings(args.settings),
-                windows_host(args.windows_host, skills_directory))
+                windows_host(args.windows_host, skills_directory),
+                args.agents_dir.expanduser() if args.agents_dir else None)
     except (ValueError, OSError, subprocess.CalledProcessError) as error:
         parser.exit(1, str(error)+'\n')
 

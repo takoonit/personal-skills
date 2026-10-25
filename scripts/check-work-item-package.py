@@ -41,7 +41,8 @@ def main():
         patterns += [re.compile(line) for line in args.privacy_pattern_file.read_text().splitlines() if line.strip()]
     candidates = [file for folder in OWN for file in (ROOT/'skills'/folder).rglob('*')]
     candidates += [file for folder in WINDOWS_OWN for file in (ROOT/'windows/skills'/folder).rglob('*')]
-    candidates += [ROOT/'scripts'/name for name in ['check-work-item-package.py', 'install-work-item-delivery.py', 'setup-work-item-delivery.sh', 'test_install_work_item_delivery.py']]
+    candidates += list((ROOT/'claude/agents').rglob('*'))
+    candidates += [ROOT/'scripts'/name for name in ['check-work-item-package.py', 'install-work-item-delivery.py', 'setup-work-item-delivery.sh', 'test_install_work_item_delivery.py', 'test_claude_session_resume.py']]
     for file in candidates:
             if not file.is_file() or '__pycache__' in file.parts:
                 continue

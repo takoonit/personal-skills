@@ -264,7 +264,9 @@ run_wizard() {
   confirm "Are the host's available models, effort and routing choices saved?" || return 1
 
   stage "Install, check and reload"
-  python3 "$repo_root/scripts/install-work-item-delivery.py" --skills-dir "$AGENT_SKILLS_DIR" --bin-dir "$WORK_ITEM_BIN_DIR" --settings "$ENV_FILE"
+  install_args=(--skills-dir "$AGENT_SKILLS_DIR" --bin-dir "$WORK_ITEM_BIN_DIR" --settings "$ENV_FILE")
+  [[ "$AGENT_HOST" != claude ]] || install_args+=(--agents-dir "$HOME/.claude/agents")
+  python3 "$repo_root/scripts/install-work-item-delivery.py" "${install_args[@]}"
   runtime="$AGENT_SKILLS_DIR/work-item-delivery/vendor/work-item-runtime"
   write_env WORK_ITEM_DELIVERY_ROOT "$runtime"
   python3 "$repo_root/scripts/validate_skills.py"
@@ -274,6 +276,7 @@ run_wizard() {
   step "Reload/start a new host session. Request work-item-delivery and proof-of-work, and confirm the installed package is the one the host loads."
   step "Ask for investigation and a developer plan for a real Work Item. Setup never approves that plan or starts product implementation."
   note "Add $WORK_ITEM_BIN_DIR to your shell PATH if needed, or invoke the printed launcher directly."
+  [[ "$AGENT_HOST" != claude ]] || step "For Claude Code, add the SessionStart re-entry hook and read-only permissions from skills/work-item-delivery/references/claude-code.md to ~/.claude/settings.json yourself; setup does not edit host settings."
   confirm "Does the new session load the intended workflow skills?" || return 1
   SKIPPED+=("Live connectors, model execution, hook routing and actual Work Item readiness are not certified by offline tests.")
   finish

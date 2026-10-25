@@ -78,6 +78,32 @@ class InstallTests(unittest.TestCase):
         self.assertEqual((existing/'SKILL.md').read_text(), 'my claude-obsidian install')
         self.assertFalse((self.skills/'work-item-delivery').exists())
 
+    def test_claude_agents_install_only_with_agents_dir(self):
+        result = self.install()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(json.loads(result.stdout)['claude_agents'], [])
+        agents = self.root/'claude agents'
+        result = self.install('--agents-dir', str(agents))
+        self.assertEqual(result.returncode, 0, result.stderr)
+        names = sorted(path.name for path in (ROOT/'claude/agents').glob('*.md'))
+        self.assertEqual(json.loads(result.stdout)['new_agents'], names)
+        for name in names:
+            self.assertEqual((agents/name).read_bytes(), (ROOT/'claude/agents'/name).read_bytes())
+        rerun = self.install('--agents-dir', str(agents))
+        self.assertEqual(rerun.returncode, 0, rerun.stderr)
+        self.assertEqual(json.loads(rerun.stdout)['new_agents'], [])
+
+    def test_existing_agent_definition_is_preserved(self):
+        agents = self.root/'agents'
+        agents.mkdir()
+        (agents/'work-item-reviewer.md').write_text('my reviewer')
+        result = self.install('--agents-dir', str(agents))
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('Existing agent definition conflicts', result.stderr)
+        self.assertEqual((agents/'work-item-reviewer.md').read_text(), 'my reviewer')
+        self.assertFalse((agents/'work-item-investigator.md').exists())
+        self.assertFalse((self.skills/'work-item-delivery').exists())
+
     def test_windows_host_detection(self):
         spec = importlib.util.spec_from_file_location('installer', INSTALLER)
         installer = importlib.util.module_from_spec(spec)
@@ -150,6 +176,7 @@ class InstallTests(unittest.TestCase):
         shutil.copytree(ROOT/'skills', copied/'skills')
         shutil.copytree(ROOT/'scripts', copied/'scripts', ignore=shutil.ignore_patterns('__pycache__'))
         shutil.copytree(ROOT/'windows', copied/'windows')
+        shutil.copytree(ROOT/'claude', copied/'claude')
         shutil.copy2(ROOT/'.gitignore', copied/'.gitignore')
         return copied
 

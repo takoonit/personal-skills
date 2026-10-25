@@ -27,7 +27,7 @@ and human-reproducible verification plan before implementation.
 Use swarm where independent work improves quality or speed.
 ```
 
-The plan and approval steps are automatic. A shorter request containing the skill and Work Item URL is enough.
+The plan and approval steps are automatic. A shorter request containing the skill and Work Item URL is enough. In Claude Code, write `/work-item-delivery` in place of `$work-item-delivery` and see [Claude Code](claude-code.md).
 
 Provide specification links, the target repository, test environment, role, data, and deadline when available. State who owns QA or SIT. Keep private source details in your session and local run evidence.
 
