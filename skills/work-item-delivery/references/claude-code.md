@@ -38,7 +38,7 @@ The server has no read-only mode. Never pre-approve its write tools, so every wr
 claude mcp add playwright -- npx @playwright/mcp@latest --isolated
 ```
 
-A Node script using the `playwright` library also works; keep it in the run directory, outside product source. The Chrome extension and other browsers are not Playwright. Use them to explore, never for a capture receipt.
+A Node script using the `playwright` library also works; keep it in the run directory, outside product source. Claude in Chrome is the faster loop for the writer's own end-to-end check in `work-item-implement`, but it is not Playwright and its sessions cannot be rerun from a script, so it never produces a capture receipt. Start the session with `claude --chrome` (or `/chrome`). Call `tabs_context_mcp` with `createIfEmpty: true` first, so the session gets its own tab group and never touches your other tabs. Point it at the running app over http(s); the extension refuses `data:` and browser-internal URLs. From WSL, Windows Chrome reaches an app served on WSL `localhost`.
 
 **Vault skills.** On Claude the vault skills register as `claude-obsidian:wiki-query` and `claude-obsidian:think`; wherever the docs say `wiki-query` or `think`, use those. Native Windows hosts receive short-named replacements instead.
 
