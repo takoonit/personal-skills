@@ -65,8 +65,10 @@ function median(values) {
 }
 
 export function summarize(results) {
+  const errors = results.filter(r => r.status === 'ERROR');
+  results = results.filter(r => r.status !== 'ERROR');
   const base = median(results.filter(r => r.scenario === 'baseline').map(r => r.cost_usd));
-  const summary = {baseline_median_cost_usd: base};
+  const summary = {baseline_median_cost_usd: base, baseline_runs: results.filter(r => r.scenario === 'baseline').length, errors: errors.length};
   for (const name of [...new Set(results.map(r => r.scenario))].filter(n => n !== 'baseline')) {
     const runs = results.filter(r => r.scenario === name);
     const passes = runs.filter(r => r.status === 'PASS').length;
@@ -101,6 +103,9 @@ async function run(name) {
     env: {...process.env, PATH: `${join(home, 'bin')}:${process.env.PATH}`}});
   let output = {};
   try { output = JSON.parse(result.stdout); } catch { output = {result: result.stdout, error: result.stderr}; }
+  // A call that never reached the model is an error, kept out of the medians, not a workflow result.
+  if (result.status !== 0 || !output.num_turns || !output.total_cost_usd)
+    return {scenario: name, status: 'ERROR', exit: result.status, error: String(output.result || output.error || result.stderr || '').slice(0, 300)};
   const after = snapshot(f);
   let calls = [];
   try { calls = readFileSync(join(home, 'calls.log'), 'utf8').split('\n').filter(Boolean); } catch {}
@@ -134,11 +139,19 @@ if (process.argv.includes('--self-test')) {
   assert.ok(close(s.gate.cost_per_pass_usd, 3.2 / 2), 'cost per pass includes the failed run');
   assert.ok(s.gate.median_turns === 12 && s.gate.median_tokens.total === 10, 'turn and token medians');
   assert.ok(summarize([r('gate', 'ISSUES', 1)]).gate.cost_per_pass_usd === null, 'no pass means no cost per pass');
+  const e = summarize([r('baseline', 'BASELINE', 0.5), {scenario: 'gate', status: 'ERROR'}, r('gate', 'PASS', 0.9, 10)]);
+  assert.ok(e.errors === 1 && e.gate.runs === 1 && e.gate.pass_rate === 1 && close(e.gate.median_cost_usd, 0.9), 'errors stay out of the medians');
   console.log('self-test done');
 } else {
   const results = [];
-  for (let i = 0; i < repeat; i++)
-    for (const name of [...(baseline ? ['baseline'] : []), ...scenarios]) results.push(await run(name));
+  let stop = false;
+  for (let i = 0; i < repeat && !stop; i++)
+    for (const name of [...(baseline ? ['baseline'] : []), ...scenarios]) {
+      const result = await run(name);
+      results.push(result);
+      // A usage limit fails every later call too, so stop instead of recording more errors.
+      if (result.status === 'ERROR' && /limit/i.test(result.error)) { stop = true; break; }
+    }
   console.log(JSON.stringify({summary: summarize(results), runs: results}, null, 2));
   process.exitCode = results.every(r => r.status === 'PASS' || r.status === 'BASELINE') ? 0 : 1;
 }
