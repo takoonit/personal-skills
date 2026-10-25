@@ -72,5 +72,23 @@ class LinkTests(unittest.TestCase):
         self.assertEqual(missing, [])
 
 
+PLUGIN_SKILL = re.compile(r'\b((?:pstack|mattpocock-skills|claude-obsidian):[a-z0-9-]+)')
+PREREQUISITES = ROOT/'skills/work-item-delivery/references/prerequisites.md'
+
+
+class DependencyTests(unittest.TestCase):
+    def test_declared_plugin_skills_match_the_ones_the_workflow_uses(self):
+        files = [file for name in installer_skills() for file in (ROOT/'skills'/name).rglob('*.md')
+                 if 'vendor/pstack' not in str(file) and file != PREREQUISITES and file.name != 'pstack-models.example.md']
+        files += list((ROOT/'claude').rglob('*.md'))
+        files += [RUNTIME/'lib/workflow-context.mjs', ROOT/'scripts/setup-work-item-delivery.sh']
+        used = {name for file in files for name in PLUGIN_SKILL.findall(file.read_text())}
+        text = PREREQUISITES.read_text()
+        section = text.split('## Plugin skills', 1)[1].split('\n## ', 1)[0]
+        declared = set(PLUGIN_SKILL.findall(section))
+        self.assertEqual({'used but undeclared': sorted(used - declared), 'declared but unused': sorted(declared - used)},
+                         {'used but undeclared': [], 'declared but unused': []})
+
+
 if __name__ == '__main__':
     unittest.main()

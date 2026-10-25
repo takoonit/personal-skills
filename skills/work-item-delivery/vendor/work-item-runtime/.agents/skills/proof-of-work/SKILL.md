@@ -17,13 +17,13 @@ Use `--execute` only for actual approved checks through `Delivery.verify`; defau
 
 ## Choose direct execution or swarm
 
-Work directly when there is one short job or coordination would add no useful coverage. Use `pstack:swarm` when approved independent repository verifications or separate read-only source/evidence/blast-radius investigations materially help. Read that skill and its Codex mapping before dispatch; follow all four phases below.
+Work directly when there is one short job or coordination would add no useful coverage. Use `pstack:swarm` when approved independent repository verifications or separate read-only source/evidence/blast-radius investigations materially help. Read that skill and its mapping for the current host before dispatch; follow all four phases below.
 
 ### Frame
 
 Open a task list for Frame, Fan out, Aggregate and Report. Declare the required slices and done predicate: every required slice returns source-bound evidence or a visible gap, every returned execution bundle passes independent collector validation, and unsupported claims are removed. Prefer partitioned slices; declare the selection rule first if racing alternatives.
 
-Use the configured `swarm workers` role from applicable instructions or `pstack-models.md`, including its effort/default effort; here the configured role is `gpt-6.1-sol` with default `medium`. Follow the swarm skill's documented fallback only if configuration is absent or the model is rejected, and report the fallback.
+Use the configured `swarm workers` role from applicable instructions or `pstack-models.md`, including its effort/default effort, as resolved on the current host. Follow the swarm skill's documented fallback only if configuration is absent or the model is rejected, and report the fallback.
 
 Name exact tool and target repository heads, relevant uncommitted file hashes, run/repository IDs, allowed scope, verification method and required return artifacts in every standalone brief. For measurements also specify sampling method/order. Require workers to return those identities, method, paths and `PASS`, `ISSUES` or `BLOCKED` with concrete evidence.
 

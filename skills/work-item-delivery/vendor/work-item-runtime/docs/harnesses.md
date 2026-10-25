@@ -4,14 +4,14 @@ The local runtime is shared by the configured agent hosts. Run it under Linux or
 
 | Responsibility                          | Codex                                                                          | Claude Code                           | Cursor                                |
 | --------------------------------------- | ------------------------------------------------------------------------------ | ------------------------------------- | ------------------------------------- |
-| Read Work Items, relations, discussion  | Configured Azure DevOps MCP server; see discovery below | Configured Azure DevOps MCP server | Configured Azure DevOps MCP server |
-| SecondBrain business context | Available `wiki-query`/`think` skills and vault read tools | Same installed skills/vault | Same installed skills/vault |
-| Browser observations | Installed Playwright skill/runtime; scripts and receipts outside product source | Configured Playwright skill/runtime | Configured Playwright skill/runtime |
+| Read Work Items, relations, discussion  | Configured Azure DevOps MCP server; see discovery below | Azure DevOps MCP server, Azure CLI read-only fallback; see the `work-item-delivery` skill's `references/claude-code.md` | Configured Azure DevOps MCP server |
+| SecondBrain business context | Available `wiki-query`/`think` skills and vault read tools | `claude-obsidian:wiki-query`/`claude-obsidian:think` and vault read tools | Same installed skills/vault |
+| Browser observations | Installed Playwright skill/runtime; scripts and receipts outside product source | Playwright MCP server or `playwright` library; see the `work-item-delivery` skill's `references/claude-code.md` | Configured Playwright skill/runtime |
 | Read specs                              | Available Atlassian/Drive/document tools, or supplied source files             | Configured connectors/source files    | Configured connectors/source files    |
 | Local runtime and Git inspection        | `exec_command`                                                                 | Shell/Bash                            | Terminal/shell tool                   |
 | Ask for missing scope or exact approval | Supported user-input tool or plain chat                                        | Supported question tool or plain chat | Supported question tool or plain chat |
 | Optional delegation                     | Native collaboration tools when authorized                                     | Native Agent tool when authorized     | Native Task tool when authorized      |
-| PR creation/update/read-back            | Available Azure DevOps tools                                                   | Configured Azure DevOps connector     | Configured Azure DevOps connector     |
+| PR creation/update/read-back            | Available Azure DevOps tools                                                   | Azure DevOps MCP server, or `az repos pr` only when the user authorizes that transport | Configured Azure DevOps connector     |
 
 ## Context re-entry and scoped handoffs
 
@@ -27,7 +27,7 @@ Record independent-host only when the host establishes separate initial contexts
 
 ## Azure DevOps MCP discovery
 
-Use the configured Azure DevOps MCP server first for tracker and repository reads. Discover exposed tools and their actual schemas before calling them. When the host does not expose that server's tools, inspect its configured launcher and connect through the installed MCP SDK, retaining one client/server session across reads. On this machine the existing launcher is `/path/to/your/configured-ado-mcp-launcher`; it starts the official Azure DevOps MCP server. This is MCP access, not a REST fallback. Use a read-only tool/action allowlist during planning and preserve source responses outside product repositories.
+Use the configured Azure DevOps MCP server first for tracker and repository reads. Discover exposed tools and their actual schemas before calling them. When the host does not expose that server's tools, inspect its configured launcher and connect through the installed MCP SDK, retaining one client/server session across reads. The official server is Microsoft's `@azure-devops/mcp`, local or hosted; host-specific setup lives with each host's reference, such as the Claude Code page. This is MCP access, not a REST fallback. Use a read-only tool/action allowlist during planning and preserve source responses outside product repositories.
 
 An unrelated connector's cancelled call does not establish the configured MCP server's availability. An MCP authentication timeout leaves access unverified; keep the session and allow one bounded retry after authentication can complete. Respect explicit permission denials: do not switch transports to bypass them. If MCP remains unavailable for a technical reason, explain the failure before using an authorized, bounded authenticated read-only fallback. Record the tool/transport and actual result; missing access stays a blocker, never an empty Work Item or a completed intake.
 

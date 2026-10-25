@@ -14,6 +14,34 @@ node SKILL_DIR/scripts/claude-session-resume.mjs --set RUN --project PROJECT_DIR
 
 `SKILL_DIR` is the installed `work-item-delivery` skill directory, `RUN` the run directory and `PROJECT_DIR` the session's primary working directory, all absolute. Use `--clear --project DIR` when the delivery is finished. The registry lives at `~/.claude/work-item-delivery/active-runs.json` and holds paths only. A `WORK_ITEM_RUN` environment variable overrides it for one session.
 
+## Connect sources
+
+**Azure DevOps.** Claude has no first-party Azure DevOps connector, so add Microsoft's official MCP server. Upstream recommends the hosted one:
+
+```sh
+claude mcp add --transport http azure-devops https://mcp.dev.azure.com/ORGANIZATION
+```
+
+The local server can be limited to the domains this workflow uses:
+
+```sh
+claude mcp add azure-devops -- npx -y @azure-devops/mcp ORGANIZATION -d core work work-items repositories wiki --authentication azcli
+```
+
+The server has no read-only mode. Never pre-approve its write tools, so every write reaches a permission prompt, and call only read tools during planning. If the server is unavailable for a technical reason, say why, then read through the signed-in Azure CLI (`az boards work-item show --id ID --expand all`, `az repos list`, `az repos pr show`) and record that transport. A missing or denied read stays a blocker, never an empty Work Item. PR creates and updates go through the MCP server. Use `az repos pr create` or `update` only when the user explicitly authorizes that transport, under the same exact-content approval and direct read-back.
+
+**Confluence and Jira.** The claude.ai Atlassian connector reads Confluence pages and versions. Call `getAccessibleAtlassianResources` once for the cloud ID.
+
+**Browser.** Capture receipts record `tool: "playwright"`, so captures need a Playwright driver. Prefer the Playwright MCP server, and save its screenshots and traces into the run directory:
+
+```sh
+claude mcp add playwright -- npx @playwright/mcp@latest --isolated
+```
+
+A Node script using the `playwright` library also works; keep it in the run directory, outside product source. The Chrome extension and other browsers are not Playwright. Use them to explore, never for a capture receipt.
+
+**Vault skills.** On Claude the vault skills register as `claude-obsidian:wiki-query` and `claude-obsidian:think`; wherever the docs say `wiki-query` or `think`, use those. Native Windows hosts receive short-named replacements instead.
+
 ## Re-entry hook
 
 The workflow requires `resume` after startup, resumption and compaction. A SessionStart hook does this for you. It runs `resume` for the registered run and adds the packet to Claude's context before the first prompt. It prints nothing and exits 0 when no run is registered, the run directory is missing, or `resume` fails. Add it to `~/.claude/settings.json` only after the installed `work-item-delivery` contains `scripts/claude-session-resume.mjs`; until then Node fails at every session start:
@@ -55,7 +83,7 @@ These commands record no decision and are safe to pre-approve. `status`, `next` 
 | Implement | For the Red lock, dispatch `work-item-test-author` with the unit's Red test paths and assertions; it commits only those tests. Then the coordinator or one delegated writer per repository turns them green in the bound checkout. Do not use `isolation: "worktree"` or `EnterWorktree` for writers. The runtime binds the primary checkout and allows a linked worktree only under the conditions in `docs/repository-conventions.md`. |
 | Verify | `verify` can run for minutes. Start it with Bash `run_in_background: true` and keep working on other repositories; the session is notified when it exits. Use `Monitor` only to wait on a log line. |
 | Review | When no accepted review covers the unchanged head, dispatch one `work-item-reviewer` per axis in parallel, then feed their report paths to `review`. |
-| Publish and approved action | Show the staged payload and hash in chat, then ask with `AskUserQuestion`. Azure DevOps writes go through the configured connector, as in `docs/harnesses.md`. |
+| Publish and approved action | Show the staged payload and hash in chat, then ask with `AskUserQuestion`. Azure DevOps writes go through the MCP server from Connect sources, and read-back follows `docs/harnesses.md`. |
 
 ## Subagents
 

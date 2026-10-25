@@ -9,7 +9,7 @@ Use this after Work Item start safety and source-led investigation, before produ
 | Explain the current flow or find the relevant code | `pstack:how` | A traced behavior and its boundaries, with code references. |
 | Explain why the design exists or why a fix belongs here | `pstack:why` | Evidence-backed reasoning, labelled inference and source gaps. |
 | Make the findings understandable to a colleague | `pstack:teach` | A plain explanation using the how/why findings already gathered. |
-| Turn checked findings into an implementation specification | `mattpocock-skills:to-spec` | Seven sections, observable acceptance and a proposed primary testing seam. |
+| Turn checked findings into an implementation specification | `mattpocock-skills:to-spec`, read as a template only | Seven sections, observable acceptance and a proposed primary testing seam. Read its SKILL.md for the template and seam method, but never invoke it: upstream disables model invocation and its own last step publishes to the tracker. `scripts/draft_spec.py` renders the preview instead. |
 | Design the planned work before building | `pstack:architect` using `pstack:arena`, then `pstack:interrogate` | Compared sketches, one synthesized design and independent findings disposition before final approval and edits. |
 | Diagnose a bug before choosing its fix | `pstack:principle-fix-root-causes` | Reproduction and the first wrong decision, with sibling impact and uncertainty recorded. |
 | Bound the coding unit before edits | `pstack:principle-guard-the-context-window` | Scoped files, read/output budget, saved contract and concise evidence pointers. |
@@ -33,7 +33,7 @@ At each unit, record the actual evidence and one of VERIFIED, NOT VERIFIED or IN
 
 Unattended execution stays within the approved developer plan. A request to leave a job running does not approve an unseen Work Item plan, a revised scope, tracker publication, deployment or destructive cleanup. When a required decision is missing, preserve the checkpoint, state the exact hold and continue only independent authorized investigation. Do not invent approval or silently broaden the job. Resume by checking the latest log, repository ownership, actual refs and approval validity. The current runtime's writer lock covers one run, not every run sharing a checkout; inspect other owners before writing.
 
-The final trail review must be independent. Use the skill's cross-model requirement and the configured Codex mapping. If only one model family is available, record the reduced diversity and name the reviewer. If no independent reviewer can run, report that gate as blocked; passing tests do not replace it.
+The final trail review must be independent. Use the skill's cross-model requirement and the current host's configured role models. If only one model family is available, record the reduced diversity and name the reviewer. If no independent reviewer can run, report that gate as blocked; passing tests do not replace it.
 
 This guidance does not install a scheduler or start a recurring/background job. Use the host's supported scheduling tools only when the user asks for execution later or repeated execution.
 

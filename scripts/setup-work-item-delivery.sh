@@ -225,11 +225,14 @@ run_wizard() {
   confirm "Use these directories? Existing conflicting installations will be preserved and refused." || return 1
 
   stage "Enable prerequisite skills and native trust"
-  open_url "https://github.com/michael-denyer/pstack-claude#codex"
+  case "$AGENT_HOST" in
+    codex) open_url "https://github.com/michael-denyer/pstack-claude#codex" ;;
+    *) open_url "https://github.com/michael-denyer/pstack-claude" ;;
+  esac
   open_url "https://github.com/mattpocock/skills#installation-30-second-setup"
   step "Read the section for your chosen host. Have the agent run supported installer commands; handle any native plugin/trust prompts yourself."
   step "For Cursor, use the upstream instructions for that runtime or shared skills; do not run Codex commands."
-  step "Confirm the host can actually load poteto-mode, architect, arena, interrogate, swarm, to-spec and wizard. Cache files alone are not discovery proof."
+  step "Confirm the host can actually load poteto-mode, architect, arena, interrogate, swarm and wizard. to-spec only needs to exist on disk: the workflow reads it as a template, and Claude blocks invoking it automatically. Cache files alone are not discovery proof."
   note "The exact prerequisite list and known source versions are in skills/work-item-delivery/references/prerequisites.md."
   note "Some Codex CLIs do not support plugin commands. Follow the host's current supported installation path; do not guess dashboard controls."
   confirm "Have both prerequisite skillsets loaded in the selected host?" || return 1
@@ -244,6 +247,7 @@ run_wizard() {
   write_env ADO_ORGANIZATION "$ADO_ORGANIZATION"
   write_env ADO_PROJECT "$ADO_PROJECT"
   step "Connect Azure DevOps through the host's configured connector/MCP and complete SSO there. Ask the agent for a read-only Work Item check."
+  [[ "$AGENT_HOST" != claude ]] || step "For Claude Code, add the official Azure DevOps and Playwright MCP servers as skills/work-item-delivery/references/claude-code.md describes."
   step "Follow actual specification links. Connect the relevant Confluence/vault source and browser tool in the same host, or record the access gap."
   ask CONFLUENCE_SITE "Confluence site URL (optional, Enter for none):"
   ask KNOWLEDGE_VAULT "Knowledge-vault path (optional, Enter for none):"

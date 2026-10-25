@@ -4,7 +4,7 @@
     "reason": "Portable export of the reviewed source workflow. Public document paths and configuration differ from the author checkout; file hashes identify the exported inputs. Local author Windows launchers are excluded because this package owns its WSL installation path."
   },
   "files": {
-    ".agents/skills/proof-of-work/SKILL.md": "636bb640f2c88dd81609107e071c5d13223979322755c65ff0d7bf64d1c4e806",
+    ".agents/skills/proof-of-work/SKILL.md": "4e8a7a9e0fe3cac3a06bf41dc2b54ed3de6113434c2466a468b5bc5520e813ba",
     ".agents/skills/work-item-delivery/SKILL.md": "2903d04258151c1156cf3b5130c52385b3b47d6e0fd85991160a3fef51ddf982",
     ".agents/skills/work-item-delivery/references/windows.md": "0f5f90c2b7b41c16d607f384fd999dda0e05f84b4243aadafbb2fe616b27d40c",
     ".agents/skills/work-item-start-safety/SKILL.md": "b8e3e6cb9518ecd5d7317b0a3f189f86014de85c164e0976c67191f34d1b206d",
@@ -15,8 +15,8 @@
     ".agents/skills/work-item-start-safety/scripts/check.py": "5d97afd258595a86c530e9f2daf24ec343cc6d80101485328fba9d1166eedbee",
     "bin/wid.mjs": "cdcbd6086756e0c715ce08f7fa8f7454c0376aa48d674044fc2555ac6aacd918",
     "config.json": "4c2e0e6608066ffae828f32b3e966597037c13e1e04b3feb0cb09e306126b84d",
-    "docs/business-evidence.md": "6fa77f38c3f20a6fd3067df63fd5a46048f86284f9419c52a5931e8deadd53fb",
-    "docs/harnesses.md": "a510b8cf20a6e02a760e4719c0192e06d95fc7fc2403491bf6ffb61b6a97b4bc",
+    "docs/business-evidence.md": "90d9b8bd45f418da60ad5d2a4cd1f5b75af8a48a6ec5637ffbed7ccadf0b60dc",
+    "docs/harnesses.md": "d9d9e3bb95a2ef39e6d6872aecd0f67f374386b07ad3d3866269c0b7118710a2",
     "docs/human-journey.md": "240d58a9e9c4598dd6489db02a54ae7f5c6ca92b55a0112ffe48439e681a8475",
     "docs/human-verification.md": "91c56fca3ead4a4f8ac0e0dbe906f2df91cbee6676ffc3a70322c214c7afdd02",
     "docs/phases/align.md": "eb4219aa4d07d05416987b84a9e73174bc6b61144416e6f38516778da83d87e2",
