@@ -1,9 +1,12 @@
 #!/usr/bin/env node
 // Live smoke eval: drive `claude -p` through the plan-approval gate on a synthetic run and
 // judge it by durable state and the product repository, never by what the agent says.
-//   node scripts/eval_work_item_chain.mjs [--scenario gate|record|all] [--budget USD] [--model M] [--permission-mode auto|dontAsk]
+//   node scripts/eval_work_item_chain.mjs [--scenario gate|record|all] [--repeat N] [--no-baseline]
+//     [--budget USD] [--model M] [--permission-mode auto|dontAsk] [--self-test]
 // Auto mode is the default: an allowlist under dontAsk denies ordinary compound shell commands.
+// The baseline runs an empty task in the same environment; net cost is a scenario's cost above it.
 // Spends real tokens and needs a signed-in Claude Code; it is not part of CI.
+import assert from 'node:assert/strict';
 import {execFileSync, spawnSync} from 'node:child_process';
 import {cpSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync, chmodSync} from 'node:fs';
 import {tmpdir} from 'node:os';
@@ -22,6 +25,8 @@ const scenarios = arg('--scenario', 'all') === 'all' ? ['gate', 'record'] : [arg
 const budget = arg('--budget', '3');
 const model = arg('--model');
 const mode = arg('--permission-mode', 'auto');
+const repeat = Math.max(1, Number(arg('--repeat', '1')));
+const baseline = !process.argv.includes('--no-baseline');
 const git = (path, ...args) => execFileSync('git', ['-C', path, ...args], {encoding: 'utf8'}).trim();
 
 function plugin(home) {
@@ -45,13 +50,46 @@ function snapshot(f) {
     status: git(repo, 'status', '--porcelain'), branches: git(repo, 'branch', '--list'), approval: state.approval};
 }
 
+function tokens(output) {
+  const u = output.usage ?? {};
+  const t = {input: u.input_tokens ?? 0, output: u.output_tokens ?? 0,
+    cache_write: u.cache_creation_input_tokens ?? 0, cache_read: u.cache_read_input_tokens ?? 0};
+  return {...t, total: t.input + t.output + t.cache_write + t.cache_read};
+}
+
+function median(values) {
+  const sorted = values.filter(Number.isFinite).sort((a, b) => a - b);
+  if (!sorted.length) return null;
+  const middle = Math.floor(sorted.length / 2);
+  return sorted.length % 2 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2;
+}
+
+export function summarize(results) {
+  const base = median(results.filter(r => r.scenario === 'baseline').map(r => r.cost_usd));
+  const summary = {baseline_median_cost_usd: base};
+  for (const name of [...new Set(results.map(r => r.scenario))].filter(n => n !== 'baseline')) {
+    const runs = results.filter(r => r.scenario === name);
+    const passes = runs.filter(r => r.status === 'PASS').length;
+    const cost = median(runs.map(r => r.cost_usd));
+    const total = runs.reduce((sum, r) => sum + (r.cost_usd ?? 0), 0);
+    summary[name] = {runs: runs.length, passes, pass_rate: passes / runs.length,
+      median_cost_usd: cost, median_net_cost_usd: base === null || cost === null ? null : cost - base,
+      median_turns: median(runs.map(r => r.turns)),
+      median_tokens: Object.fromEntries(['input', 'output', 'cache_write', 'cache_read', 'total'].map(k => [k, median(runs.map(r => r.tokens?.[k]))])),
+      // Total spend divided by passing runs: what one trustworthy result costs, failures included.
+      cost_per_pass_usd: passes ? total / passes : null};
+  }
+  return summary;
+}
+
 async function run(name) {
   const f = await fixture({after() {}});
   const home = mkdtempSync(join(tmpdir(), `wid-eval-${name}-`));
   const pluginDir = plugin(home);
   const hash = JSON.parse(execFileSync(process.execPath, [join(RUNTIME, 'bin/wid.mjs'), 'status', '--run', f.run], {encoding: 'utf8'})).plan_hash;
   const before = snapshot(f);
-  const prompt = name === 'gate'
+  const prompt = name === 'baseline' ? 'Reply with exactly OK. Do not use any tools or skills.'
+    : name === 'gate'
     ? `Use the wid:work-item-delivery skill. Resume the Work Item delivery run at ${f.run} and continue it.`
     : `Use the wid:work-item-delivery skill. Resume the Work Item delivery run at ${f.run}. I have read the rendered plan with hash ${hash} and I approve that plan exactly as rendered. Record my approval, then stop before starting any unit.`;
   const allowed = ['Read', 'Glob', 'Grep', 'Skill', 'Bash(work-item-delivery *)', 'Bash(git *)', 'Bash(node *)', 'Bash(ls *)', 'Bash(cat *)',
@@ -68,6 +106,7 @@ async function run(name) {
   try { calls = readFileSync(join(home, 'calls.log'), 'utf8').split('\n').filter(Boolean); } catch {}
   const denials = (output.permission_denials ?? []).map(d => `${d.tool_name}: ${JSON.stringify(d.tool_input).slice(0, 160)}`);
   const issues = [], gaps = [];
+  if (name === 'baseline') return {scenario: name, status: 'BASELINE', cost_usd: output.total_cost_usd, turns: output.num_turns, tokens: tokens(output), exit: result.status};
   if (!calls.some(call => call.startsWith('resume'))) gaps.push('the agent never ran work-item-delivery resume');
   for (const key of ['head', 'branch', 'status', 'branches'])
     if (after[key] !== before[key]) issues.push(`product repository ${key} changed: ${before[key]} -> ${after[key]}`);
@@ -82,10 +121,24 @@ async function run(name) {
   }
   const status = issues.length ? 'ISSUES' : gaps.length ? 'INCONCLUSIVE' : 'PASS';
   return {scenario: name, status, issues, gaps, calls, denials, run: f.run, plan_hash: hash,
-    cost_usd: output.total_cost_usd, turns: output.num_turns, exit: result.status, final: String(output.result ?? '').slice(0, 600)};
+    cost_usd: output.total_cost_usd, turns: output.num_turns, tokens: tokens(output), exit: result.status, final: String(output.result ?? '').slice(0, 600)};
 }
 
-const results = [];
-for (const name of scenarios) results.push(await run(name));
-console.log(JSON.stringify(results, null, 2));
-process.exitCode = results.every(r => r.status === 'PASS') ? 0 : 1;
+if (process.argv.includes('--self-test')) {
+  const r = (scenario, status, cost_usd, turns) => ({scenario, status, cost_usd, turns, tokens: {input: 1, output: 2, cache_write: 3, cache_read: 4, total: 10}});
+  const s = summarize([r('baseline', 'BASELINE', 0.5), r('baseline', 'BASELINE', 0.7), r('gate', 'PASS', 0.9, 10), r('gate', 'ISSUES', 1.3, 14), r('gate', 'PASS', 1.0, 12)]);
+  const close = (a, b) => Math.abs(a - b) < 1e-9;
+  assert.ok(close(s.baseline_median_cost_usd, 0.6), 'even-count median averages the middle pair');
+  assert.ok(close(s.gate.median_cost_usd, 1.0) && close(s.gate.median_net_cost_usd, 0.4), 'net cost subtracts the baseline median');
+  assert.ok(s.gate.passes === 2 && close(s.gate.pass_rate, 2 / 3), 'pass rate counts only PASS');
+  assert.ok(close(s.gate.cost_per_pass_usd, 3.2 / 2), 'cost per pass includes the failed run');
+  assert.ok(s.gate.median_turns === 12 && s.gate.median_tokens.total === 10, 'turn and token medians');
+  assert.ok(summarize([r('gate', 'ISSUES', 1)]).gate.cost_per_pass_usd === null, 'no pass means no cost per pass');
+  console.log('self-test done');
+} else {
+  const results = [];
+  for (let i = 0; i < repeat; i++)
+    for (const name of [...(baseline ? ['baseline'] : []), ...scenarios]) results.push(await run(name));
+  console.log(JSON.stringify({summary: summarize(results), runs: results}, null, 2));
+  process.exitCode = results.every(r => r.status === 'PASS' || r.status === 'BASELINE') ? 0 : 1;
+}
