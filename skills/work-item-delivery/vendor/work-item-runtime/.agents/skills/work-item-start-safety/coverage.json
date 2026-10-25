@@ -5,7 +5,7 @@
   },
   "files": {
     ".agents/skills/proof-of-work/SKILL.md": "636bb640f2c88dd81609107e071c5d13223979322755c65ff0d7bf64d1c4e806",
-    ".agents/skills/work-item-delivery/SKILL.md": "2c8e4bcc8b6a0af0f21fc8063edc2f3bb8a51d743efa18bea09592ea90fe00ab",
+    ".agents/skills/work-item-delivery/SKILL.md": "2903d04258151c1156cf3b5130c52385b3b47d6e0fd85991160a3fef51ddf982",
     ".agents/skills/work-item-delivery/references/windows.md": "0f5f90c2b7b41c16d607f384fd999dda0e05f84b4243aadafbb2fe616b27d40c",
     ".agents/skills/work-item-start-safety/SKILL.md": "b8e3e6cb9518ecd5d7317b0a3f189f86014de85c164e0976c67191f34d1b206d",
     ".agents/skills/work-item-start-safety/checks.json": "00223fb45e5f85ef033b5116c37df69f565093fc71647751102ba713b1f8e643",
@@ -30,7 +30,7 @@
     "docs/phases/verify.md": "1bb1c23c1a19c39bca0702ccdc23601e42add55b78e5f5b6b557b159e58c60dd",
     "docs/proof-of-work.md": "06e47248233cf95d5d3b14521b635db655d4454dec81e7131a6067edcfd15302",
     "docs/repository-conventions.md": "5cdf242f554a6b42ef255a07cc7f60b05764ac360f27dd7bec61a6c9da7ca46b",
-    "docs/rules.md": "3628552e6b2d6c4b81881e59c2ad3b22c8c3ef8b8efd91822acb9819934bff80",
+    "docs/rules.md": "cdf8e70cc18b33ab2e578ccd7281284d4d32a0b34e18b31023cd18fa8eb96c19",
     "docs/working-pr-draft.md": "63bf1d1de6df641692ae464ab02df0f4c7bd2c8b775fef459f61406bcaa81c5b",
     "lib/alignment.mjs": "93f0cdd6fb29874e2f73ae8fc4d24f3f4b51bd3dc2e297a16a56f7b28991adb9",
     "lib/approved-action.mjs": "5ff92eb2f2cfdddcf613fe27def53aee3aa7fab98dd17161dcd1f721074046e8",
@@ -75,6 +75,7 @@
     "test/proof-fixture.mjs": "76edc2e78ab788a58f48ff1530b41aaf73192cab59846d24e982e41a869d1e7c",
     "test/proof-journey.test.mjs": "0347ab77310db5b957dcc3bfd04fa55f322962e0c597573b93edc51967edc6c4",
     "test/proof-of-work.test.mjs": "7d8e23b94ed241f518836e85ca86bfe65a715fc386096f2c78940bb13aeeabef",
+    "test/published-branch.test.mjs": "1a4e6dd9ce6823a894b7b5c40d941948cc672336dd990c582dbe0678861beeb7",
     "test/test-report.test.mjs": "b35181ec94ac75b62d205138422a7f7dd321719198246c6e92600d0444177ae6",
     "test/workflow-context.test.mjs": "e9cdc0e2864d7c7ae24423804011e1854b088858454f85260ba09c61f6e427a9",
     "vendor/pstack/store.mjs": "a8094d1ab2f753f9dbbd3c548df57b93ad9e32b67283a4b42687035d8d0a77aa"

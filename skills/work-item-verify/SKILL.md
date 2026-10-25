@@ -18,6 +18,7 @@ Run inside the [chain](../work-item-delivery/SKILL.md). The runtime card `docs/p
 
 - Never change approved argv or add checks to reach green. Exit codes and test counts prove execution, not acceptance, SIT or deployment.
 - Retry once: rerun a failed check only when setup failed before any test ran. A second failure is real and returns to implement with its output.
+- A check that also fails on the baseline is recorded as pre-existing, with its evidence, and does not return to implement. Record before and after capture scope honestly.
 - A setup failure is inconclusive, not a regression. Clear a crashed verifier with `recover-verification` only after its process is confirmed dead, then rerun.
 - Keep product actions (executor, approved procedure, UI, API or CLI receipt), automated checks and unclassified records separate. A local fixture never certifies SIT; QA-owned SIT becomes a handoff checklist.
 - A correction that arrives during verification holds certification until `work-item-align` reconciles it.

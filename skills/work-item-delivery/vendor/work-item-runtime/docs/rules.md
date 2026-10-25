@@ -1,10 +1,11 @@
 # Rules and their enforcement
 
-The procedure lives in the `work-item-<phase>` skills. This table lists the rules the runtime enforces in code, each with the test that fails when the rule breaks, so the skills do not restate them. A rule with no test here is a judgment call and lives in its phase skill.
+The procedure lives in the `work-item-<phase>` skills. This table lists the rules the runtime enforces in code, each with the test that fails when the rule breaks (in `test/` or the start-safety `scripts/admission.test.mjs`), so the skills do not restate them. A rule with no test here is a judgment call and lives in its phase skill.
 
 | Rule | Enforcement (runtime test) |
 | --- | --- |
 | Product work starts only under the approved current plan fingerprint. | `start safety approval guard rejects missing mismatched and stale fingerprints`; `plan approval is a human stop`; `H1 human journey: withhold, revise, then approve the displayed implementation` |
+| A published PR branch is never renamed; an unpublished rename needs human evidence. | `a published repository branch cannot be renamed even with human evidence`; `a human-approved unpublished branch rename preserves the source and withdraws certification` |
 | A plan needs an executable unit-test plan or a justified exception. | `approval requires an explicit executable unit-test plan or a justified exception` |
 | Bug branches use the configured `fix/` prefix, never `codex/`. | `Bug approval rejects codex branches even if a stale plan asks for that prefix` |
 | A plan covers every case, cites its sources and groups one PR per repository. | `case coverage, source references and same-repo PR grouping are structural` |
