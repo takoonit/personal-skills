@@ -15,6 +15,8 @@ SKILLS = ROOT / "skills"
 README = ROOT / "README.md"
 MARKETPLACE = ROOT / ".claude-plugin" / "marketplace.json"
 INSTALLER = ROOT / "scripts" / "install-work-item-delivery.py"
+EVALS = ROOT / "evals"
+CASE_SKILL_PREFIX = "../../../skills/"
 # Platform-specific skills, installed only on that platform by the workflow installer.
 PLATFORM_SKILLS = ROOT / "windows" / "skills"
 NAME_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
@@ -98,6 +100,42 @@ def validate_readme(names: list[str]) -> list[str]:
     ]
 
 
+def plugin_skills() -> list[str]:
+    plugins = json.loads(MARKETPLACE.read_text(encoding="utf-8")).get("plugins", [])
+    return [Path(entry).name for plugin in plugins for entry in plugin.get("skills", [])]
+
+
+def case_plugins(prompt: Path) -> list[str]:
+    """Return the skill names a case's prompt.md frontmatter lists under plugins."""
+    lines = prompt.read_text(encoding="utf-8").splitlines()
+    end = lines.index("---", 1)
+    return [
+        line.strip()[2:].removeprefix(CASE_SKILL_PREFIX)
+        for line in lines[1:end]
+        if line.strip().startswith("- " + CASE_SKILL_PREFIX)
+    ]
+
+
+def validate_evals() -> list[str]:
+    """Each case must load exactly the plugin's skills, and each plugin skill needs a case."""
+    if not EVALS.is_dir() or not MARKETPLACE.is_file():
+        return []
+
+    errors: list[str] = []
+    expected = sorted(plugin_skills())
+    covered: set[str] = set()
+    for prompt in sorted(EVALS.glob("*/*/prompt.md")):
+        group = prompt.parent.parent.name
+        label = f"evals: {prompt.parent.relative_to(EVALS)}"
+        if sorted(case_plugins(prompt)) != expected:
+            errors.append(f"{label}: plugins list differs from the boat plugin's skills")
+        if group not in expected:
+            errors.append(f"{label}: group {group!r} is not a boat plugin skill")
+        covered.add(group)
+    errors += [f"evals: {name}: no eval case" for name in expected if name not in covered]
+    return errors
+
+
 def validate_plugin() -> list[str]:
     if not MARKETPLACE.is_file():
         return [f"plugin: missing {MARKETPLACE.relative_to(ROOT)}"]
@@ -141,7 +179,7 @@ def main() -> int:
 
     repository_errors = validate_readme(
         sorted(path.name for path in SKILLS.iterdir() if path.is_dir())
-    ) + validate_plugin()
+    ) + validate_plugin() + validate_evals()
     for error in repository_errors:
         failed = True
         print(f"ERROR: {error}")

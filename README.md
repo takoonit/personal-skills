@@ -148,6 +148,38 @@ Example requests:
 
 Implicit invocation is enabled in the package for supporting hosts. Explicit invocation uses `$design-guide`. Invocation and enforcement still depend on the host and project workflow; Markdown alone does not install CI checks or guarantee every agent follows it.
 
+## Evals
+
+`evals/` holds behavioural test cases for every skill in the `boat` plugin, run with [`claude plugin eval`](https://code.claude.com/docs/en/plugin-evals). Each case is a realistic request plus graders. It runs once with the skills loaded and once with no skills, so the report shows what the skills add (`Δ`), not only whether the answer was good.
+
+```text
+evals/<skill>/<case>/
+  prompt.md          # frontmatter: the plugin's skills, tags, tools; body: the request
+  graders/*.md       # skill-fired, file and tool checks, and an LLM rubric
+  case.yaml          # only when the case needs fixture files
+  setup.sh, fixture/ # copied into the empty workspace before the run
+```
+
+Run from the repository root. Cases list the eleven plugin skill folders under `plugins:`, because `claude plugin eval` loads plugins per case and this repository root is not itself a plugin. `validate_skills.py` fails when a case's list drifts from `.claude-plugin/marketplace.json` or a plugin skill has no case.
+
+```sh
+# Everything: 52 cases, 3 runs per arm
+claude plugin eval . --scaffold --trust-plugin --allow-tools Write Edit Bash --judge-model sonnet --max-cost-usd 40
+
+# One skill
+claude plugin eval . --tag lundy --scaffold --trust-plugin --allow-tools Write Edit Bash
+
+# One case, one run, plugin arm only: cheapest while editing a skill
+claude plugin eval . --case stacked-coupon-gap --runs 1 --ablation none --scaffold --trust-plugin --allow-tools Write Edit Bash
+```
+
+- **Requirements.** Claude Code 2.1.269 or later and git 2.31 or later. Cases that grant `Bash` run in Claude Code's sandbox, which needs `bubblewrap` and `socat` on Linux or WSL.
+- **Cost.** Every run and judge call is billed to your account. In smoke runs a prompt-only run cost about $0.04 to $0.08 and a fixture run about $0.06 to $0.26, so a full suite lands roughly in the $25 to $35 range. Keep `--max-cost-usd` on.
+- **Judge.** The default judge is a small model and can misread long replies. Use `--judge-model sonnet` before trusting a regression.
+- **Results** go to `evals/results/`, which git ignores.
+
+To add a case, copy a sibling case folder, change the request and graders, and keep the `plugins:` list as it is. Give each case one grader on the result and one on the steps, such as `skill-fired`.
+
 ## Design principles
 
 ### Narrow ownership
@@ -172,12 +204,12 @@ A good skill can abstain, reject a weak premise, ask for missing evidence, or ha
 2. Keep the skill's ownership narrow and state both positive and negative trigger conditions.
 3. Put deep supporting material in `references/` rather than bloating the operational `SKILL.md`.
 4. Keep machine-specific paths, credentials, private customer data, and generated output out of the skill.
-5. Add representative eval cases when routing, abstention, or judgement quality matters.
+5. Add [eval cases](#evals) under `evals/<skill>/`. A plugin skill needs at least one, and more when routing, abstention or judgement quality matters.
 6. List it in its group under [Included skills](#included-skills). For a core skill, also add its path to the `boat` plugin's `skills` list in `.claude-plugin/marketplace.json`.
 7. Run `python scripts/validate_skills.py`, and `claude plugin validate .` when the plugin changed.
 8. Review the diff before committing.
 
-The validation workflow runs automatically for pushes and pull requests. It fails when a skill is missing from this README or when the plugin lists a skill that does not exist or that the setup wizard installs.
+The validation workflow runs automatically for pushes and pull requests. It fails when a skill is missing from this README, when the plugin lists a skill that does not exist or that the setup wizard installs, or when the eval cases drift from the plugin.
 
 ## Security boundary
 
