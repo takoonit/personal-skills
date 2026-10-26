@@ -174,7 +174,7 @@ claude plugin eval . --case stacked-coupon-gap --runs 1 --ablation none --scaffo
 ```
 
 - **Requirements.** Claude Code 2.1.269 or later and git 2.31 or later. Cases that grant `Bash` run in Claude Code's sandbox, which needs `bubblewrap` and `socat` on Linux or WSL.
-- **Cost.** Every run and judge call is billed to your account. In smoke runs a prompt-only run cost about $0.04 to $0.08 and a fixture run about $0.06 to $0.26, so a full suite lands roughly in the $25 to $35 range. Keep `--max-cost-usd` on.
+- **Cost.** Every run and judge call is billed to your account. In smoke runs a prompt-only run cost about $0.04 to $0.08 and a fixture run about $0.06 to $0.26, so a full suite lands roughly in the $25 to $35 range. Keep `--max-cost-usd` on. On a subscription plan the full suite can exhaust a session's usage limit (the first baseline stopped after 34 cases), so run it one `--tag` at a time across sessions. Runs that hit the limit score 0, so stop the suite rather than letting it continue.
 - **Judge.** The default judge is a small model and can misread long replies. Use `--judge-model sonnet` before trusting a regression.
 - **Results** go to `evals/results/`, which git ignores.
 

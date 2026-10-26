@@ -1,5 +1,8 @@
 ---
 type: llm
+focus:
+  source: file
+  path: DESIGN.md
 ---
 
 PASS only if all of these hold:
