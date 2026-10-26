@@ -1,0 +1,33 @@
+{
+  "name": "boat-skills",
+  "description": "Takoon Chiengtong's agent skills for deciding, designing, building and validating work.",
+  "owner": {
+    "name": "Takoon Chiengtong"
+  },
+  "plugins": [
+    {
+      "name": "boat",
+      "source": "./",
+      "version": "0.1.0",
+      "description": "Gate, shape, challenge, design, build and validate work. Installs as /boat:<skill>.",
+      "author": {
+        "name": "Takoon Chiengtong"
+      },
+      "repository": "https://github.com/takoonit/personal-skills",
+      "keywords": ["skills", "engineering", "design", "review"],
+      "skills": [
+        "./skills/strategic-gate",
+        "./skills/shark-tank",
+        "./skills/shape-system-work",
+        "./skills/doakes",
+        "./skills/dextor",
+        "./skills/lundy",
+        "./skills/design-guide",
+        "./skills/intentional-design",
+        "./skills/laws-of-ux",
+        "./skills/ship-sound-code",
+        "./skills/clear-tactful-writing"
+      ]
+    }
+  ]
+}

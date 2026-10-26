@@ -1,6 +1,6 @@
 # Personal Skills
 
-A version-controlled collection of reusable skills for ChatGPT and Codex. Each skill gives an agent a focused job, clear ownership boundaries, decision rules, and hand-offs to neighbouring skills instead of one giant catch-all prompt.
+A version-controlled collection of reusable skills for Claude Code, ChatGPT and Codex. Each skill gives an agent a focused job, clear ownership boundaries, decision rules, and hand-offs to neighbouring skills instead of one giant catch-all prompt.
 
 ## How the skills fit together
 
@@ -30,21 +30,87 @@ skills/
 
 Each directory under `skills/` is a portable skill package. Its directory name must match the `name` field in `SKILL.md`.
 
+## Install
+
+**Claude Code.** The core skills ship as the `boat` plugin, so every skill is namespaced as `/boat:<skill>`:
+
+```text
+/plugin marketplace add takoonit/personal-skills
+/plugin install boat@boat-skills
+```
+
+On Claude Code 2.1.275 or later, `/plugin install boat --marketplace takoonit/personal-skills` does both in one step. The plugin carries the core groups below. The Work Item and Azure DevOps skills are installed by their [setup wizard](#work-item-delivery-workflow) instead, because they need a runtime, a CLI and session hooks that the plugin does not install.
+
+**ChatGPT and Codex.** Copy the skill directories you want. `agents/openai.yaml` supplies each skill's display name and invocation policy, and skills call each other as `$<skill>`.
+
+## Naming
+
+Names follow two rules, so a name tells you what kind of skill it is before you open it:
+
+- **Characters question work.** The crew are named after people whose job is suspicion: Doakes, Dextor and Lundy from *Dexter*, and the Shark Tank panel. They challenge, investigate or validate. They never build.
+- **Plain names do work.** Every other name states its outcome (`ship-sound-code`, `clear-tactful-writing`). Skills that belong to one workflow share a prefix: `work-item-<phase>`, `azure-<artifact>`.
+
+In Claude Code the plugin adds the `boat:` prefix. Inside skill files, cross-references stay as `$<skill>` so they work on every host.
+
 ## Included skills
+
+### The crew
+
+| Skill | Role | Use it when... |
+| --- | --- | --- |
+| [`shark-tank`](skills/shark-tank/SKILL.md) | Business challenger | An early product or business idea needs evidence, sharper questions, commercial pressure-testing, and a realistic invest / test / pass judgement. |
+| [`doakes`](skills/doakes/SKILL.md) | Intent challenger | A request may be drifting from the project's core outcome or adding complexity without a strong reason. |
+| [`dextor`](skills/dextor/SKILL.md) | Code-bloat investigator | Existing code may contain evidence-backed duplication, dead weight, or unnecessary complexity that should be investigated before removal. |
+| [`lundy`](skills/lundy/SKILL.md) | Independent validator | Consequential completed work needs an independent acceptance pass using focused validation agents. |
+
+### Direction
 
 | Skill | Role | Use it when... |
 | --- | --- | --- |
 | [`strategic-gate`](skills/strategic-gate/SKILL.md) | Attention gate | A proposed task, feature, or initiative needs a quick decision on whether it deserves effort now. |
-| [`shark-tank`](skills/shark-tank/SKILL.md) | Business challenger | An early product or business idea needs evidence, sharper questions, commercial pressure-testing, and a realistic invest / test / pass judgement. |
 | [`shape-system-work`](skills/shape-system-work/SKILL.md) | System shaper | Product or architecture direction is still ambiguous and needs trade-offs resolved before implementation. |
-| [`doakes`](skills/doakes/SKILL.md) | Intent challenger | A request may be drifting from the project's core outcome or adding complexity without a strong reason. |
+
+### Design
+
+| Skill | Role | Use it when... |
+| --- | --- | --- |
 | [`design-guide`](skills/design-guide/SKILL.md) | Visual direction and ongoing design guidance | Any task affects visual design or UX, including routine implementation, fixes, assets, reviews and visual work in other media. Reuse existing rules; establish a full system only when needed. |
 | [`intentional-design`](skills/intentional-design/SKILL.md) | Interaction designer | A product flow needs purposeful hierarchy, state, feedback, restrained delight, or behaviour-aware interaction design. |
 | [`laws-of-ux`](skills/laws-of-ux/SKILL.md) | Behavioural UX diagnostician & auditor | Use Diagnostic mode when behaviour could materially change a design decision. Use Audit mode to inspect a rendered UI or journey, surface 3–5 evidence-backed candidate laws, and reduce them to the 1–3 highest-value UX changes. The skill may also conclude that no law applies or evidence is insufficient. |
+
+### Build and communicate
+
+| Skill | Role | Use it when... |
+| --- | --- | --- |
 | [`ship-sound-code`](skills/ship-sound-code/SKILL.md) | Implementation and engineering standards | A defined change needs proportionate implementation and verification, or a repository needs coding standards, concise guardrails and executable quality gates. Audit requests stay read-only unless fixes are authorised. |
-| [`dextor`](skills/dextor/SKILL.md) | Code-bloat investigator | Existing code may contain evidence-backed duplication, dead weight, or unnecessary complexity that should be investigated before removal. |
-| [`lundy`](skills/lundy/SKILL.md) | Independent validator | Consequential completed work needs an independent acceptance pass using focused validation agents. |
 | [`clear-tactful-writing`](skills/clear-tactful-writing/SKILL.md) | Communication | Facts, decisions, requests, or difficult messages need concise Thai or English wording with appropriate tact. |
+
+### Work Item delivery (installed by the setup wizard)
+
+| Skill | Use it when... |
+| --- | --- |
+| [`work-item-delivery`](skills/work-item-delivery/SKILL.md) | Start, plan, deliver or resume an Azure DevOps Work Item. Routes to the phase skills below. |
+| [`work-item-investigate`](skills/work-item-investigate/SKILL.md) | Intake and independent investigation into a reconciled dossier. |
+| [`work-item-design`](skills/work-item-design/SKILL.md) | Architect, arena and interrogate the dossier into an approved plan with locked Red tests. |
+| [`work-item-implement`](skills/work-item-implement/SKILL.md) | Turn one approved unit's Red tests green with a root-cause fix. |
+| [`work-item-verify`](skills/work-item-verify/SKILL.md) | Run the approved checks and capture human-reproducible evidence. |
+| [`work-item-review`](skills/work-item-review/SKILL.md) | Review the exact head with reviewers who did not write the code. |
+| [`work-item-publish`](skills/work-item-publish/SKILL.md) | Stage the exact PR payload for approval. |
+| [`work-item-approved-action`](skills/work-item-approved-action/SKILL.md) | Run an action the user already approved, such as publishing or merging. |
+| [`work-item-report`](skills/work-item-report/SKILL.md) | Report coverage, evidence, holds and handoff after a run. |
+| [`work-item-align`](skills/work-item-align/SKILL.md) | Reconcile a user correction or stop on a missing decision, at any phase. |
+| [`work-item-start-safety`](skills/work-item-start-safety/SKILL.md) | Check readiness, realistic estimates and the writer and workspace guards. |
+| [`proof-of-work`](skills/proof-of-work/SKILL.md) | Plan human-reproducible verification and gather PR evidence. |
+
+### Azure DevOps documentation (installed by the setup wizard)
+
+| Skill | Use it when... |
+| --- | --- |
+| [`azure-pr-format`](skills/azure-pr-format/SKILL.md) | Apply the three-section team PR format and its anti-pattern checks. |
+| [`azure-pr-write`](skills/azure-pr-write/SKILL.md) | Write or revise a PR in that format. |
+| [`azure-pr-review`](skills/azure-pr-review/SKILL.md) | Review a PR description for format, clarity and honest evidence. |
+| [`azure-commit-message`](skills/azure-commit-message/SKILL.md) | Draft a commit message grounded in the diff. |
+| [`azure-change-record`](skills/azure-change-record/SKILL.md) | Write a full change record with diagrams, test plan and release notes. |
 
 ## Work Item delivery workflow
 
@@ -102,15 +168,16 @@ A good skill can abstain, reject a weak premise, ask for missing evidence, or ha
 
 ## Add or update a skill
 
-1. Add or replace its complete directory under `skills/<skill-name>/`.
+1. Add or replace its complete directory under `skills/<skill-name>/`. Name it by the [naming rules](#naming).
 2. Keep the skill's ownership narrow and state both positive and negative trigger conditions.
 3. Put deep supporting material in `references/` rather than bloating the operational `SKILL.md`.
 4. Keep machine-specific paths, credentials, private customer data, and generated output out of the skill.
 5. Add representative eval cases when routing, abstention, or judgement quality matters.
-6. Run `python scripts/validate_skills.py`.
-7. Review the diff before committing.
+6. List it in its group under [Included skills](#included-skills). For a core skill, also add its path to the `boat` plugin's `skills` list in `.claude-plugin/marketplace.json`.
+7. Run `python scripts/validate_skills.py`, and `claude plugin validate .` when the plugin changed.
+8. Review the diff before committing.
 
-The validation workflow runs automatically for pushes and pull requests.
+The validation workflow runs automatically for pushes and pull requests. It fails when a skill is missing from this README or when the plugin lists a skill that does not exist or that the setup wizard installs.
 
 ## Security boundary
 

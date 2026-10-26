@@ -3,6 +3,8 @@
 
 from __future__ import annotations
 
+import ast
+import json
 import re
 import sys
 from pathlib import Path
@@ -10,6 +12,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SKILLS = ROOT / "skills"
+README = ROOT / "README.md"
+MARKETPLACE = ROOT / ".claude-plugin" / "marketplace.json"
+INSTALLER = ROOT / "scripts" / "install-work-item-delivery.py"
 # Platform-specific skills, installed only on that platform by the workflow installer.
 PLATFORM_SKILLS = ROOT / "windows" / "skills"
 NAME_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
@@ -73,6 +78,45 @@ def validate_skill(directory: Path) -> list[str]:
     return errors
 
 
+def installer_skills() -> set[str]:
+    """Read the setup wizard's SKILLS tuple without executing the installer."""
+    tree = ast.parse(INSTALLER.read_text(encoding="utf-8"))
+    for node in tree.body:
+        if isinstance(node, ast.Assign) and any(
+            isinstance(target, ast.Name) and target.id == "SKILLS" for target in node.targets
+        ):
+            return set(ast.literal_eval(node.value))
+    raise ValueError(f"{INSTALLER.name} defines no SKILLS tuple")
+
+
+def validate_readme(names: list[str]) -> list[str]:
+    text = README.read_text(encoding="utf-8")
+    return [
+        f"README: {name}: not listed under Included skills"
+        for name in names
+        if f"](skills/{name}/SKILL.md)" not in text
+    ]
+
+
+def validate_plugin() -> list[str]:
+    if not MARKETPLACE.is_file():
+        return [f"plugin: missing {MARKETPLACE.relative_to(ROOT)}"]
+
+    errors: list[str] = []
+    owned_by_installer = installer_skills()
+    for plugin in json.loads(MARKETPLACE.read_text(encoding="utf-8")).get("plugins", []):
+        for entry in plugin.get("skills", []):
+            path = (ROOT / entry).resolve()
+            label = f"plugin {plugin.get('name')}: {entry}"
+            if not (path / "SKILL.md").is_file():
+                errors.append(f"{label}: no SKILL.md at this path")
+            elif path.parent != SKILLS:
+                errors.append(f"{label}: must point at a skills/<name> directory")
+            elif path.name in owned_by_installer:
+                errors.append(f"{label}: installed by the setup wizard, so the plugin must not ship it")
+    return errors
+
+
 def main() -> int:
     if not SKILLS.is_dir():
         print("ERROR: missing skills directory")
@@ -94,6 +138,13 @@ def main() -> int:
                 print(f"ERROR: {directory.name}: {error}")
         else:
             print(f"OK: {directory.name}")
+
+    repository_errors = validate_readme(
+        sorted(path.name for path in SKILLS.iterdir() if path.is_dir())
+    ) + validate_plugin()
+    for error in repository_errors:
+        failed = True
+        print(f"ERROR: {error}")
 
     return 1 if failed else 0
 

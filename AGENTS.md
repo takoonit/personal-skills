@@ -5,3 +5,4 @@ Honor existing user approval for its stated action. Reuse completed review and v
 | Rule | Enforcement |
 | --- | --- |
 | Approved actions check new blockers and execute without restarting old approval gates. | The runtime owns approved-action receipts. `npm test` in `skills/work-item-delivery/vendor/work-item-runtime` includes the routing and persistence regressions and runs in CI. |
+| Every skill is listed in the README, and the `boat` plugin ships only existing skills that the setup wizard does not install. | `python scripts/validate_skills.py` checks both in CI, reading the wizard's `SKILLS` tuple as the source of truth. |
