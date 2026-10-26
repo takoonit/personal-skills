@@ -90,6 +90,18 @@ Before requires an observed/passed outcome; after requires passed. Failed/blocke
 
 These checks bind authored records and bytes. They do not authenticate executor identity or independently certify the semantic result. UI receipt fixtures use synthetic screenshots in automated tests; only actual browser execution supports a real UI walkthrough. The same boundary applies to API/CLI transcripts and their stated environment.
 
+## UI publication projection
+
+UI publication uses the compact `publication_proof` shape in [publication.example.json](../templates/publication.example.json), bound directly to the approved cases, business flows and latest capture receipts. It does not require a collector index or a particular test-report format. Backend/API/CLI-only publications keep their existing evidence path.
+
+Each UI case supplies its title, role/setup, product actions, expected result, observed before/after, actual environment, source head and executor. Each phase identifies its capture receipt and full image bytes. Capture artifacts declare `framing: "viewport"`, `"full-page"` or `"crop"`; declared full captures must have PNG/JPEG header dimensions at least as large as the recorded viewport. Unknown legacy framing remains readable but cannot supply a new publication's primary image. A full viewport is valid. A supplementary crop does not replace either original.
+
+`renderPublicationProof(proof)` from `lib/publication-proof.mjs` returns the complete final `## Proof of Works` section. Use it after the authored What Happened and Insight sections. It renders case journeys first, full Before then full After with full-size links, and supporting checks last. `stage-publication` and new `approve-action` publish requests validate that exact section, capture identities and attachment bytes before recording admission. Existing stored approvals are not sent through new proof admission.
+
+For a new PR whose attachment URLs do not exist yet, use `attachment:NAME` destinations backed by named approved files. After the authorized creation/upload, call `materializePublicationDescription(request, approvedAttachments, uploadReceipts)`. The receipts contain `name`, `sha256`, `bytes` and the actual HTTPS `url`. The helper derives only the approved image destinations, checks the 4,000-character limits and preserves all prose. Use that derived description for the update and include the attachment read-back receipts in `published` or `action-completed`. An incomplete binding or any other prose edit fails exact read-back; revised prose needs its existing approval process.
+
+Semantic quality remains a review judgment. For example, "HR opens Current Benefits, saves a 100 THB adjustment, and sees the success message" is a product journey when its actual captures support it. "The agent approved the plan and ran 118 tests" describes workflow and supporting automation. A fixture remains a fixture. Framing declarations, hashes and authored observations do not authenticate screenshot provenance, actual human execution, remote accessibility or SIT acceptance.
+
 ## Read the result
 
 The bundle contains private `evidence-index.json` and `proof-of-works.md`. Its first account is the product user's approved case: Work Item expectation and citations, role and starting state, actions/expected outcomes, capture procedure, then actual authored before/after observations linked to their artifacts. Automated commands, exits and runner counts support those case accounts. Pending units, blockers, failed/incomplete reports, absent unit/regression proof and unmapped cases remain execution gaps. Invalid/missing/changed logs or source bindings cause refusal.

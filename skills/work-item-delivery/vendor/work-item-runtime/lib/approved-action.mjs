@@ -1,3 +1,5 @@
+import { assertPublicationSize, materializePublicationDescription } from "./publication-proof.mjs";
+
 const assert = (condition, message) => { if (!condition) throw new Error(message); };
 const text = (value, label) => assert(typeof value === "string" && value.trim(), label + " is required");
 export const PREFLIGHT_MAX_AGE_MS = 5 * 60 * 1000;
@@ -12,7 +14,7 @@ export function validateApprovedAction(input) {
     assert(["create", "update"].includes(request.action), "publication action must be create or update");
     text(request.title, "PR title");
     text(request.description, "PR description");
-    assert(request.description.length <= 4000 && [...request.description].length <= 4000, "PR description exceeds 4000 characters");
+    assertPublicationSize(request.description);
     request.is_draft ??= false;
     assert(typeof request.is_draft === "boolean", "explicit boolean draft state required");
     assert(Array.isArray(request.work_item_ids), "work_item_ids must be an array");
@@ -80,7 +82,7 @@ export function approvedActionDecision(record, localBlockers = [], now = Date.no
   return { ...base, phase: "ready", expected_head: record.request.head };
 }
 
-export function validateActionReadback(request, actual) {
+export function validateActionReadback(request, actual, proofAttachments = null) {
   for (const key of ["repository_id", "source_branch", "target_branch", "head"])
     assert(actual[key] === request[key], "action read-back differs: " + key);
   assert(typeof actual.pr_url === "string" && /^https:\/\//.test(actual.pr_url), "direct PR URL required");
@@ -90,8 +92,9 @@ export function validateActionReadback(request, actual) {
     assert(/^[a-f0-9]{40,64}$/.test(actual.merge_commit), "merge commit required");
   } else {
     assert(actual.status === "active", "published PR must be active");
+    const description = proofAttachments ? materializePublicationDescription(request, proofAttachments, actual.attachments ?? []) : request.description;
     for (const key of ["title", "description", "is_draft"])
-      assert(actual[key] === request[key], "publication read-back differs: " + key);
+      assert(actual[key] === (key === "description" ? description : request[key]), "publication read-back differs: " + key);
     assert(JSON.stringify([...(actual.work_item_ids ?? [])].map(String).sort()) ===
       JSON.stringify([...request.work_item_ids].map(String).sort()), "work item associations differ");
   }

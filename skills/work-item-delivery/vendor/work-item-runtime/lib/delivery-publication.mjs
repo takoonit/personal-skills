@@ -1,5 +1,6 @@
 import { resolve, basename } from "node:path";
 import { validateApprovedAction, validateActionObservation, approvedActionDecision, validateActionReadback } from "./approved-action.mjs";
+import { assertPublicationSize, validatePublicationProof, materializePublicationDescription } from "./publication-proof.mjs";
 import { sha, canonical, assert, text, array, id, readJson, repositoryIdentity, publicationIdentity, receipt } from "./delivery-common.mjs";
 
 export const deliveryPublication = {
@@ -14,6 +15,7 @@ export const deliveryPublication = {
       state.approved_action = {
         request, hash: sha(canonical(request)), plan_hash: s.plan_hash,
         approval: pub.approval, attachments: pub.attachments ?? [],
+        ...(pub.proof ? { proof: pub.proof } : {}),
         known_blockers: [], preflight: null, completed: null,
       };
     }
@@ -25,6 +27,8 @@ export const deliveryPublication = {
     try {
       assert((await receipt(record.approval.path)).sha256 === record.approval.sha256, "approval evidence changed");
       assert(sha(canonical(record.request)) === record.hash, "approved action changed");
+      for (const dependency of record.proof?.dependencies ?? [])
+        assert((await receipt(dependency.path)).sha256 === dependency.sha256, "publication proof dependency changed");
       if (record.completed) {
         assert((await receipt(record.completed.evidence.path)).sha256 === record.completed.evidence.sha256, "action read-back evidence changed");
       } else {
@@ -64,9 +68,10 @@ export const deliveryPublication = {
       const attachments = [];
       for (const item of request.attachments ?? [])
         attachments.push({ name: item.name ?? basename(item.path), ...(await receipt(item.path)) });
+      const proof = request.operation === "publish" ? await validatePublicationProof(s, repo, request) : null;
       s.repos[repo].approved_action = {
         request, hash: sha(canonical(request)), plan_hash: s.plan_hash,
-        approval: await receipt(evidence), attachments,
+        approval: await receipt(evidence), attachments, ...(proof ? { proof } : {}),
         known_blockers: s.blockers.filter((b) => !b.resolved && b.units.some((key) => this.unit(s, key).repo === repo)).map((b) => sha(canonical(b))),
         preflight: null, completed: null,
       };
@@ -100,8 +105,10 @@ export const deliveryPublication = {
       assert(record, "approved action required");
       assert((await receipt(record.approval.path)).sha256 === record.approval.sha256, "approval evidence changed");
       assert(sha(canonical(record.request)) === record.hash, "approved action changed");
+      for (const dependency of record.proof?.dependencies ?? [])
+        assert((await receipt(dependency.path)).sha256 === dependency.sha256, "publication proof dependency changed");
       const actual = await readJson(file);
-      validateActionReadback(record.request, actual);
+      validateActionReadback(record.request, actual, record.proof ? record.attachments : null);
       if (record.request.operation === "publish")
         assert(canonical((actual.attachments ?? []).map((a) => [a.name, a.sha256, a.bytes]).sort()) ===
           canonical(record.attachments.map((a) => [a.name, a.sha256, a.bytes]).sort()), "attachment read-back differs");
@@ -146,11 +153,7 @@ export const deliveryPublication = {
       const payload = await readJson(file);
       text(payload.title, "PR title");
       text(payload.description, "PR description");
-      assert(
-        payload.description.length <= 4000 &&
-          [...payload.description].length <= 4000,
-        "PR description exceeds 4000 characters",
-      );
+      assertPublicationSize(payload.description);
       assert(payload.head === w.head, "publication payload head mismatch");
       assert(
         payload.source_branch === this.repo(s, repo).branch,
@@ -190,11 +193,12 @@ export const deliveryPublication = {
           name: a.name ?? basename(a.path),
           ...(await receipt(a.path)),
         });
+      const proof = await validatePublicationProof(s, repo, payload);
       s.repos[repo].publication = {
         head: w.head,
         payload,
-        attachments,
-        hash: sha(canonical({ payload, attachments })),
+        attachments, ...(proof ? { proof } : {}),
+        hash: sha(canonical({ payload, attachments, ...(proof ? { proof } : {}) })),
         approval: null,
       };
       await this.save(s, { type: "publication-staged", repo });
@@ -225,6 +229,8 @@ export const deliveryPublication = {
           (await receipt(a.path)).sha256 === a.sha256,
           "attachment changed after staging",
         );
+      for (const dependency of pub.proof?.dependencies ?? [])
+        assert((await receipt(dependency.path)).sha256 === dependency.sha256, "publication proof dependency changed");
       pub.approval = { hash, ...(await receipt(evidence)) };
       await this.save(s, { type: "publication-approved", repo, hash });
       return {
@@ -255,6 +261,9 @@ export const deliveryPublication = {
       );
       const actual = await readJson(file),
         expected = pub.payload;
+      for (const dependency of pub.proof?.dependencies ?? [])
+        assert((await receipt(dependency.path)).sha256 === dependency.sha256, "publication proof dependency changed");
+      const description = pub.proof ? materializePublicationDescription(expected, pub.attachments, actual.attachments ?? []) : expected.description;
       for (const k of [
         "repository_id",
         "title",
@@ -265,7 +274,7 @@ export const deliveryPublication = {
         "is_draft",
       ])
         assert(
-          actual[k] === expected[k],
+          actual[k] === (k === "description" ? description : expected[k]),
           `publication read-back differs: ${k}`,
         );
       assert(actual.status === "active", "PR must be active");

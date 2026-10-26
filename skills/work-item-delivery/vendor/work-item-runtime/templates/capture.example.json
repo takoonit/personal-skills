@@ -34,7 +34,8 @@
   "artifacts": [
     {
       "kind": "screenshot",
-      "path": "/replace/with/after-dropdown.png"
+      "path": "/replace/with/after-full.png",
+      "framing": "viewport"
     },
     {
       "kind": "trace",

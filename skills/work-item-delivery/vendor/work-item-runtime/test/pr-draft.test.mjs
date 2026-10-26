@@ -18,8 +18,14 @@ test("working PR draft starts before a plan and resume preserves fresh prose and
   assert.equal(first.created, true);
   assert.equal(first.path, join(run, "pr-drafts", "be", "PR.md"));
   assert.deepEqual(first.content.match(/^## .+$/gm), ["## What Happened", "## Insight", "## Proof of Works"]);
-  assert.match(first.content, /Screenshot\/log to collect and what it must show/);
-  assert.match(first.content, /Not run — evidence pending/);
+  for (const field of ["Role/setup", "Actions", "Expected", "Before", "After"])
+    assert.ok(first.content.includes(`**${field}.**`), field);
+  assert.match(first.content, /Before\.\*\* Not run\. \[Planned full capture/);
+  assert.match(first.content, /After\.\*\* Not run\. \[Planned full capture/);
+  assert.match(first.content, /\[Full-size before\]\(attachment:before-full\.png\)/);
+  assert.match(first.content, /\[Full-size after\]\(attachment:after-full\.png\)/);
+  assert.ok(first.content.indexOf("![Before:") < first.content.indexOf("![After:"));
+  assert.ok(first.content.indexOf("![After:") < first.content.indexOf("Supporting automated checks"));
   await assert.rejects(access(join(run, "delivery.json")), {code: "ENOENT"});
 
   const intake = "## What Happened\n\nWI 75877: HR opens Year for an employee with adjustments only in 2026; unrelated years appear.\n\n";

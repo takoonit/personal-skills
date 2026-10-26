@@ -61,6 +61,32 @@ export async function fileReceipt(path) {
   return { path:absolute, bytes:bytes.length, sha256:createHash("sha256").update(bytes).digest("hex") };
 }
 
+function screenshotDimensions(bytes) {
+  let width, height;
+  if (bytes.subarray(0,8).equals(Buffer.from([137,80,78,71,13,10,26,10]))) {
+    need(bytes.length >= 33 && bytes.readUInt32BE(8) === 13 && bytes.toString("ascii",12,16) === "IHDR", "invalid PNG dimensions header");
+    width = bytes.readUInt32BE(16); height = bytes.readUInt32BE(20);
+  } else {
+    let offset = 2;
+    while (offset < bytes.length && bytes[offset] === 255) {
+      while (bytes[offset] === 255) offset++;
+      const marker = bytes[offset++];
+      if (marker === 0xDA || marker === 0xD9) break;
+      if (marker === 0xD8 || marker === 1 || (marker >= 0xD0 && marker <= 0xD7)) continue;
+      need(offset + 2 <= bytes.length, "truncated JPEG dimensions header");
+      const length = bytes.readUInt16BE(offset);
+      need(length >= 2 && offset + length <= bytes.length, "invalid JPEG segment header");
+      if ([0xC0,0xC1,0xC2,0xC3,0xC5,0xC6,0xC7,0xC9,0xCA,0xCB,0xCD,0xCE,0xCF].includes(marker)) {
+        need(length >= 8, "invalid JPEG dimensions header");
+        height = bytes.readUInt16BE(offset + 3); width = bytes.readUInt16BE(offset + 5); break;
+      }
+      offset += length;
+    }
+  }
+  need(width > 0 && height > 0, "screenshot dimensions header required");
+  return {width,height};
+}
+
 export async function captureReceipt(plan, input) {
   const capture = plan.capture_plan?.find(c => c.id === input.capture_id && c.tool === "playwright");
   need(capture, "unknown Playwright capture ID");
@@ -83,11 +109,17 @@ export async function captureReceipt(plan, input) {
   for (const artifact of input.artifacts) {
     need(["screenshot", "dom", "trace", "network", "console", "video"].includes(artifact.kind), "unknown capture artifact kind");
     const proof = await fileReceipt(artifact.path);
+    let dimensions = {};
     if (artifact.kind === "screenshot") {
       const bytes = await readFile(proof.path);
       need(bytes.subarray(0,8).equals(Buffer.from([137,80,78,71,13,10,26,10])) || (bytes[0] === 255 && bytes[1] === 216), "screenshot must contain PNG/JPEG bytes");
+      if (["viewport", "full-page"].includes(artifact.framing)) {
+        dimensions = screenshotDimensions(bytes);
+        need(dimensions.width >= input.viewport.width && dimensions.height >= input.viewport.height, "full screenshot is smaller than the declared viewport");
+      }
     }
-    artifacts.push({kind:artifact.kind,...proof});
+    if (artifact.framing !== undefined) need(artifact.kind === "screenshot" && ["viewport", "full-page", "crop"].includes(artifact.framing), "invalid screenshot framing");
+    artifacts.push({kind:artifact.kind,...proof,...dimensions,...(artifact.framing === undefined ? {} : {framing:artifact.framing})});
   }
   need(input.phase === "blocker" || artifacts.some(a => a.kind === "screenshot"), "Playwright screenshot is required");
   return {...input,artifacts};

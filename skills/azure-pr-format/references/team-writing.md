@@ -20,7 +20,7 @@ Implementation file paths, filenames and changed-file inventories belong in the 
 
 State the evidence scope first: environment, baseline, fixture/real data and limitations. Keep reported SIT behavior, tested local behavior and deployment status distinct.
 
-For a fix, pair the observed failing scenario with the observed post-fix result. Retain inline Before/After screenshots in a two-column table where available. Describe screenshot coverage honestly: a capture showing six choices does not prove all nine; link the assertion or additional capture. Show relevant test command/scenario, observed counts and results, then clickable logs/review/evidence links. Mention existing warnings or unresolved checks accurately. Attribute previous runs; drafting PR prose does not rerun them. Use `⏳ Not run — reason` for a planned or absent check. For prose-only work, relevant document checks are enough.
+Use the template's case blocks for role/setup, product actions, expected result and observed before/after. UI blocks render the original full screenshots stacked before then after, each with its full-size link. A crop is an optional detail after the originals. Describe screenshot coverage honestly: a capture showing six choices does not prove all nine; link the assertion or additional capture. Automated counts and downloadable evidence support the case blocks. Mention existing warnings or unresolved checks accurately. Attribute previous runs; drafting PR prose does not rerun them. Use `⏳ Not run — reason` for a planned or absent check. API/CLI cases use their action and output evidence; prose-only work needs relevant document checks.
 
 ## Anti-patterns and corrections
 

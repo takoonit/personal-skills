@@ -3,13 +3,48 @@
   "url": "https://dev.azure.com/ORG/PROJECT/_apis/git/repositories/REPO_ID/pullRequests",
   "repository_id": "REPLACE_WITH_VERIFIED_REPOSITORY_ID",
   "title": "REPLACE_WITH_REVIEWED_OWNING_WORK_ITEM_OUTCOME",
-  "description": "## What Happened\n\nREPLACE_WITH_REVIEWED_CASE_COVERAGE\n\n## Insight\n\nREPLACE_WITH_SUPPORTED_FLOW_AND_FIX\n\n## Proof of Works\n\nREPLACE_WITH_ACTUAL_OR_ATTRIBUTED_EVIDENCE",
+  "description": "REPLACE_WITH_AUTHORED_WHAT_HAPPENED_AND_INSIGHT_THEN_renderPublicationProof(publication_proof)",
   "head": "REPLACE_WITH_CURRENT_VERIFIED_AND_REVIEWED_SHA",
   "source_branch": "codex/100-employee-history",
   "target_branch": "develop",
   "is_draft": true,
   "work_item_ids": ["100", "101"],
+  "publication_proof": {
+    "schema": "work-item-delivery.publication-proof.v1",
+    "cases": [{
+      "case_id": "A",
+      "flow_id": "employee-choices",
+      "title": "Employee plan choices",
+      "role": "HR administrator",
+      "setup": "Local fixture with an employee and an unrelated company plan",
+      "actions": ["Open the employee section", "Choose a plan and Search"],
+      "expected": "Only applicable employee plans appear and Search filters the table",
+      "before": {
+        "capture_id": "choices",
+        "evidence_sha256": "REPLACE_WITH_BEFORE_CAPTURE_RECEIPT_SHA256",
+        "environment": "local-fixture",
+        "head": "REPLACE_WITH_BEFORE_CAPTURE_GIT_HEAD",
+        "executor": "REPLACE_WITH_ACTUAL_EXECUTOR_ATTRIBUTION",
+        "observed": "REPLACE_WITH_OBSERVED_BEFORE_BEHAVIOR",
+        "image": {"path": "/replace/with/before-full.png", "sha256": "REPLACE_WITH_ORIGINAL_IMAGE_SHA256", "href": "attachment:before-full.png"}
+      },
+      "after": {
+        "capture_id": "choices",
+        "evidence_sha256": "REPLACE_WITH_AFTER_CAPTURE_RECEIPT_SHA256",
+        "environment": "local-fixture",
+        "head": "REPLACE_WITH_CURRENT_VERIFIED_AND_REVIEWED_SHA",
+        "executor": "REPLACE_WITH_ACTUAL_EXECUTOR_ATTRIBUTION",
+        "observed": "REPLACE_WITH_OBSERVED_AFTER_BEHAVIOR",
+        "image": {"path": "/replace/with/after-full.png", "sha256": "REPLACE_WITH_ORIGINAL_IMAGE_SHA256", "href": "attachment:after-full.png"}
+      }
+    }],
+    "supporting": [
+      "REPLACE_WITH_ACTUAL_AUTOMATED_COUNTS_AND_LOCAL_SCOPE",
+      {"text": "Supporting test log or evidence archive", "href": "https://REPLACE_WITH_REVIEWED_HTTPS_EVIDENCE_URL"}
+    ]
+  },
   "attachments": [
-    { "name": "evidence.zip", "path": "/replace/with/approved-evidence.zip" }
+    { "name": "before-full.png", "path": "/replace/with/before-full.png" },
+    { "name": "after-full.png", "path": "/replace/with/after-full.png" }
   ]
 }

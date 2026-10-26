@@ -8,11 +8,28 @@
 
 ## Proof of Works
 
-- **Scope:** Not run — record role, environment, baseline/fixed build, fixture or real data, and limitations.
+**Scope.** Not run. [Environment, baseline/fixed build, fixture or real data, executor and limitations.]
 
-| Work Item case | Setup and exact user actions | Expected visible or persisted result | Screenshot/log to collect and what it must show | Observed result and evidence |
-|---|---|---|---|---|
-| [case and requirement link] | [entry point, data/state, ordered actions] | [specific result] | [before/after artifact target and required content] | Not run — evidence pending |
+**[Case and requirement: product user's task]**
 
-- **Supporting automated checks:** Not run — select approved checks for these cases; retain actual results and logs after execution.
-- **Remaining gaps:** Evidence gathering and review pending. Planned procedures are not observed results.
+**Role/setup.** [Permissions, entry point and starting data/state.]
+
+**Actions.** [Ordered product actions, with expected visible or persisted result.]
+
+**Expected.** [Work Item acceptance result.]
+
+**Before.** Not run. [Planned full capture and the baseline behavior it must show.]
+
+![Before: full screenshot](attachment:before-full.png)
+
+[Full-size before](attachment:before-full.png)
+
+**After.** Not run. [Planned full capture and the fixed behavior it must show.]
+
+![After: full screenshot](attachment:after-full.png)
+
+[Full-size after](attachment:after-full.png)
+
+**Supporting automated checks.** Not run. [Approved checks, actual results and logs.]
+
+**Remaining gaps.** Evidence gathering and review pending. Planned procedures are not observed results.
