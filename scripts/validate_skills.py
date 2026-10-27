@@ -108,6 +108,8 @@ def plugin_skills() -> list[str]:
 def case_plugins(prompt: Path) -> list[str]:
     """Return the skill names a case's prompt.md frontmatter lists under plugins."""
     lines = prompt.read_text(encoding="utf-8").splitlines()
+    if not lines or lines[0] != "---" or "---" not in lines[1:]:
+        return []
     end = lines.index("---", 1)
     return [
         line.strip()[2:].removeprefix(CASE_SKILL_PREFIX)
@@ -127,6 +129,11 @@ def validate_evals() -> list[str]:
     for prompt in sorted(EVALS.glob("*/*/prompt.md")):
         group = prompt.parent.parent.name
         label = f"evals: {prompt.parent.relative_to(EVALS)}"
+        lines = prompt.read_text(encoding="utf-8").splitlines()
+        if not lines or lines[0] != "---" or "---" not in lines[1:]:
+            errors.append(f"{label}: prompt.md frontmatter must open and close with ---")
+            covered.add(group)
+            continue
         if sorted(case_plugins(prompt)) != expected:
             errors.append(f"{label}: plugins list differs from the boat plugin's skills")
         if group not in expected:
