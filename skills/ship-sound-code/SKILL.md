@@ -1,6 +1,6 @@
 ---
 name: ship-sound-code
-description: "Deliver a defined repository change with proportionate, YAGNI-driven standards and focused self-verification. Use for features, bug fixes, APIs, data models, UI flows, refactors, and establishing or auditing repository-specific coding standards, architecture guardrails, testing practices or CI quality gates when no active local skill owns the specialised work. Reuse existing conventions and checks for routine changes. Route unresolved product or consequential architecture choices to shape-system-work when available."
+description: "Make a code change in a repository and prove it works: fix a bug, add or change a feature, refactor or move code, change types or a data model, update an API or UI flow, or repair a failing test or CI step. Delivers the smallest complete change with focused, proportionate verification and reuses existing conventions. Also use to set up or audit coding standards, architecture guardrails, testing practices and CI quality gates. Skip when an active, narrower local skill owns the work. Route unresolved product or consequential architecture choices to shape-system-work when available."
 ---
 
 # Ship Sound Code

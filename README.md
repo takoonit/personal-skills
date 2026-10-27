@@ -76,7 +76,7 @@ In Claude Code the plugin adds the `boat:` prefix. Inside skill files, cross-ref
 | --- | --- | --- |
 | [`design-guide`](skills/design-guide/SKILL.md) | Visual direction and ongoing design guidance | Any task affects visual design or UX, including routine implementation, fixes, assets, reviews and visual work in other media. Reuse existing rules; establish a full system only when needed. |
 | [`intentional-design`](skills/intentional-design/SKILL.md) | Interaction designer | A product flow needs purposeful hierarchy, state, feedback, restrained delight, or behaviour-aware interaction design. |
-| [`laws-of-ux`](skills/laws-of-ux/SKILL.md) | Behavioural UX diagnostician & auditor | Use Diagnostic mode when behaviour could materially change a design decision. Use Audit mode to inspect a rendered UI or journey, surface 3–5 evidence-backed candidate laws, and reduce them to the 1–3 highest-value UX changes. The skill may also conclude that no law applies or evidence is insufficient. |
+| [`laws-of-ux`](skills/laws-of-ux/SKILL.md) | Behavioural UX diagnostician & auditor | Use Diagnostic mode when behaviour could materially change a design decision. Use Audit mode to inspect a rendered UI or journey, surface up to five candidate laws tied to distinct hotspots, and reduce them to the 1–3 highest-value UX changes. The skill may also conclude that no law applies or evidence is insufficient. |
 
 ### Build and communicate
 
