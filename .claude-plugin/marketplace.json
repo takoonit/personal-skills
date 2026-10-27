@@ -14,8 +14,14 @@
         "name": "Takoon Chiengtong"
       },
       "repository": "https://github.com/takoonit/personal-skills",
-      "keywords": ["skills", "engineering", "design", "review"],
+      "keywords": [
+        "skills",
+        "engineering",
+        "design",
+        "review"
+      ],
       "skills": [
+        "./skills/boat-mode",
         "./skills/strategic-gate",
         "./skills/shark-tank",
         "./skills/shape-system-work",
