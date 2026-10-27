@@ -41,6 +41,8 @@ Each directory under `skills/` is a portable skill package. Its directory name m
 
 On Claude Code 2.1.275 or later, `/plugin install boat --marketplace takoonit/personal-skills` does both in one step. The plugin carries the core groups below. The Work Item and Azure DevOps skills are installed by their [setup wizard](#work-item-delivery-workflow) instead, because they need a runtime, a CLI and session hooks that the plugin does not install.
 
+Start any non-trivial task with `/boat:boat-mode <task>`. It picks a playbook (decide, shape, fix, build, UX, validate, write) and loads the skill that owns each step. Other skills can fire on their own, but ordinary code edits rarely trigger a skill unprompted, so Boat Mode is the reliable way in.
+
 **ChatGPT and Codex.** Copy the skill directories you want. `agents/openai.yaml` supplies each skill's display name and invocation policy, and skills call each other as `$<skill>`.
 
 ## Naming
@@ -53,6 +55,12 @@ Names follow two rules, so a name tells you what kind of skill it is before you 
 In Claude Code the plugin adds the `boat:` prefix. Inside skill files, cross-references stay as `$<skill>` so they work on every host.
 
 ## Included skills
+
+### Start here
+
+| Skill | Role | Use it when... |
+| --- | --- | --- |
+| [`boat-mode`](skills/boat-mode/SKILL.md) | Router | You start a non-trivial task. It matches the task to a playbook and loads the skills below as each step needs them. Invoke it explicitly; it never fires on its own. |
 
 ### The crew
 
@@ -160,10 +168,10 @@ evals/<skill>/<case>/
   setup.sh, fixture/ # copied into the empty workspace before the run
 ```
 
-Run from the repository root. Cases list the eleven plugin skill folders under `plugins:`, because `claude plugin eval` loads plugins per case and this repository root is not itself a plugin. `validate_skills.py` fails when a case's list drifts from `.claude-plugin/marketplace.json` or a plugin skill has no case.
+Run from the repository root. Cases list the twelve plugin skill folders under `plugins:`, because `claude plugin eval` loads plugins per case and this repository root is not itself a plugin. `validate_skills.py` fails when a case's list drifts from `.claude-plugin/marketplace.json` or a plugin skill has no case.
 
 ```sh
-# Everything: 52 cases, 3 runs per arm
+# Everything: 60 cases, 3 runs per arm
 claude plugin eval . --scaffold --trust-plugin --allow-tools Write Edit Bash --judge-model sonnet --max-cost-usd 40
 
 # One skill
@@ -177,6 +185,8 @@ claude plugin eval . --case stacked-coupon-gap --runs 1 --ablation none --scaffo
 - **Cost.** Every run and judge call is billed to your account. In smoke runs a prompt-only run cost about $0.04 to $0.08 and a fixture run about $0.06 to $0.26, so a full suite lands roughly in the $25 to $35 range. Keep `--max-cost-usd` on. On a subscription plan the full suite can exhaust a session's usage limit (the first baseline stopped after 34 cases), so run it one `--tag` at a time across sessions. Runs that hit the limit score 0, so stop the suite rather than letting it continue.
 - **Judge.** The default judge is a small model and can misread long replies. Use `--judge-model sonnet` before trusting a regression.
 - **Results** go to `evals/results/`, which git ignores.
+
+Boat Mode cases start their request with `/boat-mode`. The no-plugin arm receives that as plain text, so `Δ` still compares the same request with and without the skills. Their key grader is whether the routed skill fired, compared with the same request sent without `/boat-mode` in that skill's own cases.
 
 To add a case, copy a sibling case folder, change the request and graders, and keep the `plugins:` list as it is. Give each case one grader on the result and one on the steps, such as `skill-fired`.
 

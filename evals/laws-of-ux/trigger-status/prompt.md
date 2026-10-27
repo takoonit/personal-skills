@@ -1,5 +1,6 @@
 ---
 plugins:
+  - ../../../skills/boat-mode
   - ../../../skills/strategic-gate
   - ../../../skills/shark-tank
   - ../../../skills/shape-system-work
