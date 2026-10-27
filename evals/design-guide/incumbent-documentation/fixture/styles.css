@@ -1,0 +1,3 @@
+:root { --clay: #b4532a; --cream: #f6efe6; --radius: 14px; }
+body { background: var(--cream); }
+.cta { background: var(--clay); border-radius: var(--radius); }

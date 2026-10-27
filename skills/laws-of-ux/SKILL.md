@@ -1,6 +1,6 @@
 ---
 name: laws-of-ux
-description: "Behavioural UX diagnostician and audit skill for product interfaces and journeys. Use when perception, attention, memory, choice, motor action, learning, waiting, recovery, or remembered experience could materially change a design decision; when a rendered UI should be audited through UX laws; or when a named UX principle needs validation. Do not use for styling, branding, implementation-only work, generic accessibility compliance, copywriting, or design-system work without behavioural uncertainty. May conclude that no law applies or evidence is insufficient."
+description: "Diagnose why users struggle with a product interface and what to change. Use when users tap the wrong control, press a button twice because nothing visibly happens, lose their work after an error, hesitate or drop off at a step, must remember something between steps, stall on too many options, or when a request would hide or obstruct a choice such as cancelling. Also use to audit a rendered UI or journey with UX laws, or to check whether a named UX law justifies a change. Do not use for styling, branding, implementation-only work, generic accessibility compliance, copywriting, or design-system work without a behavioural question. May conclude that no law applies or evidence is insufficient."
 ---
 
 # Laws of UX
@@ -49,8 +49,8 @@ Audit flow:
 
 1. **Scan the view** across the nine friction classes.
 2. **Identify hotspots** that could materially affect task success, comprehension, control, or recovery.
-3. **Suggest 3–5 candidate UX laws** that could improve the experience, each tied to a specific observed hotspot and confidence level.
-4. **Return fewer than three** if the evidence does not support three distinct laws. Never pad the list.
+3. **Suggest up to five candidate UX laws**, one per distinct observed hotspot, each with a confidence level. A count the user asks for is a ceiling, not a quota.
+4. **Return fewer than three** when the view has fewer distinct hotspots. Two laws on the same hotspot count as one: keep the stronger and drop the other. Never pad the list, and say plainly when the evidence supports fewer laws than requested.
 5. **Collapse the shortlist into 1–3 priority actions**. Candidate laws are hypotheses; fixes are the decision.
 6. **Call out one collision or risk** where a law could be misapplied.
 
@@ -73,7 +73,7 @@ Use this sequence internally. Do not narrate it unless useful to the user.
 7. **Challenge** — test the correction against competing needs, accessibility, safety, ethics, and another plausible explanation.
 8. **Validate** — state an observable result that would support or falsify the recommendation.
 
-Stop early when the evidence is already decisive. If no behavioural mechanism improves the decision, return **no law needed**. If evidence cannot distinguish plausible explanations, return **insufficient evidence** and name the smallest useful test.
+Stop early when the evidence is already decisive. If no behavioural mechanism improves the decision, return **no law needed** and name no law or mechanism as a finding; do not add one as a precaution. If evidence cannot distinguish plausible explanations, return **insufficient evidence** and name the smallest useful test.
 
 ## Select mechanisms before laws
 
@@ -91,7 +91,7 @@ Use these stable mechanism IDs in evals and internal routing. User-facing output
 | Recover | `recover.state-preservation`; `recover.error-tolerance`; `recover.reversibility`; `recover.retry-clarity` |
 | Finish | `finish.outcome-clarity`; `finish.peak-end`; `finish.serial-position`; `finish.next-step` |
 
-In Diagnostic mode, choose at most three **non-duplicative mechanisms**. In Audit mode, 3–5 candidate laws may map to more than three mechanisms, but the final action plan must still be prioritised to 1–3 changes.
+In Diagnostic mode, choose at most three **non-duplicative mechanisms**. In Audit mode, up to five candidate laws may map to more than three mechanisms, but the final action plan must still be prioritised to 1–3 changes.
 
 Use `references/law-catalogue.md` only after the mechanism is clear. A law name must add explanatory or action value; otherwise omit it.
 
@@ -185,7 +185,7 @@ Conversion, engagement, retention, and time spent alone do not demonstrate bette
 
 **Evidence:** observed facts versus inference.
 
-Then at most three findings:
+Then at most three findings, or none when the verdict is no law needed:
 
 `<Mechanism or law> [confidence] - <observation>; <why>; <smallest correction>; <collision>; <validation>.`
 
@@ -195,7 +195,7 @@ Then at most three findings:
 
 **Observed hotspots:** concise view-level problems, not generic design preferences.
 
-**3–5 candidate laws:** each with confidence, evidence, why it applies, and one practical improvement. Return fewer if unsupported.
+**Candidate laws (up to five):** one per distinct observed hotspot, each with confidence, evidence, why it applies, and one practical improvement. Return fewer when the hotspots do not support more.
 
 **Priority actions:** the 1–3 changes most likely to improve task success or reduce risk.
 

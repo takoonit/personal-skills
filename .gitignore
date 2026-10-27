@@ -8,3 +8,6 @@ __pycache__/
 .work-item-setup.env
 *.log
 /.audit/
+
+# claude plugin eval output
+evals/results/
