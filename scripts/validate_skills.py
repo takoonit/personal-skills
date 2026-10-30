@@ -19,6 +19,8 @@ EVALS = ROOT / "evals"
 CASE_SKILL_PREFIX = "../../../skills/"
 # Platform-specific skills, installed only on that platform by the workflow installer.
 PLATFORM_SKILLS = ROOT / "windows" / "skills"
+BOAT = "boat"
+WORK_ITEM = "work-item"
 NAME_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 
 
@@ -56,7 +58,7 @@ def validate_skill(directory: Path) -> list[str]:
     metadata, parse_errors = parse_frontmatter(skill_file)
     errors.extend(parse_errors)
 
-    allowed = {"name", "description"}
+    allowed = {"name", "description", "disable-model-invocation"}
     extra = sorted(set(metadata) - allowed)
     if extra:
         errors.append(f"unsupported frontmatter fields: {', '.join(extra)}")
@@ -100,9 +102,17 @@ def validate_readme(names: list[str]) -> list[str]:
     ]
 
 
-def plugin_skills() -> list[str]:
-    plugins = json.loads(MARKETPLACE.read_text(encoding="utf-8")).get("plugins", [])
-    return [Path(entry).name for plugin in plugins for entry in plugin.get("skills", [])]
+def marketplace_plugins() -> list[dict]:
+    return json.loads(MARKETPLACE.read_text(encoding="utf-8")).get("plugins", [])
+
+
+def plugin_skills(name: str = BOAT) -> list[str]:
+    return [
+        Path(entry).name
+        for plugin in marketplace_plugins()
+        if plugin.get("name") == name
+        for entry in plugin.get("skills", [])
+    ]
 
 
 def case_plugins(prompt: Path) -> list[str]:
@@ -144,21 +154,32 @@ def validate_evals() -> list[str]:
 
 
 def validate_plugin() -> list[str]:
+    """Each repository skill ships in exactly one plugin; work-item ships exactly the wizard's set."""
     if not MARKETPLACE.is_file():
         return [f"plugin: missing {MARKETPLACE.relative_to(ROOT)}"]
 
     errors: list[str] = []
     owned_by_installer = installer_skills()
-    for plugin in json.loads(MARKETPLACE.read_text(encoding="utf-8")).get("plugins", []):
+    shipped: dict[str, str] = {}
+    for plugin in marketplace_plugins():
+        name = plugin.get("name")
         for entry in plugin.get("skills", []):
             path = (ROOT / entry).resolve()
-            label = f"plugin {plugin.get('name')}: {entry}"
+            label = f"plugin {name}: {entry}"
             if not (path / "SKILL.md").is_file():
                 errors.append(f"{label}: no SKILL.md at this path")
-            elif path.parent != SKILLS:
+            elif path.parent not in (SKILLS, PLATFORM_SKILLS):
                 errors.append(f"{label}: must point at a skills/<name> directory")
-            elif path.name in owned_by_installer:
-                errors.append(f"{label}: installed by the setup wizard, so the plugin must not ship it")
+            elif path.name in shipped:
+                errors.append(f"{label}: already shipped by plugin {shipped[path.name]}")
+            else:
+                shipped[path.name] = name
+                if name == BOAT and path.name in owned_by_installer:
+                    errors.append(f"{label}: installed by the setup wizard, so it belongs in {WORK_ITEM}")
+    work_item = set(plugin_skills(WORK_ITEM))
+    errors += [f"plugin {WORK_ITEM}: missing wizard skill {skill}" for skill in sorted(owned_by_installer - work_item)]
+    repository = {path.name for path in SKILLS.iterdir() if path.is_dir()}
+    errors += [f"plugin: {skill}: shipped by no plugin" for skill in sorted(repository - set(shipped))]
     return errors
 
 

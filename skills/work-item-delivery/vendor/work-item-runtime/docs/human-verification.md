@@ -6,7 +6,7 @@ Use wizard's planning method here. Generate an interactive Bash wizard only for 
 
 ## Scope before collecting
 
-Read the Work Item acceptance, versioned business rules, actual application/API flow and existing checks. For every case, establish:
+Read the Work Item acceptance, versioned business rules, actual application/API flow and existing checks. Choose local baseline and fixed builds with suitable data under [Developer verification scope](business-evidence.md#developer-verification-scope); preserve the reported remote environment as provenance and QA handoff context. For every case, establish:
 
 - The tester's role, permissions, starting URL or request, relevant data and initial state.
 - Exact visible actions and the expected observable result after each action.

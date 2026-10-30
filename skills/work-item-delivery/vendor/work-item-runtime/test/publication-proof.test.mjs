@@ -174,7 +174,9 @@ test("Journeys require fields, bindings and inline originals", async t => {
   }
   for (const phase of ["before", "after"]) {
     const bad = structuredClone(good); delete bad.publication_proof.cases[0][phase];
-    await assert.rejects(validatePublicationProof(f.state, "be", bad), /observation/);
+    if (phase === "after") await assert.rejects(validatePublicationProof(f.state, "be", bad), /observation/);
+    // Before is optional: an After-only proof with its own rendering passes.
+    else assert.ok(await validatePublicationProof(f.state, "be", canonical(bad)));
     const absent = structuredClone(good); absent.publication_proof.cases[0][phase].observed = "";
     await assert.rejects(validatePublicationProof(f.state, "be", absent), /observation/);
     const removed = structuredClone(good); removed.description = removed.description.replace(new RegExp(`!\\[${phase === "before" ? "Before" : "After"}[^\\n]+\\n`), "");
@@ -311,4 +313,24 @@ test("Full captures need viewport dimensions", async t => {
     await writeFile(f.image,bytes);
     await assert.rejects(f.capture("before","observed",{artifacts:[{kind:"screenshot",path:f.image,framing:"full-page"}]}), /dimensions|header/);
   }
+});
+
+test("After-only cases render and materialize without a Before section", async () => {
+  const { renderPublicationProof, materializePublicationDescription } = await import("../lib/publication-proof.mjs");
+  const sha = "a".repeat(64), head = "b".repeat(40);
+  const after = { observed: "Saved", environment: "local", head, executor: "agent",
+    image: { path: "/tmp/after.png", sha256: sha, href: "attachment:after.png" } };
+  const row = { case_id: "C1", title: "Save works", role: "HR admin", setup: "Terminated employee",
+    actions: ["Open record", "Save"], expected: "Saved" };
+  const afterOnly = renderPublicationProof({ cases: [{ ...row, after }] });
+  assert.match(afterOnly, /\*\*After:\*\* Saved/);
+  assert.doesNotMatch(afterOnly, /Before/);
+  const both = renderPublicationProof({ cases: [{ ...row, before: { ...after, observed: "Failed" }, after }] });
+  assert.ok(both.indexOf("**Before:**") < both.indexOf("**After:**"));
+  const request = { description: afterOnly, publication_proof: { cases: [{ ...row, after }] } };
+  const attachments = [{ name: "after.png", path: "/tmp/after.png", sha256: sha, bytes: 1 }];
+  const uploads = [{ name: "after.png", sha256: sha, bytes: 1, url: "https://example.test/after.png" }];
+  const hosted = materializePublicationDescription(request, attachments, uploads);
+  assert.match(hosted, /\(<https:\/\/example\.test\/after\.png>\)/);
+  assert.doesNotMatch(hosted, /attachment:/);
 });

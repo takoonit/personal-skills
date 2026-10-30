@@ -34,6 +34,66 @@
         "./skills/ship-sound-code",
         "./skills/clear-tactful-writing"
       ]
+    },
+    {
+      "name": "work-item",
+      "source": "./",
+      "version": "0.1.0",
+      "description": "Deliver Azure DevOps Work Items: investigate, plan, build, verify, publish, promote. Installs as /work-item:<skill>.",
+      "author": {
+        "name": "Takoon Chiengtong"
+      },
+      "repository": "https://github.com/takoonit/personal-skills",
+      "keywords": [
+        "azure-devops",
+        "work-item",
+        "workflow",
+        "pull-request"
+      ],
+      "skills": [
+        "./skills/work-item-delivery",
+        "./skills/work-item-investigate",
+        "./skills/work-item-design",
+        "./skills/work-item-align",
+        "./skills/work-item-implement",
+        "./skills/work-item-verify",
+        "./skills/work-item-review",
+        "./skills/work-item-publish",
+        "./skills/work-item-approved-action",
+        "./skills/work-item-promote",
+        "./skills/work-item-report",
+        "./skills/work-item-start-safety",
+        "./skills/proof-of-work",
+        "./skills/azure-pr-format",
+        "./skills/azure-pr-write",
+        "./skills/azure-pr-review",
+        "./skills/azure-commit-message",
+        "./skills/azure-change-record",
+        "./skills/clarify",
+        "./skills/reflect",
+        "./windows/skills/wiki-query",
+        "./windows/skills/think"
+      ],
+      "agents": [
+        "./claude/agents/work-item-challenger.md",
+        "./claude/agents/work-item-investigator.md",
+        "./claude/agents/work-item-reviewer.md",
+        "./claude/agents/work-item-test-author.md"
+      ],
+      "hooks": {
+        "SessionStart": [
+          {
+            "matcher": "startup|resume|compact",
+            "hooks": [
+              {
+                "type": "command",
+                "command": "node \"${CLAUDE_PLUGIN_ROOT}/skills/work-item-delivery/scripts/claude-session-resume.mjs\"",
+                "timeout": 20
+              }
+            ]
+          }
+        ]
+      }
     }
   ]
 }

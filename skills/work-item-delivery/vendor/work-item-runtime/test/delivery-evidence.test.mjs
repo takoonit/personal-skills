@@ -77,8 +77,19 @@ test("unavailable business-flow-only citations require blockers for affected uni
   assert.doesNotThrow(()=>validatePlan(f.plan));
 });
 
-test("browser captures use local builds and explicit local data scope", async t => {
-  const f=await uiFixture(t);const remote=structuredClone(f.plan);
+test("local UI proof is ready without SIT receipts; remote capture targets stay invalid", async t => {
+  const f=await uiFixture(t);
+  for (const environment of ['local', 'local-fixture', 'local-real-data']) {
+    const local=structuredClone(f.plan);
+    local.capture_plan[0].environment=environment;
+    assert.doesNotThrow(()=>validatePlan(local));
+  }
+  await f.capture('before');
+  assert.equal((await f.call('status')).units.find(unit=>unit.id==='A').ready,true);
+  await f.implement('A');
+  await f.capture('after');
+  assert.equal((await f.call('status')).publication[0].capture_evidence.ready,true);
+  const remote=structuredClone(f.plan);
   remote.capture_plan[0].url='https://example.invalid/remote-app';
   assert.throws(()=>validatePlan(remote),/local loopback/);
   remote.capture_plan[0].url='http://127.0.0.1/fixture';remote.capture_plan[0].environment='SIT';

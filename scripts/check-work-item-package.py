@@ -14,7 +14,7 @@ SKILL = ROOT/'skills/work-item-delivery'
 RUNTIME = SKILL/'vendor/work-item-runtime'
 OWN = ['work-item-delivery', 'work-item-investigate', 'work-item-design', 'work-item-align',
        'work-item-implement', 'work-item-verify', 'work-item-review',
-       'work-item-publish', 'work-item-approved-action', 'work-item-report',
+       'work-item-publish', 'work-item-approved-action', 'work-item-promote', 'work-item-report',
        'work-item-start-safety', 'proof-of-work',
        'azure-pr-format', 'azure-pr-write', 'azure-pr-review',
        'azure-commit-message', 'azure-change-record']

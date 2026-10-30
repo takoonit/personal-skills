@@ -1,0 +1,13 @@
+interface:
+  display_name: Clarify
+  short_description: Clarify a vague requirement before building it.
+  default_prompt: "Use Clarify on this work item. Quote what it literally\
+    \ says, trace what it points at, derive its scope from the parent and sibling cards,\
+    \ and draft a clarified ticket with a Need Confirmation table."
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true

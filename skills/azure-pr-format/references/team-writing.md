@@ -12,6 +12,8 @@ Explain the behavior flow: **user action → function/request → service respon
 
 Name functions, classes, APIs, fields or helpers only where they explain a step. Use the owning service and HTTP method/endpoint when useful. Explain what a named function does and how its output reaches the user. Do not force a request into a display-only fix. Cover frontend and backend where the flow crosses both.
 
+When the change settles an open requirement question by assumption, list each assumption under “Limits” with the person who must confirm it, plus known follow-ups on sibling screens and who decides them. Do not present an agent's assumption as decided scope.
+
 Use short bullets with meaningful labels, such as “When HR opens…”, “Why extra years appeared”, “Changed flow” and “Limits”. Explain actual constraints, data ambiguity, unknown mappings, pagination, cancellation or error behavior only when material. Include version-pinned specification references, conflicts, release dependencies and rollback consequences where they affect review. Keep these inside Insight rather than adding sections. Mention approved incidental cleanup briefly and accurately.
 
 Implementation file paths, filenames and changed-file inventories belong in the diff or supporting evidence. Insight tells the causal story. Concise means enough connected explanation to understand the result, not a chain of unexplained identifiers.
@@ -20,7 +22,9 @@ Implementation file paths, filenames and changed-file inventories belong in the 
 
 State the evidence scope first: environment, baseline, fixture/real data and limitations. Keep reported SIT behavior, tested local behavior and deployment status distinct.
 
-Use the template's case blocks for role/setup, product actions, expected result and observed before/after. UI blocks render the original full screenshots stacked before then after, each with its full-size link. A crop is an optional detail after the originals. Describe screenshot coverage honestly: a capture showing six choices does not prove all nine; link the assertion or additional capture. Automated counts and downloadable evidence support the case blocks. Mention existing warnings or unresolved checks accurately. Attribute previous runs; drafting PR prose does not rerun them. Use `⏳ Not run — reason` for a planned or absent check. API/CLI cases use their action and output evidence; prose-only work needs relevant document checks.
+Lead with real browser captures of the fixed build, one per user step, each with its expected and observed result. Show After only unless the user asks for Before. Never offer the reported bug screenshot as proof, and keep test counts to one supporting line: counts beside a bug image read as “nothing was tested”.
+
+Use the template's case blocks for role/setup, product actions, expected result and observed results. UI blocks render original full screenshots, each with its full-size link. A crop is an optional detail after the originals. Describe screenshot coverage honestly: a capture showing six choices does not prove all nine; link the assertion or additional capture. Automated counts and downloadable evidence support the case blocks. Mention existing warnings or unresolved checks accurately. Attribute previous runs; drafting PR prose does not rerun them. Use `⏳ Not run — reason` for a planned or absent check. API/CLI cases use their action and output evidence; prose-only work needs relevant document checks.
 
 ## Anti-patterns and corrections
 

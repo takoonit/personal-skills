@@ -11,7 +11,7 @@
 - **When [user action]:** [Function/request → owning service or transformation → previous result.]
 - **Why it happened:** [Supported cause or limitation and its effect on the user.]
 - **Changed flow:** [What now happens and why that fixes the result.]
-- **Limits/dependencies:** [Material uncertainty, release order or undo consequence; omit if inapplicable.]
+- **Limits/dependencies:** [Material uncertainty, release order or undo consequence. List each requirement decision settled by assumption and who must confirm it, plus known sibling follow-ups and their decision owner; omit if inapplicable.]
 
 ---
 
@@ -27,18 +27,16 @@
 
 **Expected.** [The linked Work Item's visible or persisted result.]
 
-**Before.** [Observed baseline result, or Not run with the gap.]
+**1. [Product action on the fixed build].** Expected: [visible result]. Observed: [actual result in the browser].
 
-![Before: full screenshot](attachment:before-full.png)
+![After: step 1](attachment:after-1.png)
 
-[Full-size before](attachment:before-full.png)
+**2. [Next product action].** Expected: [visible result]. Observed: [actual result].
 
-**After.** [Observed fixed-build result, or Not run with the gap.]
+![After: step 2](attachment:after-2.png)
 
-![After: full screenshot](attachment:after-full.png)
+<!-- After only by default. Add a Before capture only when the user asks; never use the reported bug screenshot as proof. -->
 
-[Full-size after](attachment:after-full.png)
-
-**Supporting checks.** [Actual commands/scenarios and results, with log links.]
+**Supporting checks.** [One line: actual commands/scenarios and results, with log links.]
 
 **Unverified.** [Remaining acceptance, persistence, deployment or SIT gaps.]

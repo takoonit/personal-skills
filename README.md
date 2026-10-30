@@ -7,6 +7,7 @@ A version-controlled collection of reusable skills for Claude Code, ChatGPT and 
 The collection is designed as a small operating system for recurring work:
 
 - **Gate** whether work deserves attention before spending effort.
+- **Clarify** vague tickets, specs and requests before anyone shapes or builds them.
 - **Shape** ambiguous product or system work into a decision-ready direction.
 - **Challenge** weak assumptions, product drift, and unnecessary complexity.
 - **Design** with consistent visual rules across planning, implementation and review; shape purposeful interactions and diagnose behavioural UX friction.
@@ -39,7 +40,15 @@ Each directory under `skills/` is a portable skill package. Its directory name m
 /plugin install boat@boat-skills
 ```
 
-On Claude Code 2.1.275 or later, `/plugin install boat --marketplace takoonit/personal-skills` does both in one step. The plugin carries the core groups below. The Work Item and Azure DevOps skills are installed by their [setup wizard](#work-item-delivery-workflow) instead, because they need a runtime, a CLI and session hooks that the plugin does not install.
+On Claude Code 2.1.275 or later, `/plugin install boat --marketplace takoonit/personal-skills` does both in one step. The plugin carries the core groups below.
+
+The Work Item, Azure DevOps, `clarify` and `reflect` skills ship as the `work-item` plugin, namespaced as `/work-item:<skill>`. It also carries the four workflow subagents (`work-item:<agent>`) and registers the re-entry SessionStart hook:
+
+```text
+/plugin install work-item@boat-skills
+```
+
+To work on the skills locally, add this checkout as the marketplace instead (`claude plugin marketplace add <path-to-this-checkout>`). A local marketplace loads in place, so edits apply after `/reload-plugins` with no reinstall. The [setup wizard](#work-item-delivery-workflow) remains for Linux/WSL hosts that also want the `work-item-delivery` CLI on `PATH`.
 
 Start any non-trivial task with `/boat:boat-mode <task>`. It picks a playbook (decide, shape, fix, build, UX, validate, write) and loads the skill that owns each step. Other skills can fire on their own, but ordinary code edits rarely trigger a skill unprompted, so Boat Mode is the reliable way in.
 
@@ -77,6 +86,7 @@ In Claude Code the plugin adds the `boat:` prefix. Inside skill files, cross-ref
 | --- | --- | --- |
 | [`strategic-gate`](skills/strategic-gate/SKILL.md) | Attention gate | A proposed task, feature, or initiative needs a quick decision on whether it deserves effort now. |
 | [`shape-system-work`](skills/shape-system-work/SKILL.md) | System shaper | Product or architecture direction is still ambiguous and needs trade-offs resolved before implementation. |
+| [`clarify`](skills/clarify/SKILL.md) | Requirement clarifier | A ticket, spec or request is too vague to build from, and its meaning and scope need to be traced and written up as a clarified ticket with questions for the owner. |
 
 ### Design
 
@@ -109,6 +119,8 @@ In Claude Code the plugin adds the `boat:` prefix. Inside skill files, cross-ref
 | [`work-item-align`](skills/work-item-align/SKILL.md) | Reconcile a user correction or stop on a missing decision, at any phase. |
 | [`work-item-start-safety`](skills/work-item-start-safety/SKILL.md) | Check readiness, realistic estimates and the writer and workspace guards. |
 | [`proof-of-work`](skills/proof-of-work/SKILL.md) | Plan human-reproducible verification and gather PR evidence. |
+| [`work-item-promote`](skills/work-item-promote/SKILL.md) | Take a merged fix to the next environment and tell QA. |
+| [`reflect`](skills/reflect/SKILL.md) | Mine past sessions for corrections and route them into skill edits (`/work-item:reflect`). |
 
 ### Azure DevOps documentation (installed by the setup wizard)
 
@@ -122,7 +134,7 @@ In Claude Code the plugin adds the `boat:` prefix. Inside skill files, cross-ref
 
 ## Work Item delivery workflow
 
-The collection also includes [`work-item-delivery`](skills/work-item-delivery/SKILL.md), [`work-item-start-safety`](skills/work-item-start-safety/SKILL.md), and [`proof-of-work`](skills/proof-of-work/SKILL.md), with their owned Azure PR/commit skills and a self-contained local runtime. The workflow runs as nine chained phase skills, `work-item-investigate` through `work-item-report`, each owning one phase's procedure; the [`work-item-delivery`](skills/work-item-delivery/SKILL.md) router chains them, and you can start or rerun one phase on its own. The workflow covers source-led intake, realistic estimates, plan approval, architect/arena/interrogate design, approved execution, tests, human-repeatable evidence and exact PR review/publication boundaries.
+The collection also includes [`work-item-delivery`](skills/work-item-delivery/SKILL.md), [`work-item-start-safety`](skills/work-item-start-safety/SKILL.md), and [`proof-of-work`](skills/proof-of-work/SKILL.md), with their owned Azure PR/commit skills and a self-contained local runtime. The workflow runs as nine chained phase skills, `work-item-investigate` through `work-item-report`, each owning one phase's procedure; the [`work-item-delivery`](skills/work-item-delivery/SKILL.md) router chains them, and you can start or rerun one phase on its own. [`work-item-promote`](skills/work-item-promote/SKILL.md) takes a merged fix to the next environment (source PR, cherry-pick, deploy stage, Work Item and QA note) using each repository's release facts. The workflow covers source-led intake, realistic estimates, plan approval, architect/arena/interrogate design, approved execution, tests, human-repeatable evidence and exact PR review/publication boundaries.
 
 Start with [Start a Work Item](skills/work-item-delivery/references/start-a-work-item.md) for the starting prompt, plan and estimate review, implementation approval, human-reproducible evidence, and PR publication steps.
 

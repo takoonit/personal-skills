@@ -1,6 +1,6 @@
 ---
 name: clear-tactful-writing
-description: "Draft or revise Thai and English writing in a confirmed clear and tactful style: direct, fact-grounded, concise, natural, and free from corporate or AI-like phrasing. Use for emails, replies, follow-ups, requests, scheduling, boundary-setting, conflict handling, professional chat, status updates, requirement clarification, and other practical messages."
+description: "Draft or revise Thai and English writing in a confirmed clear and tactful style: direct, fact-grounded, concise, natural, and free from corporate or AI-like phrasing. Use for emails, replies, follow-ups, requests, scheduling, boundary-setting, conflict handling, professional chat, status updates, requirement clarification, Azure DevOps or work-item comment replies to QA or BA (short: what still fails, cause, what we will fix), and other practical messages."
 ---
 
 # Clear Tactful Writing
@@ -38,6 +38,16 @@ Suggested movement:
 `brief greeting -> relevant context -> exact request/boundary -> reason or consequence -> practical next step -> concise thanks`
 
 Do not bury the request under repeated apologies or ceremonial language.
+
+### Work-item comments (Azure DevOps)
+
+A work-item comment is a record on a shared ticket, not a letter. Read the ticket's full discussion first, so you do not ask what someone already answered.
+
+- No greeting, subject line, or sign-off. Write as the user, or drop the subject; name only real people or roles.
+- Once work has started, the comment states what you are doing. It does not ask permission. Use `Note: implementing with this understanding.` followed by numbered points, in English unless asked otherwise.
+- To clarify requirements, ask only what the code, ticket, or spec cannot settle, and only what would change in-scope code or tests. State each item as the default you will build, so the reader confirms or corrects it instead of answering an open question.
+- A reply that declines a fix, disputes a report or says no change is needed links something the reader can open: a failing-before and passing-after test log, a screenshot or a code line, plus the follow-up ticket when the cause lies elsewhere. Restating the conclusion is a claim, not proof.
+- @mention someone only when the comment needs their action.
 
 ### English professional writing
 
