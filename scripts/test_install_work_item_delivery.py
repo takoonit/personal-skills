@@ -33,7 +33,7 @@ class InstallTests(unittest.TestCase):
         before = source.read_bytes()
         result = self.install()
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual(len(json.loads(result.stdout)['installed_skills']), 17)
+        self.assertEqual(len(json.loads(result.stdout)['installed_skills']), 18)
         runtime = self.skills/'work-item-delivery/vendor/work-item-runtime'
         config = json.loads((runtime/'config.json').read_text())
         self.assertEqual(config['tracker']['project'], 'Example Project')
@@ -51,7 +51,7 @@ class InstallTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         output = json.loads(result.stdout)
         self.assertEqual(output['windows_skills'], [])
-        self.assertEqual(len(output['installed_skills']), 17)
+        self.assertEqual(len(output['installed_skills']), 18)
         for name in WINDOWS_SKILLS:
             self.assertFalse((self.skills/name).exists())
 
@@ -60,7 +60,7 @@ class InstallTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         output = json.loads(result.stdout)
         self.assertEqual(output['windows_skills'], WINDOWS_SKILLS)
-        self.assertEqual(len(output['installed_skills']), 19)
+        self.assertEqual(len(output['installed_skills']), 20)
         for name in WINDOWS_SKILLS:
             self.assertEqual((self.skills/name/'SKILL.md').read_bytes(),
                              (ROOT/'windows/skills'/name/'SKILL.md').read_bytes())
