@@ -6,8 +6,8 @@
   The ADO MCP attachment tool returns the image as base64 text. Large results are
   saved by the harness as a JSON file whose base64 is JSON-escaped (\/ and \n) and
   may be cut off, so a plain FromBase64String fails. This script extracts and
-  cleans the base64, decodes it, and writes a copy no wider than MaxWidth, because
-  the Read tool rejects images over 2576px on either side.
+  cleans the base64, decodes it, and writes a copy whose longer side is at most
+  MaxSide, because the Read tool rejects images over 2576px on either side.
 
 .EXAMPLE
   ./decode-ado-image.ps1 -InputPath <tool-results\toolu_x.json> -OutDir <scratchpad>
@@ -16,7 +16,7 @@ param(
   [Parameter(Mandatory)] [string] $InputPath,
   [Parameter(Mandatory)] [string] $OutDir,
   [string] $Name = 'ado-attachment',
-  [int] $MaxWidth = 2400
+  [int] $MaxSide = 2400
 )
 
 $ErrorActionPreference = 'Stop'
@@ -33,8 +33,9 @@ $raw = Join-Path $OutDir "$Name-raw.png"
 
 $img = [Drawing.Image]::FromFile($raw)
 try {
-  $width = [Math]::Min($MaxWidth, $img.Width)
-  $height = [int]($img.Height * $width / $img.Width)
+  $scale = [Math]::Min(1.0, $MaxSide / [double][Math]::Max($img.Width, $img.Height))
+  $width = [Math]::Max(1, [int]($img.Width * $scale))
+  $height = [Math]::Max(1, [int]($img.Height * $scale))
   $bmp = New-Object Drawing.Bitmap $width, $height
   $g = [Drawing.Graphics]::FromImage($bmp)
   $g.InterpolationMode = 'HighQualityBicubic'
