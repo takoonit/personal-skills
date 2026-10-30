@@ -15,6 +15,16 @@ For evidence planning and PR writing, read [Plan evidence a human can repeat](..
 
 Use `--execute` only for actual approved checks through `Delivery.verify`; default collection and `--check` run no tests. Put all outputs outside product checkouts. No automatic publication, AI SDK or scheduler is part of this workflow.
 
+## When the UI cannot run locally
+
+A backend that is down or a sign-in that is off is not a reason to skip the browser capture. Try these in order before reporting a UI capture as infeasible:
+
+1. Override settings for the launched dev-server process only, e.g. enable local test sign-in in the spawned environment. Never edit the repository's `.env`.
+2. Point the screen's backend proxy target at a small local stand-in that returns the real response envelope with the case data.
+3. If an access check still blocks the real page, mount the real component on a temporary, uncommitted page, capture it, then delete the page.
+
+Proof from steps 2–3 is fixture evidence. Its Scope line names the backend-contract assumptions the stand-in did not test, such as which field values the fix relies on. It also names any access check the temporary page bypassed. Either confirm that check behaved correctly for the test user, or report it as a finding to triage.
+
 ## Choose direct execution or swarm
 
 Work directly when there is one short job or coordination would add no useful coverage. Use `pstack:swarm` when approved independent repository verifications or separate read-only source/evidence/blast-radius investigations materially help. Read that skill and its mapping for the current host before dispatch; follow all four phases below.

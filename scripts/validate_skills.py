@@ -49,7 +49,7 @@ def validate_skill(directory: Path) -> list[str]:
     metadata, parse_errors = parse_frontmatter(skill_file)
     errors.extend(parse_errors)
 
-    allowed = {"name", "description"}
+    allowed = {"name", "description", "disable-model-invocation"}
     extra = sorted(set(metadata) - allowed)
     if extra:
         errors.append(f"unsupported frontmatter fields: {', '.join(extra)}")

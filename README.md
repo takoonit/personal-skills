@@ -7,6 +7,7 @@ A version-controlled collection of reusable skills for ChatGPT and Codex. Each s
 The collection is designed as a small operating system for recurring work:
 
 - **Gate** whether work deserves attention before spending effort.
+- **Clarify** vague tickets, specs and requests before anyone shapes or builds them.
 - **Shape** ambiguous product or system work into a decision-ready direction.
 - **Challenge** weak assumptions, product drift, and unnecessary complexity.
 - **Design** with consistent visual rules across planning, implementation and review; shape purposeful interactions and diagnose behavioural UX friction.
@@ -37,6 +38,7 @@ Each directory under `skills/` is a portable skill package. Its directory name m
 | [`strategic-gate`](skills/strategic-gate/SKILL.md) | Attention gate | A proposed task, feature, or initiative needs a quick decision on whether it deserves effort now. |
 | [`shark-tank`](skills/shark-tank/SKILL.md) | Business challenger | An early product or business idea needs evidence, sharper questions, commercial pressure-testing, and a realistic invest / test / pass judgement. |
 | [`shape-system-work`](skills/shape-system-work/SKILL.md) | System shaper | Product or architecture direction is still ambiguous and needs trade-offs resolved before implementation. |
+| [`clarify`](skills/clarify/SKILL.md) | Requirement clarifier | A ticket, spec or request is too vague to build from, and its meaning and scope need to be traced and written up as a clarified ticket with questions for the owner. |
 | [`doakes`](skills/doakes/SKILL.md) | Intent challenger | A request may be drifting from the project's core outcome or adding complexity without a strong reason. |
 | [`design-guide`](skills/design-guide/SKILL.md) | Visual direction and ongoing design guidance | Any task affects visual design or UX, including routine implementation, fixes, assets, reviews and visual work in other media. Reuse existing rules; establish a full system only when needed. |
 | [`intentional-design`](skills/intentional-design/SKILL.md) | Interaction designer | A product flow needs purposeful hierarchy, state, feedback, restrained delight, or behaviour-aware interaction design. |
@@ -48,7 +50,7 @@ Each directory under `skills/` is a portable skill package. Its directory name m
 
 ## Work Item delivery workflow
 
-The collection also includes [`work-item-delivery`](skills/work-item-delivery/SKILL.md), [`work-item-start-safety`](skills/work-item-start-safety/SKILL.md), and [`proof-of-work`](skills/proof-of-work/SKILL.md), with their owned Azure PR/commit skills and a self-contained local runtime. The workflow runs as nine chained phase skills, `work-item-investigate` through `work-item-report`, each owning one phase's procedure; the [`work-item-delivery`](skills/work-item-delivery/SKILL.md) router chains them, and you can start or rerun one phase on its own. The workflow covers source-led intake, realistic estimates, plan approval, architect/arena/interrogate design, approved execution, tests, human-repeatable evidence and exact PR review/publication boundaries.
+The collection also includes [`work-item-delivery`](skills/work-item-delivery/SKILL.md), [`work-item-start-safety`](skills/work-item-start-safety/SKILL.md), and [`proof-of-work`](skills/proof-of-work/SKILL.md), with their owned Azure PR/commit skills and a self-contained local runtime. The workflow runs as nine chained phase skills, `work-item-investigate` through `work-item-report`, each owning one phase's procedure; the [`work-item-delivery`](skills/work-item-delivery/SKILL.md) router chains them, and you can start or rerun one phase on its own. [`work-item-promote`](skills/work-item-promote/SKILL.md) takes a merged fix to the next environment (source PR, cherry-pick, deploy stage, Work Item and QA note) using each repository's release facts. The workflow covers source-led intake, realistic estimates, plan approval, architect/arena/interrogate design, approved execution, tests, human-repeatable evidence and exact PR review/publication boundaries.
 
 Start with [Start a Work Item](skills/work-item-delivery/references/start-a-work-item.md) for the starting prompt, plan and estimate review, implementation approval, human-reproducible evidence, and PR publication steps.
 

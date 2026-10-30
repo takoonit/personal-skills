@@ -1,6 +1,6 @@
 ---
 name: clear-tactful-writing
-description: "Draft or revise Thai and English writing in a confirmed clear and tactful style: direct, fact-grounded, concise, natural, and free from corporate or AI-like phrasing. Use for emails, replies, follow-ups, requests, scheduling, boundary-setting, conflict handling, professional chat, status updates, requirement clarification, and other practical messages."
+description: "Draft or revise Thai and English writing in a confirmed clear and tactful style: direct, fact-grounded, concise, natural, and free from corporate or AI-like phrasing. Use for emails, replies, follow-ups, requests, scheduling, boundary-setting, conflict handling, professional chat, status updates, requirement clarification, Azure DevOps or work-item comment replies to QA or BA (short: what still fails, cause, what we will fix), and other practical messages."
 ---
 
 # Clear Tactful Writing
@@ -66,6 +66,8 @@ Suggested movement:
 5. Add tact proportionate to the relationship. Do not weaken the substantive sentence.
 6. Make the next action explicit when one exists.
 7. Remove repetition, filler, artificial warmth, and claims the user did not make.
+   - A reply that declines a fix, disputes a report or says no change is needed links something the reader can open: a failing-before and passing-after test log, a screenshot or a code line, plus the follow-up ticket when the cause lies elsewhere. Restating the conclusion is a claim, not proof.
+   - When work already proceeds on an assumption, write a short note ("Note: we are implementing this with the understanding that …"), in English unless asked otherwise, not a question that implies waiting. Name only real people or roles; never invent "the team".
 8. Check whether a reasonable recipient could interpret the message more broadly than intended. Narrow the wording if so.
 
 ## Editing an existing draft

@@ -1,6 +1,6 @@
 ---
 name: azure-pr-write
-description: Write or revise Azure DevOps PRs using What Happened, Insight and Proof of Works, explain behavior across frontend/backend, and avoid PR writing anti-patterns.
+description: Write, open or revise Azure DevOps PRs using What Happened, Insight and Proof of Works, explain behavior across frontend/backend, and avoid PR writing anti-patterns. Use when the user says "review PR", "let me review the PR", "open a PR" or asks for a PR description.
 ---
 
 # Write Azure DevOps PR documentation
@@ -25,11 +25,13 @@ Keep an evidence ledger while drafting: claim, supporting file/output/run, and w
 
 ## Write
 
-What Happened gives the resulting behavior, affected UI breadcrumb/route or module, requirement and impact. Keep the reported environment distinct from the tested baseline.
+What Happened gives the resulting behavior, affected UI breadcrumb/route or module, requirement and impact. Keep the reported environment distinct from the tested baseline. For each message, language or rule the change touches, say whether it already existed before this PR (name the source PR or commit) or this PR changed it.
 
 Insight explains user action → function/request → service response/transformation → cause → fix. Say what each relevant function or API actually does and how its output reaches the user. Cover both frontend and backend when the flow crosses them. Keep implementation file inventories in the diff/evidence. Include material constraints, conflicts, release order and undo consequences in concise bullets within Insight.
 
-Proof of Works states the evidence scope, observed Before/After, inline screenshot comparison when available, relevant commands/results/counts and clickable logs/review packs. Attribute previous runs. A plan or absent run is `⏳ Not run — reason`; local fixtures do not establish SIT verification or deployment. Caption incomplete screenshot coverage honestly.
+Proof of Works leads with real browser captures of the fixed build, one per user step, each with its expected and observed result. Show After only unless the user asks for Before. Test counts, gates and logs go in one short supporting line. Never use the reported bug screenshot as proof: test counts beside a bug image read as "nothing was tested". Attribute previous runs. A plan or absent run is `⏳ Not run — reason`; local fixtures do not establish SIT verification or deployment. When the capture used a stand-in backend or a temporary page, the Scope line names the backend-contract assumptions it did not test and any access check it bypassed. Caption incomplete screenshot coverage honestly.
+
+When the user asks to review a PR before it goes out, push the branch, create the PR as a draft, give the link and stop. Publish only when they say so. A local diff is not a PR review.
 
 Apply the anti-pattern table in the linked convention before delivering. Use readable risk words and reasons. Preserve the exact approved description during publication; do not silently improve it or change unrelated PR fields. Keep all material qualifications and existing approved evidence links.
 
