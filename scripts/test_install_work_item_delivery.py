@@ -11,6 +11,11 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 INSTALLER = ROOT/'scripts/install-work-item-delivery.py'
 WINDOWS_SKILLS = ['wiki-query', 'think']
+_spec = importlib.util.spec_from_file_location('installer', INSTALLER)
+_installer = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_installer)
+# Derived from the installer, so adding a skill does not break the count assertions.
+SKILL_COUNT = len(_installer.SKILLS)
 
 
 class InstallTests(unittest.TestCase):
@@ -33,7 +38,8 @@ class InstallTests(unittest.TestCase):
         before = source.read_bytes()
         result = self.install()
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual(len(json.loads(result.stdout)['installed_skills']), 18)
+        output = json.loads(result.stdout)
+        self.assertEqual(len(output['installed_skills']), SKILL_COUNT + len(output['windows_skills']))
         runtime = self.skills/'work-item-delivery/vendor/work-item-runtime'
         config = json.loads((runtime/'config.json').read_text())
         self.assertEqual(config['tracker']['project'], 'Example Project')
@@ -51,7 +57,7 @@ class InstallTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         output = json.loads(result.stdout)
         self.assertEqual(output['windows_skills'], [])
-        self.assertEqual(len(output['installed_skills']), 18)
+        self.assertEqual(len(output['installed_skills']), SKILL_COUNT)
         for name in WINDOWS_SKILLS:
             self.assertFalse((self.skills/name).exists())
 
@@ -60,7 +66,7 @@ class InstallTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         output = json.loads(result.stdout)
         self.assertEqual(output['windows_skills'], WINDOWS_SKILLS)
-        self.assertEqual(len(output['installed_skills']), 20)
+        self.assertEqual(len(output['installed_skills']), SKILL_COUNT + len(WINDOWS_SKILLS))
         for name in WINDOWS_SKILLS:
             self.assertEqual((self.skills/name/'SKILL.md').read_bytes(),
                              (ROOT/'windows/skills'/name/'SKILL.md').read_bytes())

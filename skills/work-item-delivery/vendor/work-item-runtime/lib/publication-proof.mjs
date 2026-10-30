@@ -6,6 +6,8 @@ const words = value => typeof value === "string" && value.trim();
 const md = value => String(value).replace(/[\\`*_{}\[\]<>#|]/g, "\\$&").replace(/\s+/g, " ").trim();
 const full = artifact => artifact.kind === "screenshot" && ["viewport", "full-page"].includes(artifact.framing);
 const symbolic = href => /^attachment:([A-Za-z0-9._-]+)$/.exec(href ?? "")?.[1];
+// After is required; Before is shown only when the case supplies it.
+const phases = row => row.before === undefined ? ["after"] : ["before", "after"];
 
 function destination(href) {
   if (symbolic(href)) return href;
@@ -31,7 +33,7 @@ export function renderPublicationProof(proof) {
   for (const row of proof.cases ?? []) {
     lines.push("", `### ${md(row.case_id)}: ${md(row.title)}`, `${md(row.role)}. ${md(row.setup)}.`,
       `Actions: ${(row.actions ?? []).map(md).join(" → ")}. Expected: ${md(row.expected)}.`);
-    for (const phase of ["before", "after"]) {
+    for (const phase of phases(row)) {
       const value = row[phase], label = phase === "before" ? "Before" : "After";
       lines.push("", `**${label}:** ${md(value.observed)}`,
         `Scope: ${md(value.environment)}; head ${md(value.head)}; executor ${md(value.executor)}.`,
@@ -103,7 +105,7 @@ export async function validatePublicationProof(state, repo, request) {
     need(Array.isArray(row.actions) && row.actions.length && row.actions.every(words), "publication proof actions required");
     const flow = state.plan.knowledge?.business_flows?.find(f => f.id === row.flow_id && f.case_ids.includes(row.case_id));
     need(flow, "publication proof must bind an approved case/flow");
-    for (const phase of ["before", "after"]) {
+    for (const phase of phases(row)) {
       const value = row[phase];
       need(value && words(value.observed) && words(value.executor), `publication proof ${phase} observation and executor required`);
       need(/^[a-f0-9]{40,64}$/.test(value.head), "publication proof source head required");
@@ -142,7 +144,7 @@ export async function validatePublicationProof(state, repo, request) {
 
 export function materializePublicationDescription(request, attachments, uploads) {
   let description = request.description;
-  const images = (request.publication_proof?.cases ?? []).flatMap(row => [row.before?.image, row.after?.image]);
+  const images = (request.publication_proof?.cases ?? []).flatMap(row => phases(row).map(phase => row[phase]?.image));
   need(images.every(image => words(symbolic(image?.href) ?? image?.name)), "proof image requires a named attachment");
   const names = [...new Set(images.map(image => symbolic(image?.href) ?? image?.name).filter(Boolean))];
   if (names.length) need(new Set(uploads.map(a => a.name)).size === uploads.length && uploads.every(a => attachments.some(b => a.name === b.name)), "proof upload mapping duplicate or foreign attachment");
