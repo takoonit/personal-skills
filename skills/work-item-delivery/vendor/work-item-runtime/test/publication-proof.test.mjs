@@ -174,7 +174,9 @@ test("Journeys require fields, bindings and inline originals", async t => {
   }
   for (const phase of ["before", "after"]) {
     const bad = structuredClone(good); delete bad.publication_proof.cases[0][phase];
-    await assert.rejects(validatePublicationProof(f.state, "be", bad), /observation/);
+    if (phase === "after") await assert.rejects(validatePublicationProof(f.state, "be", bad), /observation/);
+    // Before is optional: an After-only proof with its own rendering passes.
+    else assert.ok(await validatePublicationProof(f.state, "be", canonical(bad)));
     const absent = structuredClone(good); absent.publication_proof.cases[0][phase].observed = "";
     await assert.rejects(validatePublicationProof(f.state, "be", absent), /observation/);
     const removed = structuredClone(good); removed.description = removed.description.replace(new RegExp(`!\\[${phase === "before" ? "Before" : "After"}[^\\n]+\\n`), "");

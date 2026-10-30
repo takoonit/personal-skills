@@ -76,7 +76,7 @@
     "test/proof-fixture.mjs": "76edc2e78ab788a58f48ff1530b41aaf73192cab59846d24e982e41a869d1e7c",
     "test/proof-journey.test.mjs": "0347ab77310db5b957dcc3bfd04fa55f322962e0c597573b93edc51967edc6c4",
     "test/proof-of-work.test.mjs": "7d8e23b94ed241f518836e85ca86bfe65a715fc386096f2c78940bb13aeeabef",
-    "test/publication-proof.test.mjs": "4a1c9472e5385d8e44cd285022a882414abd2fbe8ca0ba391f83e9a554070c36",
+    "test/publication-proof.test.mjs": "85dac3b3f4a0550c3212d31b93a22abb95fdfd344f7b339bf5f8d6a9e02e2236",
     "test/published-branch.test.mjs": "1a4e6dd9ce6823a894b7b5c40d941948cc672336dd990c582dbe0678861beeb7",
     "test/test-report.test.mjs": "b35181ec94ac75b62d205138422a7f7dd321719198246c6e92600d0444177ae6",
     "test/workflow-context.test.mjs": "e9cdc0e2864d7c7ae24423804011e1854b088858454f85260ba09c61f6e427a9",
