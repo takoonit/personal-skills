@@ -39,6 +39,16 @@ Suggested movement:
 
 Do not bury the request under repeated apologies or ceremonial language.
 
+### Work-item comments (Azure DevOps)
+
+A work-item comment is a record on a shared ticket, not a letter. Read the ticket's full discussion first, so you do not ask what someone already answered.
+
+- No greeting, subject line, or sign-off. Write as the user, or drop the subject; name only real people or roles.
+- Once work has started, the comment states what you are doing. It does not ask permission. Use `Note: implementing with this understanding.` followed by numbered points, in English unless asked otherwise.
+- To clarify requirements, ask only what the code, ticket, or spec cannot settle, and only what would change in-scope code or tests. State each item as the default you will build, so the reader confirms or corrects it instead of answering an open question.
+- A reply that declines a fix, disputes a report or says no change is needed links something the reader can open: a failing-before and passing-after test log, a screenshot or a code line, plus the follow-up ticket when the cause lies elsewhere. Restating the conclusion is a claim, not proof.
+- @mention someone only when the comment needs their action.
+
 ### English professional writing
 
 Use plain international English: professional, warm, and restrained. Prefer simple sentences and ordinary words over corporate jargon. Use `Hi <name>` or a context-appropriate formal opening, and normally close with `Best regards`.
@@ -66,8 +76,6 @@ Suggested movement:
 5. Add tact proportionate to the relationship. Do not weaken the substantive sentence.
 6. Make the next action explicit when one exists.
 7. Remove repetition, filler, artificial warmth, and claims the user did not make.
-   - A reply that declines a fix, disputes a report or says no change is needed links something the reader can open: a failing-before and passing-after test log, a screenshot or a code line, plus the follow-up ticket when the cause lies elsewhere. Restating the conclusion is a claim, not proof.
-   - When work already proceeds on an assumption, write a short note ("Note: we are implementing this with the understanding that …"), in English unless asked otherwise, not a question that implies waiting. Name only real people or roles; never invent "the team".
 8. Check whether a reasonable recipient could interpret the message more broadly than intended. Narrow the wording if so.
 
 ## Editing an existing draft
