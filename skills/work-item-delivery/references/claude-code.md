@@ -42,6 +42,10 @@ A Node script using the `playwright` library also works; keep it in the run dire
 
 **Vault skills.** On Claude the vault skills register as `claude-obsidian:wiki-query` and `claude-obsidian:think`; wherever the docs say `wiki-query` or `think`, use those. Native Windows hosts receive short-named replacements instead.
 
+## Plugin install
+
+Installed as the `work-item` plugin, skills load as `/work-item:<skill>` and the four workers as `work-item:<agent>`, so dispatch `subagent_type: "work-item:work-item-investigator"` and likewise for the others. The plugin registers the SessionStart hook below itself; skip the manual settings entry.
+
 ## Re-entry hook
 
 The workflow requires `resume` after startup, resumption and compaction. A SessionStart hook does this for you. It runs `resume` for the registered run and adds the packet to Claude's context before the first prompt. It prints nothing and exits 0 when no run is registered, the run directory is missing, or `resume` fails. Add it to `~/.claude/settings.json` only after the installed `work-item-delivery` contains `scripts/claude-session-resume.mjs`; until then Node fails at every session start:

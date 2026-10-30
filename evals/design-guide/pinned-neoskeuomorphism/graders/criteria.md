@@ -1,0 +1,12 @@
+---
+type: llm
+focus:
+  source: file
+  path: DESIGN.md
+---
+
+PASS only if all of these hold:
+- Honours neoskeuomorphism as the chosen style rather than drifting to a generic minimal look.
+- Makes distinct project decisions for typography, a focal element, visual rhyming, subtle depth, text emphasis and variations.
+- Carries the style's distinctive rules into short builder guardrails.
+- Keeps mobile usability and a reduced-motion equivalent where motion is used.
