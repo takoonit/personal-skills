@@ -1,0 +1,12 @@
+interface:
+  display_name: Boat Mode
+  short_description: Route a task through the right skills and prove it
+  default_prompt: Use $boat-mode to pick the playbook that fits this task, load the skill
+    each step names, and prove the result before calling it done.
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: false

@@ -1,0 +1,15 @@
+interface:
+  display_name: Design Guide
+  short_description: Guide every design task and preserve visual rules
+  default_prompt: Use $design-guide throughout this task wherever visual design or
+    user experience is involved, reusing existing rules and establishing a design
+    system only when needed.
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true

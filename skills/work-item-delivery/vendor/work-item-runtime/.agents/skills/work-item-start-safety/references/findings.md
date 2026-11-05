@@ -1,0 +1,9 @@
+# Coverage and limits
+
+This package contains the reviewed Work Item workflow from source commit `0994d73` (resolve the complete identifier in the package provenance). Runtime code and tests retain the reviewed bytes. Public document paths, installer configuration, skill routing and verification hashes are adapted for the portable package. The provenance records both source and export hashes; `coverage.json` pins the exported inputs. Author-specific Windows launchers are excluded because this package uses its own installer and WSL invocation.
+
+The source verification passed 213 Node tests, 12 specification-renderer tests and 123 required admission checks, including 16 adviser combinations. Five intentional runtime guard failures and four model failures were detected, followed by passing originals. These results describe that source snapshot; run the existing package and admission checks to verify a current installation. Private audit logs and delivery runs are not included in this package.
+
+The bounded model checks two units in one repository and cooperating operations within one delivery run. Its four admission properties cover matching approval, readiness, a valid clean workspace and a single writer inside that run. Actual-code tests separately cover investigation admission, immutable evidence, scoped corrections, context re-entry, per-unit identity migration, preserved approved actions and product-action evidence relationships.
+
+The model does not establish global ownership across independent runs or protect against external Git, file or tracker changes during a callback. Inspect other run owners and refresh actual sources before product edits. Neither hashes nor fixtures authenticate human consent, agent independence, screenshot provenance or natural-language understanding. Passing local checks does not establish live tracker freshness, product acceptance, SIT or deployment. Mutation self-tests operate on temporary copies only.

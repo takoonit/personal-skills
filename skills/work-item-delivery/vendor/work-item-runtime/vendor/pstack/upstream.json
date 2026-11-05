@@ -1,0 +1,14 @@
+{
+  "repository": "https://github.com/cursor/plugins",
+  "commit": "88d47514b82e7c44f00f2b2a72ff6dd12158038c",
+  "source": "pstack/skills/poteto-mode/scripts/orch/store.ts",
+  "source_sha256": "558cfda533e1ebe7c8d7842604f07e0be7618759cf129b4c2397a8e29516ecea",
+  "generated_sha256": "a8094d1ab2f753f9dbbd3c548df57b93ad9e32b67283a4b42687035d8d0a77aa",
+  "adaptation": "TypeScript transformed to ESM with Node stripTypeScriptTypes mode transform; runtime behavior unchanged.",
+  "references": [
+    "pstack/skills/poteto-mode/playbooks/orchestrate.md",
+    "pstack/skills/poteto-mode/playbooks/multi-phase-plan.md",
+    "pstack/skills/principle-sequence-verifiable-units/SKILL.md",
+    "pstack/skills/principle-separate-before-serializing-shared-state/SKILL.md"
+  ]
+}

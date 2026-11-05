@@ -1,0 +1,17 @@
+{
+  "head": "REPLACE_WITH_EXACT_REVIEWED_SOURCE_SHA",
+  "reviews": [
+    {
+      "axis": "standards",
+      "reviewer": "REPLACE_WITH_ACTUAL_REVIEWER",
+      "verdict": "not-run",
+      "report": "/replace/with/actual-standards-report.md"
+    },
+    {
+      "axis": "specification",
+      "reviewer": "REPLACE_WITH_ACTUAL_REVIEWER",
+      "verdict": "not-run",
+      "report": "/replace/with/actual-specification-report.md"
+    }
+  ]
+}

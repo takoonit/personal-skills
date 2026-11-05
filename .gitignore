@@ -5,5 +5,9 @@ __pycache__/
 .env
 .env.*
 !.env.example
+.work-item-setup.env
 *.log
+/.audit/
 
+# claude plugin eval output
+evals/results/

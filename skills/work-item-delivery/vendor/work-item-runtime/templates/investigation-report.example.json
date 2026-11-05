@@ -1,0 +1,24 @@
+{
+  "task": "U1",
+  "input_hash": "replace-with-issued-input-hash",
+  "artifacts": [],
+  "claims": [
+    {
+      "id": "finding",
+      "statement": "The boundary requiring a backend change must be confirmed against the actual source.",
+      "basis": "source-supported",
+      "case_ids": [
+        "C1"
+      ],
+      "source_refs": [
+        "ticket",
+        "spec",
+        "task"
+      ],
+      "limitations": [
+        "Illustration only. Replace with observed limitations and cited source reads."
+      ]
+    }
+  ],
+  "gaps": []
+}

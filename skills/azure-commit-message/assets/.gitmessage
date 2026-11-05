@@ -1,0 +1,12 @@
+
+# <type>(<scope>): <imperative summary, at most 72 characters>
+# A subject alone is enough for an obvious small change.
+# Otherwise add a blank line and a short paragraph explaining what changed
+# and why. Include approach, decisions, tests, or references only when useful.
+# Why / How / Log / Test / Refs are considerations, not required headers.
+# Omit filler, empty labels, thinking-method names, and routine placeholders.
+# State material verification limits; never invent results.
+# Optional work-item trailer: Refs: #123
+# Avoid bare #123 lines; default Git comment cleanup removes them.
+# Use resolution wording only when intended and the workflow is verified.
+# These guidance comments are removed by default Git commit cleanup.

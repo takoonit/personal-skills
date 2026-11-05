@@ -1,0 +1,102 @@
+{
+  "schema": "work-item-delivery.investigation.v1",
+  "work_item": {
+    "id": "100",
+    "url": "https://example.invalid/workitems/100",
+    "revision": "7",
+    "type": "Bug"
+  },
+  "case_ids": [
+    "C1",
+    "C2"
+  ],
+  "sources": [
+    {
+      "id": "ticket",
+      "url": "https://example.invalid/workitems/100",
+      "revision": "7",
+      "section": "Expected behavior cases 1 and 2",
+      "status": "read",
+      "snapshot": "/replace/with/preserved-ticket.json"
+    },
+    {
+      "id": "spec",
+      "url": "https://example.invalid/specification",
+      "revision": "3",
+      "section": "Employee history filters",
+      "status": "read",
+      "snapshot": "/replace/with/preserved-specification.md",
+      "kind": "confluence"
+    },
+    {
+      "id": "task",
+      "url": "https://example.invalid/workitems/101",
+      "revision": "2",
+      "section": "Parent relation and acceptance",
+      "status": "read",
+      "snapshot": "/replace/with/preserved-child-task.json"
+    },
+    {
+      "id": "business",
+      "kind": "second_brain",
+      "url": "obsidian://open?vault=VAULT&file=Business%20Flow",
+      "revision": "REPLACE_WITH_NOTE_DATE_OR_SOURCE_REVISION",
+      "section": "Actor and employee-history flow; primary provenance locator",
+      "status": "read",
+      "snapshot": "/replace/with/preserved-business-note.md"
+    }
+  ],
+  "independence": {
+    "mode": "independent-host",
+    "declaration": "Replace with actual host dispatch provenance. Each investigator received only its neutral brief."
+  },
+  "challenge": {
+    "required": true
+  },
+  "tasks": [
+    {
+      "id": "U1",
+      "question": "What evidence establishes current and expected behavior for C1?",
+      "domain": "Acceptance and source data path",
+      "assignee": "replace-with-native-task-id",
+      "revision": "1",
+      "case_ids": [
+        "C1"
+      ],
+      "source_refs": [
+        "ticket",
+        "spec",
+        "task"
+      ]
+    },
+    {
+      "id": "U2",
+      "question": "What evidence establishes current and expected behavior for C1?",
+      "domain": "Acceptance and source data path",
+      "assignee": "replace-with-native-task-id",
+      "revision": "1",
+      "case_ids": [
+        "C1"
+      ],
+      "source_refs": [
+        "ticket",
+        "spec",
+        "task"
+      ]
+    },
+    {
+      "id": "U3",
+      "question": "What evidence establishes current and expected behavior for C2?",
+      "domain": "Acceptance and source data path",
+      "assignee": "replace-with-native-task-id",
+      "revision": "1",
+      "case_ids": [
+        "C2"
+      ],
+      "source_refs": [
+        "ticket",
+        "spec"
+      ]
+    }
+  ]
+}

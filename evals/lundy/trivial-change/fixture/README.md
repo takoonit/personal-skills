@@ -1,0 +1,3 @@
+# Chekout service
+
+Handles payments.

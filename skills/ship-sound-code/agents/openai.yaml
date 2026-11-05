@@ -1,4 +1,14 @@
 interface:
-  display_name: "Ship Sound Code"
-  short_description: "Implement defined code changes safely"
-  default_prompt: "Use $ship-sound-code to implement this repository change from the approved delivery brief."
+  display_name: Ship Sound Code
+  short_description: Deliver code with practical standards and checks
+  default_prompt: Use $ship-sound-code to deliver this repository change or establish
+    its coding standards and executable guardrails, following existing conventions.
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true

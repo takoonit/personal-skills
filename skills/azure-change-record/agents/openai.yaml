@@ -1,0 +1,6 @@
+interface:
+  display_name: "azure-change-record"
+  short_description: "Preserve the full Azure PR documentation conventions"
+  default_prompt: "Use $azure-change-record to apply my full documentation format."
+policy:
+  allow_implicit_invocation: true
