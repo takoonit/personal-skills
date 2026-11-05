@@ -2,6 +2,8 @@
 
 Use exactly these headings, in order: `## What Happened`, `## Insight`, `## Proof of Works`. This is the default for backend and frontend PRs, including small changes. An explicitly requested repository format can override it. The older colored format is opt-in; do not insert its extra sections into this one.
 
+Match recent team PRs in the same repo: read 3–4 merged ones before drafting and follow their language, length and bullet style. 4,000 characters is Azure's cap, not a target.
+
 ## What Happened
 
 Lead with the resulting behavior and purpose. Identify the affected screen with a useful UI breadcrumb and route, or the module/API for a backend change. Link the actual Task and relevant parent Bug expectation. If the Task explains the problem, summarize it briefly instead of copying the ticket. Include risk with a readable word and reason, and where the issue was found when known. Separate the reported environment from the baseline actually reproduced; preserve differences.

@@ -1,6 +1,6 @@
 ---
 name: azure-commit-message
-description: Draft or revise concise Azure DevOps commit messages grounded in the diff, with useful rationale and accurate work-item references.
+description: Draft or revise concise Azure DevOps commit messages grounded in the diff, with useful rationale and accurate work-item references. Use whenever a commit is made in an Azure DevOps repo, including "commit the changes", "commit this", "commit without the docs" or "split the commits".
 ---
 
 # Azure commit messages
