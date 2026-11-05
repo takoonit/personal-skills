@@ -1,101 +1,55 @@
 ---
 name: intentional-design
-description: "Design or review expressive, task-first product UI and interaction flows that benefit target users' real behaviour and goals. Use hierarchy, state, feedback, mature intrinsic gamification, and restrained micro-interactions instead of unnecessary headings, explanatory copy, reassurance, conceptual repetition, emoji, childish reward theatre, or manipulative persuasion. Use when creating or changing screens, onboarding, empty states, pricing, permissions, notifications, retention flows, progress systems, or behaviour-led UX improvements; especially when an AI-generated interface feels verbose, generic, or one to two steps removed from the user's task. Preserve necessary orientation, safety, informed choice, and accessible motion."
+description: "Design or review task-first product UX and UI with purposeful expression and honest choice. Use when a screen, flow, onboarding, empty state, pricing, permissions, notifications, retention flow, dashboard, educational tool, or visualisation needs a meaningful primary user loop, functional micro-interactions, progressive disclosure, responsive system feedback, recovery, or a coherent interaction tone. Use especially when an interface is static, bland, animated without purpose, or needs to teach a complex concept through direct manipulation. Do not use merely to add decorative animation."
 ---
 
 # Intentional Design
 
-Design for a user's immediate task, not the product team's conceptual model. Intentional Design creates expression through hierarchy, visual rhythm, meaningful states, and restrained micro-reactions; use text only where it carries decision-critical meaning. Preserve orientation, safety, and ethical choice.
+Start from the immediate user task. For interaction-heavy or learning products, establish the interaction model before layout; simple task screens need a clear action and result, not an invented repeated loop. The product should make a user's action, the resulting state change, and the next useful move clear.
 
-## Coexist with local skills
+## Scope
 
-Let a specialised accessibility, design-system, framework, or user-research skill own its narrower work. Reuse its confirmed constraints. Retain this skill's role: exposing task-distance, redundant explanation, and coercive persuasion. Use `$doakes` when the requested interface change appears to drift from the product's core outcome; use `$ship-sound-code` for accepted implementation.
+Own the primary interaction loop, interaction contracts, progressive disclosure, and system feedback. Let accessibility, design-system, domain-research, calculation, and implementation skills own their specialised work. Use `$doakes` when an interaction drifts from the product outcome and `$ship-sound-code` for accepted implementation.
 
-## Start from the task
+Read [interaction-guidelines.md](references/interaction-guidelines.md) when designing feedback states, motion, sensory cues, tone, recovery, or a complex learning flow.
 
-State the smallest user task as: `For <user>, complete <action> with <relevant constraint>.`
+## Establish the task and behavioural fit
 
-Identify the current state, next action, and any irreversible or costly choice. Treat navigation context, selected state, meaningful content, and the primary control as orientation evidence before adding a page title or explanation.
+State: `For <user in context>, complete <action> with <relevant constraint>.`
 
-Do not invent a product value proposition, feature tour, reassuring phrase, or motivational copy merely because a screen has empty space.
+Before adding a feature or feedback, state a behavioural hypothesis: `When <user> is <situation>, <friction> prevents <job>; <response> helps <user benefit>.` Prefer research and support evidence, then task observation, then analytics and domain constraints; label assumptions. Metrics describe behaviour without proving intent. Consider familiarity, repetition, interruptions, risk, and accessibility where they change the decision. Prefer task success, comprehension, time saved, and recovery over clicks or time spent.
 
-## Design from behavioural fit
+For settings, forms, checkout, and other simple task screens, define `current state → action → result → recovery or why recovery is unavailable`. Proceed to layout once these are clear. Do not require repetition or reveal routine content through artificial interactions.
 
-Treat user behaviour as evidence of context and friction, not a lever to maximise clicks, time spent, or data extraction. State one behavioural hypothesis before adding a feature or micro-reaction:
+## Establish the primary loop for interaction-heavy products
 
-`When <target user> is <situation>, they need to <job> but struggle with <observed or plausible friction>; <design response> helps them achieve <user benefit>.`
+Before proposing a layout, state:
 
-Ground the hypothesis in the best available evidence: direct research and support requests first; task observation and usability tests next; then analytics, domain constraints, and an explicitly labelled assumption. Analytics show what happened, not necessarily why. Do not infer intent from a metric alone.
+`For <user in context>, repeatedly <meaningful action> to <achieve or understand outcome>; the product responds by <observable change>.`
 
-Consider only the behaviour that changes the design decision:
+The action must be deliberate: choose, compare, inspect, arrange, transform, create, refine, confirm, recover, or continue. Do not use viewing, reading, scrolling, engagement, or time spent as the primary action unless that is genuinely the product’s value.
 
-- familiarity: first-time, returning, or expert use;
-- frequency and repetition: occasional, habitual, or high-volume work;
-- context: focused, interrupted, time-pressured, mobile, or collaborative use;
-- risk: reversible action, expensive commitment, private data, or destructive change; and
-- capability: accessibility needs, domain knowledge, confidence, and available attention.
+Then state:
 
-Choose a response that reduces friction or prevents an error for that context:
+`trigger → rule/state change → feedback → next useful action or recovery`
 
-- unfamiliar or occasional work → recognisable labels, progressive guidance, and a safe default;
-- frequent, repetitive work → shortcuts, retained context, bulk actions, and low-friction confirmation;
-- interruption-prone work → clear saved state, resumable context, undo, and non-intrusive reminders;
-- time-pressured work → prioritised information, sensible defaults, and an explicit review path;
-- high-consequence work → deliberate confirmation, visible consequence, and easy recovery.
+For interaction-heavy or learning products, resolve a missing loop before layout. Ask one focused question or label the loop as an assumption. Do not hide the missing loop behind a dashboard, generic cards, explanation copy, or animation.
 
-Reject a response if its main effect is to increase engagement, conversion, or collection without a comparable user benefit. Do not pathologise normal use, engineer a dependency, or make a user's past behaviour harder to change.
+Where exploration advances an educational or visual product, make each interaction reveal one relationship the user needs to understand. The result should be assembled through meaningful actions, not shown fully formed and explained afterwards.
 
-## Make the interface speak without narrating
+## Define interaction contracts
 
-Express status and cause-and-effect through the interface before reaching for prose:
+Treat a micro-interaction as a focused, single-purpose loop—not as a small animation. For each material interaction, define:
 
-- use hierarchy, contrast, spacing, grouping, progress, and a clear primary action to establish attention and flow;
-- make actions acknowledge themselves with a quick, purpose-linked state change: a saved value, an inserted item, a disabled duplicate action, or a concise success state;
-- use motion only to reveal a relationship, confirm a completed action, or preserve spatial continuity; keep it short, interruptible, and compatible with reduced-motion preferences;
-- use empty states to show the next useful action, not to repeat the product promise; and
-- use colour and iconography as supporting signals, never as the only carrier of a consequential meaning.
+1. **Trigger:** deliberate user action or meaningful system event.
+2. **Rule:** validation, condition, or state transition.
+3. **Feedback:** immediate proof of recognition and change.
+4. **Mode:** the persistent selected, pending, error, undoable, completed, or awaiting-input state.
+5. **Recovery:** undo, edit, retry, correction, or why none is possible.
 
-Treat micro-reactions as interface feedback, not entertainment. Avoid routine, prominent celebratory effects, bouncing controls, animated counters, or persistent badges unless they correspond to a meaningful user event and can be skipped or disabled where appropriate.
+Keep every contract tied to a user job: understanding, progress, error prevention, recovery, decision-making, or system status. A hover effect, entrance fade, looping background, generic bounce, or colour swap alone is not a micro-interaction.
 
-Do not use emoticons or emoji in UI copy unless the user explicitly asks for them. Do not substitute emoji for accessible labels, status, or error explanation.
-
-Use text when it changes a choice, communicates a state that cannot be reliably inferred, supplies an action label, prevents a costly mistake, or makes the interface accessible. Keep that text factual and specific; do not pad it with product philosophy, artificial warmth, or reassurance.
-
-## Use mature gamification and feedback
-
-Start with the reward already inherent in the user's work: visible progress, regained control, a completed task, a reduced backlog, a mastered skill, or an achieved real-world outcome. Add an external reward only when it strengthens that outcome rather than substituting for it.
-
-Use this feedback hierarchy:
-
-1. **Routine action:** immediate state change, concise confirmation, and a light visual or haptic acknowledgement where the platform supports it.
-2. **Meaningful progress:** accurate progress, streak, or completion evidence only when it helps planning, mastery, or follow-through.
-3. **Rare milestone:** restrained celebration only for a significant, user-valued achievement; never replay it for routine activity.
-
-Make feedback feel direct, not theatrical. Target immediate acknowledgement for direct manipulation and keep routine UI motion brief—usually about 150–300 ms when the platform and action allow it. Do not treat timing as a rigid rule: network state, accessibility settings, complex spatial transitions, and platform conventions can require a different treatment.
-
-Synchronise feedback with the action and its real result. Use one coherent signal at a time; avoid competing motion, sound, haptics, counters, and badges. Keep routine haptics light and optional where system settings allow. Reserve stronger visual or haptic feedback for rare, consequential milestones.
-
-### Compose quiet delight
-
-Make the product feel considered and alive through small, low-aggression details. Delight should arise from a satisfying response to the user's action—not from an announcement that the product is delightful.
-
-Use one or two understated details that fit the interaction and visual system, such as:
-
-- a control settling into its new state with a refined easing curve;
-- a brief colour, elevation, or highlight transition that makes a saved or completed state feel tangible;
-- content appearing from the place the user created or moved it, preserving spatial continuity;
-- a subtle progress fill, completion mark, or count transition that reflects a real result; or
-- a light haptic tick paired exactly with a deliberate direct action, where the platform permits it.
-
-Vary the detail by context; do not apply the same effect mechanically to every control. Keep the effect subordinate to content, short enough to avoid waiting, and visually quiet enough that it can be ignored. Stop at the first satisfying signal—do not stack glow, scale, sound, haptic, confetti, and copy around one action.
-
-Choose delight only after the essential task, state, and consequence are clear. Do not use it to distract from a delay, failed action, hidden cost, or weak value proposition. Support reduced motion, and ensure the final state remains clear with all animation disabled.
-
-Do not introduce points, badges, streaks, loot-like variable rewards, or leaderboards merely to make an ordinary task feel like a game. Before adding one, state:
-
-`What real capability, progress, or user-chosen outcome does this make visible—and what happens if the mechanic is removed?`
-
-If the answer is only engagement, return frequency, or conversion, reject it. Do not use reward systems, notifications, urgency, or loss framing to create anxiety about breaking a streak or missing an arbitrary benefit.
+For a visualisation or learning tool, prefer direct manipulation of domain objects over explanatory panels. Let the action reveal the relationship; add text only to name or clarify it.
 
 ## Apply the element test
 
@@ -129,41 +83,37 @@ For money, data, permissions, retention, and notifications:
 
 Never add moralising reassurance to prove compliance. Prefer a truthful label and an accessible control: `£8/month after 7 days`, `Not now`, `Manage notifications`, or `Delete account`.
 
-## Review proportionately
+## Make expression purposeful
 
-Inspect the screen or changed flow, direct neighbours, navigation context, visual state transitions, and the copy around consequential decisions. Do not demand a full audit for a routine button or layout change.
+For tangible UI work, state an expression plan: interaction tone, visual character, and the user events worth making perceptible. Where the flow supports them, choose two or three purpose-linked moments across arrival, direct manipulation, and relationship or result reveal. Do not manufacture extra interactions for a simple screen. Avoid inert generic transitions and stacked spectacle; each detail must clarify state, continuity, progress, or understanding.
 
-For each material concern, establish:
+Use the reward inherent in the task: mastery, regained control, real progress, or completion. Add points, streaks, badges, or leaderboards only when they support a user-chosen outcome; reject mechanics whose only benefit is engagement or conversion. Keep milestones skippable and preserve natural stopping points.
 
-- **task distance:** what the user is trying to do and why the element does not help;
-- **evidence:** the nearby state, control, or information that already supplies its meaning;
-- **cost:** extra scan time, cognitive load, confused choice, or pressure; and
-- **smallest correction:** remove, merge, shorten, move behind `Why?`, add a concrete control, or replace narration with a meaningful state or micro-reaction.
+Use factual, decision-relevant text and accessible labels. Avoid generic reassurance, product philosophy, and emoji unless requested. Preserve safety, legal disclosures, accessibility labels, and necessary unfamiliar-domain context.
 
-For a proposed behavioural improvement, also state the **behavioural bet**: target context → friction → design response → expected user benefit → proof to collect. Prefer task success, error recovery, time saved, comprehension, and voluntary return over raw engagement metrics.
+## Compose and validate
 
-Do not delete accessibility labels, error recovery, legal disclosures, or unfamiliar-domain context merely for brevity. If it is unclear whether a label carries essential meaning, retain it and mark it for user testing rather than guessing.
+Reveal only what supports the next useful action. Keep safety, cost, permission, and irreversible consequences visible at the relevant decision point.
 
-## Make the call
+Before accepting the design, answer:
 
-Classify each review result:
+1. What is the first meaningful action?
+2. What exact state changes?
+3. What immediate feedback proves it?
+4. What does the user now understand, achieve, or do next?
+5. How do they undo, edit, retry, or correct the result, or why is recovery unavailable?
 
-- **Remove or merge:** clearly redundant text, heading, or ornamental UI with no decision value.
-- **Retain with purpose:** necessary orientation, context, safety, or recovery support.
-- **Ethical risk:** misleading pressure, asymmetric exit, hidden cost, fabricated scarcity, or excessive attention demand. Pause and request a correction before release.
-- **Research needed:** whether a complex audience truly needs context is unknown. Name the task to test rather than adding generic copy.
+If an answer is vague, clarify the task or interaction. For interaction-heavy products, verify the state transition in use; a screenshot cannot prove it. Review only the changed flow and its direct context for routine edits.
 
-When asked to implement an accepted screen, remove only clear low-risk redundancy within the stated scope. Ask before changing information architecture, legal copy, pricing terms, commitments, or a product's primary conversion path.
+## Report concisely
 
-## Report without creating more noise
+Return a verdict and at most three material findings by default; include these details when relevant:
 
-Return a verdict and no more than three material findings by default:
+- **Task or primary loop:** user → action → state change → outcome.
+- **Interaction contracts:** at most three, each as trigger → rule → feedback → mode/recovery.
+- **Progressive path:** what appears first, next, and only when needed.
+- **Tone and feedback:** interaction tone, feedback choice, and reduced-motion fallback.
+- **Verdict:** remove or merge redundant elements; retain with purpose for orientation, safety, or recovery; ethical risk for hidden cost, fabricated scarcity, asymmetric exits, or pressure; research needed when audience context is uncertain. For each concern, give evidence, user cost, and the smallest correction. Correct material ethical risks before release.
+- **Behavioural bet:** context → friction → response → user benefit → validation signal, when proposing a behavioural change.
 
-- **Remove or merge — <element>:** task distance; evidence; smallest correction.
-- **Keep — <element>:** the user decision or risk it supports.
-- **Ethical risk — <interaction>:** pressure mechanism; user cost; required correction.
-- **Behavioural bet — <change>:** context → friction → response → user benefit → validation signal.
-- **Feedback choice — <interaction>:** user event → level of feedback → real progress or state made visible.
-- **Delight detail — <interaction>:** subtle response → why it fits this moment → non-animated fallback.
-
-End with the leanest viable screen direction and, when useful, one state or feedback cue that can replace text. Do not add UX boilerplate, emoji, a generic principle list, or congratulatory reassurance when the interface is already clear.
+Do not list animations as micro-interactions. For interaction-heavy products, establish the primary loop before layout. For simple task screens, use the task-and-result path above.
