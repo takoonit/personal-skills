@@ -1,17 +1,17 @@
 # Interaction Guidelines
 
-Use this reference after the primary loop and interaction contracts are known. It supplies implementation and review guidance; it does not replace the loop.
+Use this reference after the task path or primary loop and interaction contracts are known. It supplies implementation and review guidance; it does not replace the task model.
 
 ## System status and recovery
 
-| State | Design response |
+| Persistent state | Design response |
 |---|---|
 | Pending | Show what is processing and preserve context. Never simulate progress. |
 | Ready for input | Expose the next action through affordance and state, not an instruction wall. |
-| Success | Make the resulting state stable and clear; acknowledge it without forced celebration. |
-| Validation | Reveal constraints while the user works when practical. |
+| Completed | Make the resulting state stable and clear; acknowledge it without forced celebration. |
+| Invalid input | Reveal constraints while the user works when practical. |
 | Error | Identify the affected state, give the smallest correction, and retain valid work. |
-| Undo | Make reversible actions easy to reverse while the context remains fresh. |
+| Undoable result | Make reversible actions easy to reverse while the context remains fresh. |
 
 ## Progressive disclosure
 
@@ -27,7 +27,7 @@ Choose feedback after the state transition is defined.
 
 - Use motion to preserve spatial continuity, show a relationship, expose state, or acknowledge a direct action.
 - Make feedback responsive to input where applicable; avoid disconnected spinners and canned flourishes.
-- Keep routine feedback brief and interruptible. Use platform conventions and visual distance instead of a single timing rule.
+- Keep routine feedback brief and interruptible. For direct input, aim to acknowledge within about 100 ms; routine transitions usually take 150–300 ms. Adapt to platform conventions, visual distance, and accessibility rather than treating these as deadlines. For slower work, show truthful pending status promptly and completion only when confirmed.
 - Use haptics or sound only when supported, not disabled, and distinct from visual feedback.
 - Reserve richer feedback for rare, user-valued milestones. Keep it skippable and never block the next task.
 - Respect `prefers-reduced-motion` and equivalent settings. Preserve the final state, hierarchy, status, and recovery route without motion.
@@ -50,12 +50,12 @@ Build one recognisable sequence: resting state → response → resolved state. 
 - **Punishing loop:** streak loss, false urgency, variable rewards, or notification pressure manufacture dependence.
 - **Tone break:** feedback undermines the task’s emotional or trust context.
 
-## Bazi mapping example
+## Neutral example: comparing delivery plans
 
-Primary loop: `A learner adjusts or inspects one birth-data-derived chart object to understand how it produces the next chart relationship.`
+Task: A coordinator compares two delivery plans to choose one that meets a deadline.
 
-| Trigger | Rule | Feedback | Mode / recovery |
+| Trigger | Rule | Feedback | Persistent state / recovery |
 |---|---|---|---|
-| Adjust birth time | Recalculate the hour boundary using disclosed assumptions | Show the affected time range and pillar resolve from pending to final | Keep the previous result available; edit time or location |
-| Select a pillar character | Make it the active chart object | Reveal its stem/branch, element, and plain-language role | Persistent selection; select another or clear focus |
-| Trace an element to the Day Master | Compute the relation from the selected object to the reference point | Draw the relationship and name one consequence | Persistent relation; select another object or return to overview |
+| Adjust departure time | Recalculate arrival using disclosed assumptions | Acknowledge immediately; show affected times pending until confirmed | Updated plan; edit again or undo to the previous time |
+| Select a plan | Make it the active comparison | Highlight its route and arrival against the deadline | Persistent selection; choose another or clear selection |
+| Save chosen plan | Persist the selection | Confirm only after success; retain input on failure | Saved plan; edit or retry on failure. If dispatch prevents reversal, disclose that consequence before confirmation |

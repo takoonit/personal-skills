@@ -1,7 +1,7 @@
 interface:
-  display_name: Intentional Design
-  short_description: Create expressive, mature user feedback
-  default_prompt: Use $intentional-design to design a purposeful, expressive product flow for these users.
+  display_name: "Intentional Design"
+  short_description: "Design clear tasks, purposeful feedback, and honest choice"
+  default_prompt: "Use $intentional-design to design or review this task flow for clear actions, purposeful feedback, and honest choice."
 policy:
   products:
   - chatgpt

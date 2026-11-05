@@ -26,7 +26,7 @@ Each directory under `skills/` is a portable skill package. Its directory name m
 | [`dextor`](skills/dextor/SKILL.md) | Identify evidence-backed code bloat and ask before safe removal. |
 | [`doakes`](skills/doakes/SKILL.md) | Challenge vague intent and drift from the project’s core concept. |
 | [`lundy`](skills/lundy/SKILL.md) | Independently validate consequential completed work using focused subagents. |
-| [`intentional-design`](skills/intentional-design/SKILL.md) | Design purposeful, expressive product UI around real user outcomes. |
+| [`intentional-design`](skills/intentional-design/SKILL.md) | Design clear task flows, purposeful interactions, and honest choices around real user outcomes. |
 
 ## Add or update a skill
 
