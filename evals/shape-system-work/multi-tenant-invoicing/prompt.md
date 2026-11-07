@@ -11,8 +11,6 @@ plugins:
   - ../../../skills/intentional-design
   - ../../../skills/laws-of-ux
   - ../../../skills/ship-sound-code
-  - ../../../skills/deep-simple
-  - ../../../skills/deep-simple-setup
   - ../../../skills/clear-tactful-writing
 tags: [shape-system-work, trigger]
 max_turns: 30

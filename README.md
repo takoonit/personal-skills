@@ -101,8 +101,6 @@ In Claude Code the plugin adds the `boat:` prefix. Inside skill files, cross-ref
 | Skill | Role | Use it when... |
 | --- | --- | --- |
 | [`ship-sound-code`](skills/ship-sound-code/SKILL.md) | Implementation and engineering standards | A defined change needs proportionate implementation and verification, or a repository needs coding standards, concise guardrails and executable quality gates. Audit requests stay read-only unless fixes are authorised. |
-| [`deep-simple`](skills/deep-simple/SKILL.md) | Structure gate | Code, components or screens are being written, reviewed or refactored. Enforces "deepen modules and simplify interfaces" with ten testable hard fails and a blocking DEPTH GATE. Runs alongside `ship-sound-code`; hands bloat to `dextor`. |
-| [`deep-simple-setup`](skills/deep-simple-setup/SKILL.md) | Rule installer | A repository should apply `deep-simple` by default: installs an idempotent AGENTS.md block, CLAUDE.md import, PR checklist, and optional tested ESLint and knip guardrails. |
 | [`clear-tactful-writing`](skills/clear-tactful-writing/SKILL.md) | Communication | Facts, decisions, requests, or difficult messages need concise Thai or English wording with appropriate tact. |
 
 ### Work Item delivery (installed by the setup wizard)
@@ -182,10 +180,10 @@ evals/<skill>/<case>/
   setup.sh, fixture/ # copied into the empty workspace before the run
 ```
 
-Run from the repository root. Cases list the fourteen plugin skill folders under `plugins:`, because `claude plugin eval` loads plugins per case and this repository root is not itself a plugin. `validate_skills.py` fails when a case's list drifts from `.claude-plugin/marketplace.json` or a plugin skill has no case.
+Run from the repository root. Cases list the twelve plugin skill folders under `plugins:`, because `claude plugin eval` loads plugins per case and this repository root is not itself a plugin. `validate_skills.py` fails when a case's list drifts from `.claude-plugin/marketplace.json` or a plugin skill has no case.
 
 ```sh
-# Everything: 64 cases, 3 runs per arm
+# Everything: 60 cases, 3 runs per arm
 claude plugin eval . --scaffold --trust-plugin --allow-tools Write Edit Bash --judge-model sonnet --max-cost-usd 40
 
 # One skill
