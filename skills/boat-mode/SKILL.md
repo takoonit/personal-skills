@@ -1,6 +1,6 @@
 ---
 name: boat-mode
-description: "Boat's working style for any non-trivial task. Matches the request to a short playbook, loads the skill that owns each step, and proves the result before calling it done. Use when the user types /boat-mode or $boat-mode, or asks to work in Boat's style. Routes to strategic-gate, shark-tank, shape-system-work, doakes, design-guide, intentional-design, laws-of-ux, ship-sound-code, dextor, lundy and clear-tactful-writing."
+description: "Boat's working style for any non-trivial task. Matches the request to a short playbook, loads the skill that owns each step, and proves the result before calling it done. Use when the user types /boat-mode or $boat-mode, or asks to work in Boat's style. Routes to strategic-gate, shark-tank, shape-system-work, doakes, design-guide, intentional-design, laws-of-ux, ship-sound-code, deep-simple, dextor, lundy and clear-tactful-writing."
 ---
 
 # Boat mode
@@ -39,8 +39,9 @@ Pick the playbook that fits, load the skill each step names, and prove the resul
 1. Load `$ship-sound-code`. Name the data shape and the acceptance outcome before writing code.
 2. For a visual or UX change, also load `$design-guide`. Add `$intentional-design` for flow, state and feedback, and `$laws-of-ux` when user behaviour is the open question.
 3. Make the smallest complete change and run the repository's own checks.
-4. Run `$dextor` on the diff when it added files, dependencies or abstractions.
-5. Run `$lundy` when the change is consequential or crosses a boundary.
+4. Run the `$deep-simple` gate on every new or changed module, component and screen. Fix its hard fails before calling the change done.
+5. Run `$dextor` on the diff when it added files, dependencies or abstractions.
+6. Run `$lundy` when the change is consequential or crosses a boundary.
 
 ### UX: users struggle, or a screen needs review
 
@@ -49,7 +50,7 @@ Pick the playbook that fits, load the skill each step names, and prove the resul
 
 ### Validate: check finished work before it merges
 
-1. Run `$lundy`. Add `$dextor` when the change may have left dead code or extra surface.
+1. Run `$lundy`. Add `$deep-simple` in review mode for structure, and `$dextor` when the change may have left dead code or extra surface.
 2. Report the verdict and the smallest next action. Do not fix while validating.
 
 ### Write: a message, status update or reply

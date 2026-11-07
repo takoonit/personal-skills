@@ -11,6 +11,8 @@ plugins:
   - ../../../skills/intentional-design
   - ../../../skills/laws-of-ux
   - ../../../skills/ship-sound-code
+  - ../../../skills/deep-simple
+  - ../../../skills/deep-simple-setup
   - ../../../skills/clear-tactful-writing
 tags: [doakes, drift]
 max_turns: 30
