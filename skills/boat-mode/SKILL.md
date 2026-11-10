@@ -13,6 +13,7 @@ Pick the playbook that fits, load the skill each step names, and prove the resul
 2. Pick one playbook below. If two fit, take the one listed first. If the task changes shape midway, switch playbook and say so.
 3. Open a task list whose first items are the playbook's steps, copied verbatim. A step you skip stays in the list as `skip: <reason>`.
 4. Load each skill when its step starts, not all at once. If a skill is unavailable, do the step yourself and say it ran without that skill.
+5. Skills the user explicitly names own their steps. Resolve their paths from the current skill catalog. Use `$codebase-design` for module and interface decisions, `$tdd` when requested or a bug has a cheap executable reproduction, `$principle-prove-it-works` before declaring completion, and `$work-item:proof-of-work` for work-item evidence. Keep their workflows in those skills.
 
 ## Playbooks
 
@@ -63,7 +64,10 @@ Pick the playbook that fits, load the skill each step names, and prove the resul
 ## Rules
 
 - **Smallest change.** Prefer deleting to adding. Add an abstraction only for a present second consumer.
-- **Prove it.** Check the real artifact: run the test, call the endpoint, read the value. "It compiles" is not proof.
+- **Prove it where requested.** When the user names DEV, SIT, UAT or another environment, keep that verification unfinished until the changed behavior passes there. Check the actual journey and its relevant saved result on the intended version. Treat local fixtures and mocked tests as preliminary evidence. Change the verification scope only when the user agrees.
+- **Work through setup problems.** Resolve routine login, dependency and tooling failures within the authorized scope. Use existing access and preserve sessions the user asked to keep. If the next step requires an unapproved deployment or another consequential action, present that concrete action and keep verification unfinished. Reporting a blocker does not complete the task.
+- **Make proof readable.** Capture the requested journey at readable size and inspect the images before attaching them. Follow the user's recent PRs and the proof-of-work skill. Put test counts in supporting checks, and state what fixture evidence leaves unverified.
+- **Inbox only on request.** Use Plannotator Inbox only when the user explicitly asks. Keep ordinary updates, questions and handoffs in the chat.
 - **Label evidence.** Mark each claim as measured, inferred or a guess, in the same sentence.
 - **Autonomy.** Proceed on reversible work and show the result. Pause before anything irreversible: force-pushing, deploying, deleting data, merging, or messaging other people.
 - **Approved means approved.** Do not ask again for a decision the user already made.
@@ -73,3 +77,4 @@ Pick the playbook that fits, load the skill each step names, and prove the resul
 - Lead with the outcome, then the evidence, then anything still open.
 - Name each skill that shaped a decision and what it changed.
 - Use plain words, and explain any term the reader may not know. Do not use long dashes in prose.
+- When the user invokes `$bro`, use that skill to restate the previous reply in plain language.
